@@ -8,13 +8,9 @@
 <title>Store Inventory Dashboard</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
@@ -55,6 +51,7 @@ padding:20px;
 border-radius:20px;
 background:rgba(255,255,255,0.15);
 backdrop-filter:blur(10px);
+box-shadow:0 8px 20px rgba(0,0,0,0.2);
 }
 
 .card p{
@@ -194,35 +191,6 @@ display:inline-block;
 border-radius:20px;
 }
 
-.loginPage{
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
-
-.loginBox{
-background:white;
-color:black;
-padding:30px;
-border-radius:20px;
-width:300px;
-}
-
-.loginBox input{
-width:100%;
-padding:12px;
-margin-top:15px;
-border-radius:10px;
-border:1px solid #ccc;
-box-sizing:border-box;
-}
-
-.loginBox button{
-margin-top:20px;
-background:#2563eb;
-}
-
 @media(max-width:700px){
 
 .cards{
@@ -241,25 +209,7 @@ flex-direction:column;
 
 <body>
 
-<div id="loginPage" class="loginPage">
-
-<div class="loginBox">
-
-<h2>Store Login</h2>
-
-<input type="text" id="username" placeholder="Username">
-
-<input type="password" id="password" placeholder="Password">
-
-<button onclick="login()">
-Login
-</button>
-
-</div>
-
-</div>
-
-<div id="mainApp" class="app" style="display:none;">
+<div id="mainApp" class="app">
 
 <h1>Store Inventory Dashboard</h1>
 
@@ -295,9 +245,8 @@ onkeyup="searchMaterial(this.value)"
 <tr>
 <th>Code</th>
 <th>Material</th>
-<th>Supplier</th>
 <th>Current Stock</th>
-<th>Reorder</th>
+<th>Reorder Value</th>
 <th>Status</th>
 </tr>
 
@@ -386,433 +335,64 @@ Generate QR Label
 
 <script>
 
-let currentUser='';
-
-function login(){
-
-const user=
-document.getElementById('username').value;
-
-const pass=
-document.getElementById('password').value;
-
-if(user==='admin' && pass==='1234'){
-
-currentUser=user;
-
-document.getElementById('loginPage').style.display='none';
-
-document.getElementById('mainApp').style.display='block';
-
-renderTable();
-
-createChart();
-
-}
-
-else{
-
-alert('Invalid Login');
-
-}
-
-}
-
 const saved =
 localStorage.getItem('materials');
 
 const defaultMaterials = [
 
-{
-code:'0838181493',
-name:'TES',
-supplier:'ABC Industries',
-stock:95,
-reorder:20
-},
-
-{
-code:'0838880104',
-name:'SC Valve New',
-supplier:'Valve Tech',
-stock:100,
-reorder:20
-},
-
-{
-code:'0838881066',
-name:'Combo Valve',
-supplier:'Valve Tech',
-stock:75,
-reorder:20
-},
-
-{
-code:'0838882104',
-name:'LOT Valve',
-supplier:'Valve Tech',
-stock:60,
-reorder:20
-},
-
-{
-code:'0838911014',
-name:'Pressure Regulator',
-supplier:'Regulator India',
-stock:40,
-reorder:15
-},
-
-{
-code:'0838920104',
-name:'Safety Caps',
-supplier:'Safety Products Ltd',
-stock:250,
-reorder:50
-},
-
-{
-code:'0838929014',
-name:'Nylon Thread',
-supplier:'Industrial Threads',
-stock:150,
-reorder:30
-},
-
-{
-code:'0838929034',
-name:'SS Clip',
-supplier:'Steel Fasteners',
-stock:80,
-reorder:20
-},
-
-{
-code:'0838930764',
-name:'NBR O-Ring',
-supplier:'Seal India',
-stock:120,
-reorder:25
-},
-
-{
-code:'0838930774',
-name:'FKM O-Ring',
-supplier:'Seal India',
-stock:90,
-reorder:25
-},
-
-{
-code:'6183050164',
-name:'Teflon Tape',
-supplier:'Tape Solutions',
-stock:200,
-reorder:40
-},
-
-{
-code:'8601061404',
-name:'Zinc Chrome Primer',
-supplier:'Asian Paints',
-stock:50,
-reorder:10
-},
-
-{
-code:'8614022944',
-name:'Paint Enamel Signal Red',
-supplier:'Berger Paints',
-stock:70,
-reorder:15
-},
-
-{
-code:'8614023204',
-name:'Paint Enamel White',
-supplier:'Berger Paints',
-stock:65,
-reorder:15
-},
-
-{
-code:'8614023664',
-name:'Paint Synthetic Enamel Oxford Blue',
-supplier:'Nerolac Paints',
-stock:55,
-reorder:15
-},
-
-{
-code:'8630200504',
-name:'Thinner F/Enamel Paint',
-supplier:'Paint Chemicals Ltd',
-stock:85,
-reorder:20
-},
-
-{
-code:'8740155404',
-name:'Brown Soap F/LPG Conveyor',
-supplier:'Industrial Chemicals',
-stock:45,
-reorder:10
-},
-
-{
-code:'9532500114',
-name:'Gloves Hand Cotton 10IN',
-supplier:'Safety Products Ltd',
-stock:300,
-reorder:60
-},
-
-{
-code:'0838920203',
-name:'LOT CAP',
-supplier:'Valve Tech',
-stock:110,
-reorder:25
-},
-
-{
-code:'0838920404',
-name:'Spindle',
-supplier:'Valve Tech',
-stock:95,
-reorder:20
-},
-
-{
-code:'0838920504',
-name:'Valve Spring',
-supplier:'Valve Tech',
-stock:140,
-reorder:30
-},
-
-{
-code:'0838920604',
-name:'Rubber Washer',
-supplier:'Seal India',
-stock:180,
-reorder:35
-},
-
-{
-code:'0838920704',
-name:'Dust Cap',
-supplier:'Safety Products Ltd',
-stock:210,
-reorder:50
-},
-
-{
-code:'0838920804',
-name:'Hex Nut',
-supplier:'Steel Fasteners',
-stock:500,
-reorder:100
-},
-
-{
-code:'0838920904',
-name:'MS Bolt',
-supplier:'Steel Fasteners',
-stock:450,
-reorder:100
-},
-
-{
-code:'0838921004',
-name:'Lubrication Oil',
-supplier:'Servo Lubricants',
-stock:70,
-reorder:20
-},
-
-{
-code:'0838921104',
-name:'Hydraulic Oil',
-supplier:'Servo Lubricants',
-stock:55,
-reorder:15
-},
-
-{
-code:'0838921204',
-name:'Grease',
-supplier:'Castrol',
-stock:90,
-reorder:20
-},
-
-{
-code:'0838921304',
-name:'Cotton Waste',
-supplier:'Cleaning Solutions',
-stock:150,
-reorder:30
-},
-
-{
-code:'0838921404',
-name:'Cleaning Cloth',
-supplier:'Cleaning Solutions',
-stock:180,
-reorder:40
-},
-
-{
-code:'0838921504',
-name:'Industrial Gloves',
-supplier:'Safety Products Ltd',
-stock:220,
-reorder:50
-},
-
-{
-code:'0838921604',
-name:'Safety Goggles',
-supplier:'Safety Products Ltd',
-stock:80,
-reorder:20
-},
-
-{
-code:'0838921704',
-name:'Face Shield',
-supplier:'Safety Products Ltd',
-stock:60,
-reorder:15
-},
-
-{
-code:'0838921804',
-name:'Fire Extinguisher',
-supplier:'Fire Safety India',
-stock:25,
-reorder:10
-},
-
-{
-code:'0838921904',
-name:'Pressure Gauge',
-supplier:'Instrumentation Ltd',
-stock:45,
-reorder:10
-},
-
-{
-code:'0838922004',
-name:'Temperature Sensor',
-supplier:'Instrumentation Ltd',
-stock:30,
-reorder:10
-},
-
-{
-code:'0838922104',
-name:'Electrical Cable',
-supplier:'Polycab',
-stock:300,
-reorder:50
-},
-
-{
-code:'0838922204',
-name:'Cable Tie',
-supplier:'Electrical Solutions',
-stock:500,
-reorder:100
-},
-
-{
-code:'0838922304',
-name:'MCB Switch',
-supplier:'L&T',
-stock:40,
-reorder:10
-},
-
-{
-code:'0838922404',
-name:'LED Indicator',
-supplier:'Electrical Solutions',
-stock:70,
-reorder:20
-},
-
-{
-code:'0838922504',
-name:'Push Button',
-supplier:'Electrical Solutions',
-stock:85,
-reorder:20
-},
-
-{
-code:'0838922604',
-name:'Contact Relay',
-supplier:'L&T',
-stock:35,
-reorder:10
-},
-
-{
-code:'0838922704',
-name:'Bearing',
-supplier:'SKF Bearings',
-stock:95,
-reorder:20
-},
-
-{
-code:'0838922804',
-name:'Chain Sprocket',
-supplier:'SKF Bearings',
-stock:45,
-reorder:10
-},
-
-{
-code:'0838922904',
-name:'Conveyor Chain',
-supplier:'Industrial Chains Ltd',
-stock:25,
-reorder:10
-},
-
-{
-code:'0838923004',
-name:'Air Filter',
-supplier:'Filter India',
-stock:65,
-reorder:15
-},
-
-{
-code:'0838923104',
-name:'Oil Filter',
-supplier:'Filter India',
-stock:70,
-reorder:15
-},
-
-{
-code:'0838923204',
-name:'Water Filter',
-supplier:'Filter India',
-stock:50,
-reorder:10
-}
+{code:'0838181493',name:'TES',stock:95,reorder:20},
+{code:'0838880104',name:'SC Valve New',stock:100,reorder:20},
+{code:'0838881066',name:'Combo Valve',stock:75,reorder:20},
+{code:'0838882104',name:'LOT Valve',stock:60,reorder:20},
+{code:'0838911014',name:'Pressure Regulator',stock:40,reorder:15},
+{code:'0838920104',name:'Safety Caps',stock:250,reorder:50},
+{code:'0838929014',name:'Nylon Thread',stock:150,reorder:30},
+{code:'0838929034',name:'SS Clip',stock:80,reorder:20},
+{code:'0838930764',name:'NBR O-Ring',stock:120,reorder:25},
+{code:'0838930774',name:'FKM O-Ring',stock:90,reorder:25},
+{code:'6183050164',name:'Teflon Tape',stock:200,reorder:40},
+{code:'8601061404',name:'Zinc Chrome Primer',stock:50,reorder:10},
+{code:'8614022944',name:'Paint Enamel Signal Red',stock:70,reorder:15},
+{code:'8614023204',name:'Paint Enamel White',stock:65,reorder:15},
+{code:'8614023664',name:'Paint Synthetic Enamel Oxford Blue',stock:55,reorder:15},
+{code:'8630200504',name:'Thinner F/Enamel Paint',stock:85,reorder:20},
+{code:'8740155404',name:'Brown Soap F/LPG Conveyor',stock:45,reorder:10},
+{code:'9532500114',name:'Gloves Hand Cotton 10IN',stock:300,reorder:60},
+{code:'0838920203',name:'LOT CAP',stock:110,reorder:25},
+{code:'0838920404',name:'Spindle',stock:95,reorder:20},
+{code:'0838920504',name:'Valve Spring',stock:140,reorder:30},
+{code:'0838920604',name:'Rubber Washer',stock:180,reorder:35},
+{code:'0838920704',name:'Dust Cap',stock:210,reorder:50},
+{code:'0838920804',name:'Hex Nut',stock:500,reorder:100},
+{code:'0838920904',name:'MS Bolt',stock:450,reorder:100},
+{code:'0838921004',name:'Lubrication Oil',stock:70,reorder:20},
+{code:'0838921104',name:'Hydraulic Oil',stock:55,reorder:15},
+{code:'0838921204',name:'Grease',stock:90,reorder:20},
+{code:'0838921304',name:'Cotton Waste',stock:150,reorder:30},
+{code:'0838921404',name:'Cleaning Cloth',stock:180,reorder:40},
+{code:'0838921504',name:'Industrial Gloves',stock:220,reorder:50},
+{code:'0838921604',name:'Safety Goggles',stock:80,reorder:20},
+{code:'0838921704',name:'Face Shield',stock:60,reorder:15},
+{code:'0838921804',name:'Fire Extinguisher',stock:25,reorder:10},
+{code:'0838921904',name:'Pressure Gauge',stock:45,reorder:10},
+{code:'0838922004',name:'Temperature Sensor',stock:30,reorder:10},
+{code:'0838922104',name:'Electrical Cable',stock:300,reorder:50},
+{code:'0838922204',name:'Cable Tie',stock:500,reorder:100},
+{code:'0838922304',name:'MCB Switch',stock:40,reorder:10},
+{code:'0838922404',name:'LED Indicator',stock:70,reorder:20},
+{code:'0838922504',name:'Push Button',stock:85,reorder:20},
+{code:'0838922604',name:'Contact Relay',stock:35,reorder:10},
+{code:'0838922704',name:'Bearing',stock:95,reorder:20},
+{code:'0838922804',name:'Chain Sprocket',stock:45,reorder:10},
+{code:'0838922904',name:'Conveyor Chain',stock:25,reorder:10},
+{code:'0838923004',name:'Air Filter',stock:65,reorder:15},
+{code:'0838923104',name:'Oil Filter',stock:70,reorder:15},
+{code:'0838923204',name:'Water Filter',stock:50,reorder:10}
 
 ];
 
 let materials =
 saved ? JSON.parse(saved) : defaultMaterials;
-
-const stockHistory=[];
 
 let currentAction='';
 
@@ -837,15 +417,7 @@ let low=0;
 materials.forEach(item=>{
 
 if(item.stock<=item.reorder){
-
 low++;
-
-setTimeout(()=>{
-
-alert(item.name+' is Low Stock');
-
-},500);
-
 }
 
 table.innerHTML+=`
@@ -855,8 +427,6 @@ table.innerHTML+=`
 <td>${item.code}</td>
 
 <td>${item.name}</td>
-
-<td>${item.supplier}</td>
 
 <td>${item.stock}</td>
 
@@ -874,8 +444,7 @@ ${item.stock<=item.reorder?'Low':'Normal'}
 
 });
 
-document.getElementById('lowStock').innerHTML=
-low;
+document.getElementById('lowStock').innerHTML=low;
 
 document.getElementById('totalMaterials').innerHTML=
 materials.length;
@@ -883,6 +452,8 @@ materials.length;
 fillDropdown();
 
 saveData();
+
+createChart();
 
 }
 
@@ -898,9 +469,7 @@ materials.forEach(item=>{
 dropdown.innerHTML+=`
 
 <option value="${item.code}">
-
 ${item.code} - ${item.name}
-
 </option>
 
 `;
@@ -955,8 +524,8 @@ return;
 material.stock-=qty;
 
 addHistory(
+'Issued',
 material.name,
-'ISSUE',
 qty,
 material.stock
 );
@@ -968,8 +537,8 @@ if(currentAction==='receive'){
 material.stock+=qty;
 
 addHistory(
+'Received',
 material.name,
-'RECEIVE',
 qty,
 material.stock
 );
@@ -978,24 +547,13 @@ material.stock
 
 renderTable();
 
-createChart();
+document.getElementById('qtyInput').value='';
 
 alert('Transaction Successful');
 
 }
 
-function addHistory(name,action,qty,balance){
-
-stockHistory.push({
-
-name,
-action,
-qty,
-balance,
-user:currentUser,
-date:new Date().toLocaleString()
-
-});
+function addHistory(action,name,qty,balance){
 
 const div=
 document.createElement('div');
@@ -1008,15 +566,11 @@ div.innerHTML=`
 
 <br>
 
-Qty: ${qty}
+Quantity: ${qty}
 
 <br>
 
-Balance: ${balance}
-
-<br>
-
-User: ${currentUser}
+Balance Stock: ${balance}
 
 <br>
 
@@ -1142,7 +696,7 @@ label:'Current Stock',
 data:
 materials.map(m=>m.stock),
 
-backgroundColor:'#3b82f6'
+backgroundColor:'#2563eb'
 
 }]
 
@@ -1161,7 +715,7 @@ const doc = new jsPDF();
 let y=20;
 
 doc.text(
-'Store Inventory Report',
+'Inventory Report',
 10,
 10
 );
@@ -1212,6 +766,8 @@ function toggleMode(){
 document.body.classList.toggle('lightMode');
 
 }
+
+renderTable();
 
 </script>
 
