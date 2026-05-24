@@ -1,3 +1,5 @@
+# Multi-Material Store Inventory Dashboard
+
 <!DOCTYPE html>
 <html>
 
@@ -50,7 +52,6 @@
       font-size: 30px;
       color: #3a0ca3;
       font-weight: bold;
-      margin: 10px 0 0 0;
     }
 
     .searchBox {
@@ -185,17 +186,17 @@
 
     <div class="card">
       <h3>Total Materials</h3>
-      <p>1</p>
+      <p id="materialCount"></p>
     </div>
 
     <div class="card">
       <h3>Total Stock</h3>
-      <p id="totalStock">95</p>
+      <p id="totalStock"></p>
     </div>
 
     <div class="card">
       <h3>Low Stock</h3>
-      <p id="lowStockCount">0</p>
+      <p id="lowStockCount"></p>
     </div>
 
   </div>
@@ -203,7 +204,7 @@
   <input
     type="text"
     class="searchBox"
-    placeholder="Search TES"
+    placeholder="Search Material"
     onkeyup="searchMaterial(this.value)"
   >
 
@@ -213,34 +214,25 @@
       <tr>
         <th>Material Code</th>
         <th>Material</th>
+        <th>Unit</th>
         <th>Stock</th>
         <th>Rack</th>
         <th>Status</th>
       </tr>
     </thead>
 
-    <tbody id="inventoryTable">
-
-      <tr>
-        <td>0838181493</td>
-        <td>TES</td>
-        <td id="tableStock">95</td>
-        <td>A1</td>
-        <td id="status" class="normal">Normal</td>
-      </tr>
-
-    </tbody>
+    <tbody id="inventoryTable"></tbody>
 
   </table>
 
   <div class="buttons">
 
-    <button class="issue" onclick="issueMaterial()">
-      Issue TES
+    <button class="issue" onclick="manualIssue()">
+      Issue Material
     </button>
 
-    <button class="receive" onclick="receiveMaterial()">
-      Receive TES
+    <button class="receive" onclick="manualReceive()">
+      Receive Material
     </button>
 
     <button class="scanBtn" onclick="startScanner()">
@@ -265,250 +257,311 @@
 
 <script>
 
-  let stock = 95;
-
-  const minStock = 20;
-
-  function updateUI() {
-
-    document.getElementById('totalStock').innerHTML = stock;
-
-    document.getElementById('tableStock').innerHTML = stock;
-
-    const status = document.getElementById('status');
-
-    if (stock < minStock) {
-
-      status.innerHTML = 'Low Stock';
-
-      status.className = 'low';
-
-      document.getElementById('lowStockCount').innerHTML = 1;
-    }
-
-    else {
-
-      status.innerHTML = 'Normal';
-
-      status.className = 'normal';
-
-      document.getElementById('lowStockCount').innerHTML = 0;
-    }
+const materials = [
+  {
+    code: '0838181493',
+    name: 'TES',
+    unit: 'Nos.',
+    stock: 95,
+    rack: 'A1'
+  },
+  {
+    code: '0838880104',
+    name: 'SC Valve New',
+    unit: 'Nos.',
+    stock: 100,
+    rack: 'A2'
+  },
+  {
+    code: '0838881066',
+    name: 'Combo Valve',
+    unit: 'Nos.',
+    stock: 75,
+    rack: 'A3'
+  },
+  {
+    code: '0838882104',
+    name: 'LOT Valve',
+    unit: 'Nos.',
+    stock: 60,
+    rack: 'A4'
+  },
+  {
+    code: '0838911014',
+    name: 'Pressure Regulator',
+    unit: 'Nos.',
+    stock: 40,
+    rack: 'B1'
+  },
+  {
+    code: '0838920104',
+    name: 'Safety Caps',
+    unit: 'Nos.',
+    stock: 250,
+    rack: 'B2'
+  },
+  {
+    code: '0838929014',
+    name: 'Nylon Thread',
+    unit: 'Nos.',
+    stock: 150,
+    rack: 'B3'
+  },
+  {
+    code: '0838929034',
+    name: 'SS Clip',
+    unit: 'Nos.',
+    stock: 80,
+    rack: 'B4'
+  },
+  {
+    code: '0838930764',
+    name: 'NBR O-Ring',
+    unit: 'Nos.',
+    stock: 120,
+    rack: 'C1'
   }
+];
 
-  function addTransaction(text, cls) {
+const minStock = 20;
 
-    const transactions =
-      document.getElementById('transactions');
+function renderTable() {
 
-    const div = document.createElement('div');
+  const table = document.getElementById('inventoryTable');
 
-    div.className = 'transaction';
+  table.innerHTML = '';
 
-    div.innerHTML = `
-      <span class="${cls}">${text}</span>
-      <br>
-      <small>${new Date().toLocaleString()}</small>
+  let totalStock = 0;
+  let lowStock = 0;
+
+  materials.forEach((item, index) => {
+
+    totalStock += item.stock;
+
+    if (item.stock < minStock) {
+      lowStock++;
+    }
+
+    table.innerHTML += `
+
+      <tr>
+        <td>${item.code}</td>
+        <td>${item.name}</td>
+        <td>${item.unit}</td>
+        <td>${item.stock}</td>
+        <td>${item.rack}</td>
+        <td class="${item.stock < minStock ? 'low' : 'normal'}">
+          ${item.stock < minStock ? 'Low Stock' : 'Normal'}
+        </td>
+      </tr>
+
     `;
+  });
 
-    transactions.prepend(div);
+  document.getElementById('materialCount').innerHTML = materials.length;
+
+  document.getElementById('totalStock').innerHTML = totalStock;
+
+  document.getElementById('lowStockCount').innerHTML = lowStock;
+}
+
+function addTransaction(text, cls) {
+
+  const transactions = document.getElementById('transactions');
+
+  const div = document.createElement('div');
+
+  div.className = 'transaction';
+
+  div.innerHTML = `
+    <span class="${cls}">${text}</span>
+    <br>
+    <small>${new Date().toLocaleString()}</small>
+  `;
+
+  transactions.prepend(div);
+}
+
+function manualIssue() {
+
+  const code = prompt('Enter material code');
+
+  const material = materials.find(m => m.code === code);
+
+  if (!material) {
+    alert('Material not found');
+    return;
   }
 
-  function issueMaterial() {
+  const qty = parseInt(prompt('Enter issue quantity'));
 
-    const qty = parseInt(
-      prompt('Enter issue quantity')
-    );
-
-    if (!qty || qty <= 0) {
-
-      alert('Invalid quantity');
-
-      return;
-    }
-
-    if (qty > stock) {
-
-      alert('Insufficient stock');
-
-      return;
-    }
-
-    stock = stock - qty;
-
-    updateUI();
-
-    addTransaction(
-      `Issued ${qty} TES`,
-      'redText'
-    );
-
-    alert(qty + ' TES issued successfully');
+  if (!qty || qty <= 0) {
+    alert('Invalid quantity');
+    return;
   }
 
-  function receiveMaterial() {
-
-    const qty = parseInt(
-      prompt('Enter receive quantity')
-    );
-
-    if (!qty || qty <= 0) {
-
-      alert('Invalid quantity');
-
-      return;
-    }
-
-    stock = stock + qty;
-
-    updateUI();
-
-    addTransaction(
-      `Received ${qty} TES`,
-      'greenText'
-    );
-
-    alert(qty + ' TES received successfully');
+  if (qty > material.stock) {
+    alert('Insufficient stock');
+    return;
   }
 
-  function searchMaterial(value) {
+  material.stock -= qty;
 
-    value = value.toLowerCase();
+  renderTable();
 
-    const table =
-      document.getElementById('inventoryTable');
+  addTransaction(
+    `Issued ${qty} ${material.name}`,
+    'redText'
+  );
+}
+
+function manualReceive() {
+
+  const code = prompt('Enter material code');
+
+  const material = materials.find(m => m.code === code);
+
+  if (!material) {
+    alert('Material not found');
+    return;
+  }
+
+  const qty = parseInt(prompt('Enter receive quantity'));
+
+  if (!qty || qty <= 0) {
+    alert('Invalid quantity');
+    return;
+  }
+
+  material.stock += qty;
+
+  renderTable();
+
+  addTransaction(
+    `Received ${qty} ${material.name}`,
+    'greenText'
+  );
+}
+
+function searchMaterial(value) {
+
+  value = value.toLowerCase();
+
+  const rows = document.querySelectorAll('#inventoryTable tr');
+
+  rows.forEach(row => {
 
     if (
-      value.includes('tes') ||
-      value.includes('0838181493') ||
-      value === ''
+      row.innerText.toLowerCase().includes(value)
     ) {
-
-      table.style.display = '';
+      row.style.display = '';
     }
-
     else {
-
-      table.style.display = 'none';
+      row.style.display = 'none';
     }
-  }
+  });
+}
 
-  function startScanner() {
+function startScanner() {
 
-    const html5QrCode =
-      new Html5Qrcode('reader');
+  const html5QrCode = new Html5Qrcode('reader');
 
-    html5QrCode.start(
+  html5QrCode.start(
 
-      { facingMode: 'environment' },
+    { facingMode: 'environment' },
 
-      {
-        fps: 10,
-        qrbox: 250
-      },
+    {
+      fps: 10,
+      qrbox: 250
+    },
 
-      (decodedText) => {
+    (decodedText) => {
 
-        document.getElementById('result').innerHTML =
-          'Scanned Material: ' + decodedText;
+      document.getElementById('result').innerHTML =
+        'Scanned Material: ' + decodedText;
 
-        if (
-          decodedText.includes('0838181493') ||
-          decodedText.toLowerCase().includes('tes')
-        ) {
+      const material = materials.find(m =>
+        decodedText.includes(m.code)
+      );
 
-          const action = prompt(
-            'Type ISSUE or RECEIVE'
-          );
+      if (!material) {
+        alert('Unknown Material');
+        html5QrCode.stop();
+        return;
+      }
 
-          if (!action) {
+      const action = prompt(
+        'Type ISSUE or RECEIVE'
+      );
 
-            html5QrCode.stop();
+      if (!action) {
+        html5QrCode.stop();
+        return;
+      }
 
-            return;
-          }
+      const qty = parseInt(
+        prompt('Enter quantity')
+      );
 
-          const qty = parseInt(
-            prompt('Enter quantity')
-          );
+      if (!qty || qty <= 0) {
+        alert('Invalid quantity');
+        html5QrCode.stop();
+        return;
+      }
 
-          if (!qty || qty <= 0) {
+      if (action.toLowerCase() === 'issue') {
 
-            alert('Invalid quantity');
-
-            html5QrCode.stop();
-
-            return;
-          }
-
-          if (
-            action.toLowerCase() === 'issue'
-          ) {
-
-            if (qty > stock) {
-
-              alert('Insufficient stock');
-            }
-
-            else {
-
-              stock = stock - qty;
-
-              updateUI();
-
-              addTransaction(
-                `QR Issued ${qty} TES`,
-                'redText'
-              );
-
-              alert(
-                qty + ' TES issued successfully'
-              );
-            }
-          }
-
-          else if (
-            action.toLowerCase() === 'receive'
-          ) {
-
-            stock = stock + qty;
-
-            updateUI();
-
-            addTransaction(
-              `QR Received ${qty} TES`,
-              'greenText'
-            );
-
-            alert(
-              qty + ' TES received successfully'
-            );
-          }
-
-          else {
-
-            alert(
-              'Type ISSUE or RECEIVE only'
-            );
-          }
+        if (qty > material.stock) {
+          alert('Insufficient stock');
         }
 
         else {
 
-          alert('Unknown Material');
-        }
+          material.stock -= qty;
 
-        html5QrCode.stop();
+          renderTable();
+
+          addTransaction(
+            `QR Issued ${qty} ${material.name}`,
+            'redText'
+          );
+
+          alert('Material issued successfully');
+        }
       }
 
-    ).catch(err => {
+      else if (
+        action.toLowerCase() === 'receive'
+      ) {
 
-      alert('Camera Error: ' + err);
+        material.stock += qty;
 
-    });
-  }
+        renderTable();
 
-  updateUI();
+        addTransaction(
+          `QR Received ${qty} ${material.name}`,
+          'greenText'
+        );
+
+        alert('Material received successfully');
+      }
+
+      else {
+
+        alert('Type ISSUE or RECEIVE only');
+      }
+
+      html5QrCode.stop();
+    }
+
+  ).catch(err => {
+
+    alert('Camera Error: ' + err);
+
+  });
+}
+
+renderTable();
 
 </script>
 
