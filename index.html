@@ -104,6 +104,16 @@ backdrop-filter:blur(12px);
 box-shadow:
 0 10px 30px rgba(0,0,0,0.3);
 
+cursor:pointer;
+
+transition:0.3s;
+
+}
+
+.card:hover{
+
+transform:translateY(-5px);
+
 }
 
 .card p{
@@ -137,6 +147,23 @@ outline:none;
 
 .searchBox::placeholder{
 color:#ddd;
+}
+
+select{
+
+color:white !important;
+
+background:
+rgba(15,23,42,0.95) !important;
+
+}
+
+option{
+
+background:#0f172a;
+
+color:white;
+
 }
 
 .tableContainer{
@@ -261,7 +288,7 @@ background:linear-gradient(to right,#f59e0b,#d97706);
 
 .panel{
 
-margin-top:30px;
+margin-top:25px;
 
 padding:25px;
 
@@ -273,6 +300,22 @@ rgba(255,255,255,0.08);
 backdrop-filter:blur(12px);
 
 display:none;
+
+animation:fadeIn 0.3s ease;
+
+}
+
+@keyframes fadeIn{
+
+from{
+opacity:0;
+transform:translateY(10px);
+}
+
+to{
+opacity:1;
+transform:translateY(0px);
+}
 
 }
 
@@ -370,19 +413,45 @@ flex-direction:column;
 
 <p>QR Based Inventory Management System</p>
 
+<!-- CARDS -->
+
 <div class="cards">
 
 <div class="card">
+
 <h3>Total Materials</h3>
+
 <p id="totalMaterials"></p>
+
 </div>
 
-<div class="card">
+<div
+class="card"
+onclick="showLowStock()"
+>
+
 <h3>Low Stock Materials</h3>
+
 <p id="lowStock"></p>
+
 </div>
 
 </div>
+
+<!-- LOW STOCK PANEL -->
+
+<div
+id="lowStockPanel"
+class="panel"
+>
+
+<h2>Low Stock Materials</h2>
+
+<div id="lowStockList"></div>
+
+</div>
+
+<!-- SEARCH -->
 
 <input
 type="text"
@@ -390,6 +459,8 @@ class="searchBox"
 placeholder="Search Material"
 onkeyup="searchMaterial(this.value)"
 >
+
+<!-- TABLE -->
 
 <div class="tableContainer">
 
@@ -413,6 +484,8 @@ onkeyup="searchMaterial(this.value)"
 </table>
 
 </div>
+
+<!-- BUTTONS -->
 
 <div class="buttons">
 
@@ -508,7 +581,7 @@ Download QR PNG
 
 <div id="reader"></div>
 
-<!-- HISTORY -->
+<!-- TRANSACTION HISTORY -->
 
 <div class="transactionBox">
 
@@ -607,6 +680,22 @@ let transactionHistory=[];
 
 let filteredHistory=[];
 
+function hidePanels(){
+
+document.getElementById(
+'transactionPanel'
+).style.display='none';
+
+document.getElementById(
+'qrPanel'
+).style.display='none';
+
+document.getElementById(
+'lowStockPanel'
+).style.display='none';
+
+}
+
 function renderTable(){
 
 const table=
@@ -701,11 +790,102 @@ ${item.name}
 
 }
 
+function showLowStock(){
+
+hidePanels();
+
+const panel =
+document.getElementById(
+'lowStockPanel'
+);
+
+const list =
+document.getElementById(
+'lowStockList'
+);
+
+panel.style.display='block';
+
+list.innerHTML='';
+
+const lowMaterials =
+materials.filter(
+m => m.stock <= m.reorder
+);
+
+if(lowMaterials.length===0){
+
+list.innerHTML=
+'<p>No Low Stock Materials</p>';
+
+return;
+
+}
+
+lowMaterials.forEach(item=>{
+
+list.innerHTML += `
+
+<div class="transaction">
+
+<b>${item.name}</b>
+
+<br><br>
+
+Code:
+${item.code}
+
+<br>
+
+Current Stock:
+${item.stock}
+
+<br>
+
+Reorder Level:
+${item.reorder}
+
+</div>
+
+`;
+
+});
+
+panel.scrollIntoView({
+behavior:'smooth'
+});
+
+}
+
 function openPanel(){
+
+hidePanels();
 
 document.getElementById(
 'transactionPanel'
 ).style.display='block';
+
+document.getElementById(
+'transactionPanel'
+).scrollIntoView({
+behavior:'smooth'
+});
+
+}
+
+function openQRPanel(){
+
+hidePanels();
+
+document.getElementById(
+'qrPanel'
+).style.display='block';
+
+document.getElementById(
+'qrPanel'
+).scrollIntoView({
+behavior:'smooth'
+});
 
 }
 
@@ -798,6 +978,14 @@ document.getElementById(
 
 function startScanner(){
 
+hidePanels();
+
+document.getElementById(
+'reader'
+).scrollIntoView({
+behavior:'smooth'
+});
+
 const html5QrCode =
 new Html5Qrcode('reader');
 
@@ -834,6 +1022,8 @@ return;
 
 html5QrCode.stop();
 
+hidePanels();
+
 document.getElementById(
 'transactionPanel'
 ).style.display='block';
@@ -846,6 +1036,12 @@ document.getElementById(
 'panelTitle'
 ).innerHTML =
 'Scanned Material : ' + material.name;
+
+document.getElementById(
+'transactionPanel'
+).scrollIntoView({
+behavior:'smooth'
+});
 
 document.getElementById(
 'reader'
@@ -863,14 +1059,6 @@ html5QrCode.stop();
 }
 
 );
-
-}
-
-function openQRPanel(){
-
-document.getElementById(
-'qrPanel'
-).style.display='block';
 
 }
 
