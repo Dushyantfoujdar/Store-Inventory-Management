@@ -361,6 +361,8 @@ rgba(255,255,255,0.08);
 
 backdrop-filter:blur(12px);
 
+display:none;
+
 }
 
 .transaction{
@@ -501,6 +503,10 @@ Scan QR
 Generate QR
 </button>
 
+<button class="download" onclick="openHistoryPanel()">
+Material History
+</button>
+
 </div>
 
 <!-- TRANSACTION PANEL -->
@@ -577,13 +583,16 @@ Download QR PNG
 
 </div>
 
-<!-- QR SCANNER -->
+<!-- QR READER -->
 
 <div id="reader"></div>
 
-<!-- TRANSACTION HISTORY -->
+<!-- HISTORY PANEL -->
 
-<div class="transactionBox">
+<div
+class="transactionBox"
+id="historyPanel"
+>
 
 <h2>Material Transaction History</h2>
 
@@ -677,7 +686,6 @@ const materials=[
 ];
 
 let transactionHistory=[];
-
 let filteredHistory=[];
 
 function hidePanels(){
@@ -692,6 +700,10 @@ document.getElementById(
 
 document.getElementById(
 'lowStockPanel'
+).style.display='none';
+
+document.getElementById(
+'historyPanel'
 ).style.display='none';
 
 }
@@ -794,17 +806,14 @@ function showLowStock(){
 
 hidePanels();
 
-const panel =
 document.getElementById(
 'lowStockPanel'
-);
+).style.display='block';
 
 const list =
 document.getElementById(
 'lowStockList'
 );
-
-panel.style.display='block';
 
 list.innerHTML='';
 
@@ -832,27 +841,20 @@ list.innerHTML += `
 
 <br><br>
 
-Code:
-${item.code}
+Code: ${item.code}
 
 <br>
 
-Current Stock:
-${item.stock}
+Current Stock: ${item.stock}
 
 <br>
 
-Reorder Level:
-${item.reorder}
+Reorder Level: ${item.reorder}
 
 </div>
 
 `;
 
-});
-
-panel.scrollIntoView({
-behavior:'smooth'
 });
 
 }
@@ -865,12 +867,6 @@ document.getElementById(
 'transactionPanel'
 ).style.display='block';
 
-document.getElementById(
-'transactionPanel'
-).scrollIntoView({
-behavior:'smooth'
-});
-
 }
 
 function openQRPanel(){
@@ -881,11 +877,15 @@ document.getElementById(
 'qrPanel'
 ).style.display='block';
 
+}
+
+function openHistoryPanel(){
+
+hidePanels();
+
 document.getElementById(
-'qrPanel'
-).scrollIntoView({
-behavior:'smooth'
-});
+'historyPanel'
+).style.display='block';
 
 }
 
@@ -980,12 +980,6 @@ function startScanner(){
 
 hidePanels();
 
-document.getElementById(
-'reader'
-).scrollIntoView({
-behavior:'smooth'
-});
-
 const html5QrCode =
 new Html5Qrcode('reader');
 
@@ -1036,12 +1030,6 @@ document.getElementById(
 'panelTitle'
 ).innerHTML =
 'Scanned Material : ' + material.name;
-
-document.getElementById(
-'transactionPanel'
-).scrollIntoView({
-behavior:'smooth'
-});
 
 document.getElementById(
 'reader'
@@ -1199,13 +1187,11 @@ container.innerHTML += `
 
 <br><br>
 
-Action:
-${item.action}
+Action: ${item.action}
 
 <br>
 
-Quantity:
-${item.qty}
+Quantity: ${item.qty}
 
 <br>
 
@@ -1216,13 +1202,11 @@ ${item.person}
 
 <br>
 
-Balance:
-${item.balance}
+Balance: ${item.balance}
 
 <br>
 
-Date:
-${item.date}
+Date: ${item.date}
 
 </div>
 
