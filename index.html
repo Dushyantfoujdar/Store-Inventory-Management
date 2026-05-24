@@ -364,7 +364,7 @@ flex-direction:column;
 
 <body>
 
-<div class="app" id="dashboard">
+<div class="app">
 
 <h1>Smart Inventory Dashboard</h1>
 
@@ -385,15 +385,10 @@ flex-direction:column;
 </div>
 
 <input
-
 type="text"
-
 class="searchBox"
-
 placeholder="Search Material"
-
 onkeyup="searchMaterial(this.value)"
-
 >
 
 <div class="tableContainer">
@@ -403,8 +398,8 @@ onkeyup="searchMaterial(this.value)"
 <thead>
 
 <tr>
-<th>Code</th>
-<th>Material</th>
+<th>Material Code</th>
+<th>Material Name</th>
 <th>Unit</th>
 <th>Stock</th>
 <th>Reorder</th>
@@ -421,12 +416,8 @@ onkeyup="searchMaterial(this.value)"
 
 <div class="buttons">
 
-<button class="issue" onclick="openPanel('issue')">
-Issue Material
-</button>
-
-<button class="receive" onclick="openPanel('receive')">
-Receive Material
+<button class="issue" onclick="openPanel()">
+Issue / Receive
 </button>
 
 <button class="scan" onclick="startScanner()">
@@ -443,7 +434,21 @@ Generate QR
 
 <div id="transactionPanel" class="panel">
 
-<h2 id="panelTitle"></h2>
+<h2 id="panelTitle">
+Material Transaction
+</h2>
+
+<select id="actionSelect" class="searchBox">
+
+<option value="issue">
+Issue Material
+</option>
+
+<option value="receive">
+Receive Material
+</option>
+
+</select>
 
 <select id="materialSelect" class="searchBox"></select>
 
@@ -499,11 +504,11 @@ Download QR PNG
 
 </div>
 
-<!-- QR READER -->
+<!-- QR SCANNER -->
 
 <div id="reader"></div>
 
-<!-- TRANSACTION REPORT -->
+<!-- HISTORY -->
 
 <div class="transactionBox">
 
@@ -536,14 +541,14 @@ Generate History
 class="download"
 onclick="downloadExcel()"
 >
-Excel
+Download Excel
 </button>
 
 <button
 class="download"
 onclick="downloadPDF()"
 >
-PDF
+Download PDF
 </button>
 
 </div>
@@ -599,8 +604,6 @@ const materials=[
 ];
 
 let transactionHistory=[];
-
-let currentAction='';
 
 let filteredHistory=[];
 
@@ -698,36 +701,40 @@ ${item.name}
 
 }
 
-function openPanel(action){
-
-currentAction=action;
+function openPanel(){
 
 document.getElementById(
 'transactionPanel'
 ).style.display='block';
 
-document.getElementById(
-'panelTitle'
-).innerHTML=
-action.toUpperCase()+' Material';
-
 }
 
 function submitTransaction(){
 
-const code=
-document.getElementById('materialSelect').value;
+const action =
+document.getElementById(
+'actionSelect'
+).value;
 
-const qty=
+const code =
+document.getElementById(
+'materialSelect'
+).value;
+
+const qty =
 parseInt(
-document.getElementById('qtyInput').value
+document.getElementById(
+'qtyInput'
+).value
 );
 
-const person=
-document.getElementById('personInput').value;
+const person =
+document.getElementById(
+'personInput'
+).value;
 
-const material=
-materials.find(m=>m.code===code);
+const material =
+materials.find(m => m.code === code);
 
 if(!qty || !person){
 
@@ -737,108 +744,9 @@ return;
 
 }
 
-if(currentAction==='issue'){
-
-if(qty>material.stock){
-
-alert('Insufficient Stock');
-
-return;
-
-}
-
-material.stock -= qty;
-
-}
-
-if(currentAction==='receive'){
-
-material.stock += qty;
-
-}
-
-transactionHistory.unshift({
-
-material:material.name,
-
-code:material.code,
-
-action:currentAction,
-
-qty:qty,
-
-person:person,
-
-balance:material.stock,
-
-date:new Date().toLocaleString()
-
-});
-
-renderTable();
-
-alert('Transaction Successful');
-
-}
-
-function startScanner(){
-
-const html5QrCode=
-new Html5Qrcode('reader');
-
-html5QrCode.start(
-
-{facingMode:'environment'},
-
-{
-fps:10,
-qrbox:250
-},
-
-(decodedText)=>{
-
-const material=
-materials.find(m=>
-decodedText.includes(m.code)
-);
-
-if(!material){
-
-alert('Unknown Material');
-
-html5QrCode.stop();
-
-return;
-
-}
-
-html5QrCode.stop();
-
-const action=
-prompt(
-`Material: ${material.name}
-
-Type:
-issue
-or
-receive`
-);
-
-if(!action)return;
-
-const qty=
-parseInt(prompt('Enter Quantity'));
-
-if(!qty)return;
-
-const person=
-prompt('Enter Person Name');
-
-if(!person)return;
-
 if(action==='issue'){
 
-if(qty>material.stock){
+if(qty > material.stock){
 
 alert('Insufficient Stock');
 
@@ -876,7 +784,81 @@ date:new Date().toLocaleString()
 
 renderTable();
 
-alert('Transaction Completed');
+alert('Transaction Successful');
+
+document.getElementById(
+'qtyInput'
+).value='';
+
+document.getElementById(
+'personInput'
+).value='';
+
+}
+
+function startScanner(){
+
+const html5QrCode =
+new Html5Qrcode('reader');
+
+html5QrCode.start(
+
+{ facingMode:'environment' },
+
+{
+fps:10,
+qrbox:250
+},
+
+(decodedText)=>{
+
+try{
+
+const qrData =
+JSON.parse(decodedText);
+
+const material =
+materials.find(
+m => m.code === qrData.code
+);
+
+if(!material){
+
+alert('Unknown Material');
+
+html5QrCode.stop();
+
+return;
+
+}
+
+html5QrCode.stop();
+
+document.getElementById(
+'transactionPanel'
+).style.display='block';
+
+document.getElementById(
+'materialSelect'
+).value = material.code;
+
+document.getElementById(
+'panelTitle'
+).innerHTML =
+'Scanned Material : ' + material.name;
+
+document.getElementById(
+'reader'
+).innerHTML='';
+
+}
+catch(err){
+
+alert('Invalid QR Code');
+
+html5QrCode.stop();
+
+}
 
 }
 
@@ -910,14 +892,27 @@ document.createElement('canvas');
 
 qrDiv.appendChild(canvas);
 
+const qrData = JSON.stringify({
+
+code: material.code,
+
+name: material.name
+
+});
+
 QRCode.toCanvas(
 
 canvas,
 
-`${material.code}`,
+qrData,
 
 {
-width:220
+width:220,
+margin:2,
+color:{
+dark:'#000000',
+light:'#FFFFFF'
+}
 },
 
 function(error){
@@ -940,10 +935,6 @@ label.innerHTML = `
 <h3>${material.name}</h3>
 
 <p><b>Code:</b> ${material.code}</p>
-
-<p><b>Unit:</b> ${material.unit}</p>
-
-<p><b>Stock:</b> ${material.stock}</p>
 
 `;
 
@@ -1025,12 +1016,14 @@ ${item.action}
 
 <br>
 
-Qty:
+Quantity:
 ${item.qty}
 
 <br>
 
-Person:
+${item.action==='issue'
+?'Issued To'
+:'Received From'}:
 ${item.person}
 
 <br>
