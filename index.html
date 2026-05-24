@@ -9,6 +9,8 @@
 
 <title>Professional Inventory ERP Dashboard</title>
 
+<!-- LIBRARIES -->
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
@@ -22,7 +24,7 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Segoe UI,sans-serif;
+font-family:'Segoe UI',sans-serif;
 }
 
 body{
@@ -81,6 +83,9 @@ color:white;
 
 transition:0.3s;
 
+box-shadow:
+0 10px 25px rgba(0,0,0,0.3);
+
 }
 
 .topButtons button:hover{
@@ -103,6 +108,10 @@ background:linear-gradient(to right,#2563eb,#1d4ed8);
 background:linear-gradient(to right,#f59e0b,#d97706);
 }
 
+.materialBtn{
+background:linear-gradient(to right,#7c3aed,#5b21b6);
+}
+
 .cards{
 
 display:grid;
@@ -112,7 +121,7 @@ repeat(auto-fit,minmax(220px,1fr));
 
 gap:20px;
 
-margin-top:25px;
+margin-top:30px;
 
 }
 
@@ -125,11 +134,14 @@ border-radius:25px;
 background:
 rgba(255,255,255,0.08);
 
-backdrop-filter:blur(10px);
+backdrop-filter:blur(12px);
 
 cursor:pointer;
 
 transition:0.3s;
+
+box-shadow:
+0 10px 30px rgba(0,0,0,0.3);
 
 }
 
@@ -139,9 +151,9 @@ transform:translateY(-5px);
 
 .card p{
 
-font-size:36px;
+font-size:38px;
 font-weight:bold;
-margin-top:10px;
+margin-top:15px;
 
 }
 
@@ -158,7 +170,23 @@ border-radius:25px;
 background:
 rgba(255,255,255,0.08);
 
-backdrop-filter:blur(10px);
+backdrop-filter:blur(12px);
+
+animation:fade 0.3s ease;
+
+}
+
+@keyframes fade{
+
+from{
+opacity:0;
+transform:translateY(10px);
+}
+
+to{
+opacity:1;
+transform:translateY(0px);
+}
 
 }
 
@@ -168,16 +196,18 @@ width:100%;
 
 padding:15px;
 
+margin-top:18px;
+
 border:none;
 
 border-radius:15px;
 
-margin-top:15px;
-
 background:
-rgba(255,255,255,0.1);
+rgba(255,255,255,0.08);
 
 color:white;
+
+outline:none;
 
 font-size:15px;
 
@@ -197,40 +227,11 @@ background:#0f172a;
 color:white;
 }
 
-.panelButton{
-
-width:100%;
-
-padding:15px;
-
-border:none;
-
-border-radius:15px;
-
-margin-top:18px;
-
-cursor:pointer;
-
-font-size:16px;
-
-font-weight:bold;
-
-background:
-linear-gradient(
-to right,
-#2563eb,
-#06b6d4
-);
-
-color:white;
-
-}
-
 .tableContainer{
 
 overflow-x:auto;
-
-margin-top:20px;
+margin-top:25px;
+border-radius:20px;
 
 }
 
@@ -243,7 +244,7 @@ border-collapse:collapse;
 
 th{
 
-padding:15px;
+padding:16px;
 
 background:
 linear-gradient(
@@ -256,7 +257,7 @@ to right,
 
 td{
 
-padding:14px;
+padding:15px;
 
 border-bottom:
 1px solid rgba(255,255,255,0.1);
@@ -275,6 +276,72 @@ font-weight:bold;
 .normal{
 color:#4ade80;
 font-weight:bold;
+}
+
+.panelButton{
+
+margin-top:20px;
+
+padding:15px;
+
+width:100%;
+
+border:none;
+
+border-radius:15px;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+
+color:white;
+
+}
+
+#qrcode{
+
+background:white;
+
+padding:25px;
+
+border-radius:20px;
+
+margin-top:20px;
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+justify-content:center;
+
+min-height:300px;
+
+color:black;
+
+}
+
+.transaction{
+
+padding:15px;
+
+margin-top:15px;
+
+border-radius:15px;
+
+background:
+rgba(255,255,255,0.08);
+
 }
 
 .editBtn{
@@ -297,36 +364,92 @@ cursor:pointer;
 background:#1d4ed8;
 }
 
-.transaction{
-
-padding:15px;
-
-border-radius:15px;
-
-background:
-rgba(255,255,255,0.08);
-
-margin-top:15px;
-
+#reader{
+margin-top:20px;
 }
 
-#qrcode{
+.popupOverlay{
 
-background:white;
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:
+rgba(0,0,0,0.6);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+z-index:9999;
 
 padding:20px;
 
-border-radius:20px;
+}
 
-margin-top:20px;
+.popupBox{
+
+width:100%;
+max-width:550px;
+
+background:
+linear-gradient(
+135deg,
+#0f172a,
+#1e293b,
+#1d4ed8,
+#0f766e
+);
+
+padding:25px;
+
+border-radius:25px;
+
+box-shadow:
+0 10px 40px rgba(0,0,0,0.5);
+
+}
+
+.popupTop{
 
 display:flex;
 
-flex-direction:column;
+justify-content:space-between;
 
 align-items:center;
 
-color:black;
+margin-bottom:20px;
+
+}
+
+.closePopup{
+
+background:red;
+
+border:none;
+
+color:white;
+
+padding:10px 15px;
+
+border-radius:10px;
+
+cursor:pointer;
+
+font-weight:bold;
+
+}
+
+@media(max-width:768px){
+
+.topButtons{
+grid-template-columns:1fr;
+}
 
 }
 
@@ -340,7 +463,7 @@ color:black;
 
 <h1>📦 Inventory ERP Dashboard</h1>
 
-<p>QR Based Inventory Management System</p>
+<p>Professional QR Based Inventory Management System</p>
 
 <!-- TOP BUTTONS -->
 
@@ -375,8 +498,11 @@ Reports
 </button>
 
 <button
-class="scan"
-onclick="toggleSection('materialSection')"
+class="materialBtn"
+onclick="
+clearMaterialForm();
+toggleSection('materialSection');
+"
 >
 Add Material
 </button>
@@ -442,7 +568,7 @@ id="qrSection"
 class="section"
 >
 
-<h2>Generate QR</h2>
+<h2>QR Generator</h2>
 
 <select
 id="qrMaterial"
@@ -531,14 +657,14 @@ Download PDF
 
 </div>
 
-<!-- MATERIAL SECTION -->
+<!-- ADD MATERIAL -->
 
 <div
 id="materialSection"
 class="section"
 >
 
-<h2>Add / Edit Material</h2>
+<h2>Add Material</h2>
 
 <input
 type="text"
@@ -619,10 +745,10 @@ onclick="showLowStock()"
 
 <div
 class="card"
-onclick="showTodayTransactions()"
+onclick="toggleSection('reportSection')"
 >
 
-<h3>Today's Transactions</h3>
+<h3>Total Transactions</h3>
 
 <p id="todayTransactions"></p>
 
@@ -630,7 +756,7 @@ onclick="showTodayTransactions()"
 
 </div>
 
-<!-- INVENTORY TABLE -->
+<!-- INVENTORY -->
 
 <div
 id="inventorySection"
@@ -673,6 +799,81 @@ onkeyup="searchMaterial(this.value)"
 </table>
 
 </div>
+
+</div>
+
+</div>
+
+<!-- EDIT POPUP -->
+
+<div
+id="editPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Edit Material</h2>
+
+<button
+class="closePopup"
+onclick="closeEditPopup()"
+>
+X
+</button>
+
+</div>
+
+<input
+type="text"
+id="editCode"
+class="searchBox"
+placeholder="Material Code"
+>
+
+<input
+type="text"
+id="editName"
+class="searchBox"
+placeholder="Material Name"
+>
+
+<input
+type="text"
+id="editCategory"
+class="searchBox"
+placeholder="Category"
+>
+
+<input
+type="text"
+id="editUnit"
+class="searchBox"
+placeholder="Unit"
+>
+
+<input
+type="number"
+id="editStock"
+class="searchBox"
+placeholder="Current Stock"
+>
+
+<input
+type="number"
+id="editReorder"
+class="searchBox"
+placeholder="Reorder Value"
+>
+
+<button
+class="panelButton"
+onclick="updateMaterial()"
+>
+Update Material
+</button>
 
 </div>
 
@@ -725,6 +926,51 @@ category:'Safety',
 unit:'Nos.',
 stock:40,
 reorder:15
+},
+
+{
+code:'0838920104',
+name:'Safety Caps',
+category:'Safety',
+unit:'Nos.',
+stock:250,
+reorder:50
+},
+
+{
+code:'0838929014',
+name:'Nylon Thread',
+category:'Consumables',
+unit:'Nos.',
+stock:150,
+reorder:30
+},
+
+{
+code:'0838929034',
+name:'SS Clip',
+category:'Consumables',
+unit:'Nos.',
+stock:80,
+reorder:20
+},
+
+{
+code:'0838930764',
+name:'NBR O-Ring',
+category:'Consumables',
+unit:'Nos.',
+stock:120,
+reorder:25
+},
+
+{
+code:'0838930774',
+name:'FKM O-Ring',
+category:'Consumables',
+unit:'Nos.',
+stock:90,
+reorder:25
 }
 
 ];
@@ -742,6 +988,8 @@ localStorage.getItem('materials')
 if(savedMaterials){
 materials=savedMaterials;
 }
+
+let currentEditIndex=null;
 
 function saveData(){
 
@@ -813,20 +1061,18 @@ item.stock<=item.reorder
 ?'low'
 :'normal'
 }">
-
 ${
 item.stock<=item.reorder
 ?'Low'
 :'Normal'
 }
-
 </td>
 
 <td>
 
 <button
 class="editBtn"
-data-index="${index}"
+onclick="editMaterial(${index})"
 >
 Edit
 </button>
@@ -849,43 +1095,14 @@ document.getElementById(
 ).innerHTML=
 low;
 
-const today=
-new Date().toDateString();
-
-const todayCount=
-transactionHistory.filter(t=>{
-
-return new Date(t.date)
-.toDateString()===today;
-
-}).length;
-
 document.getElementById(
 'todayTransactions'
 ).innerHTML=
-todayCount;
+transactionHistory.length;
 
 fillDropdowns();
 
 saveData();
-
-document
-.querySelectorAll('.editBtn')
-.forEach(btn=>{
-
-btn.addEventListener(
-'click',
-function(){
-
-editMaterial(
-this.dataset.index
-);
-
-}
-
-);
-
-});
 
 }
 
@@ -917,6 +1134,216 @@ ${item.code} - ${item.name}
 });
 
 });
+
+}
+
+function clearMaterialForm(){
+
+document.getElementById(
+'matCode'
+).value='';
+
+document.getElementById(
+'matName'
+).value='';
+
+document.getElementById(
+'matCategory'
+).value='';
+
+document.getElementById(
+'matUnit'
+).value='';
+
+document.getElementById(
+'matStock'
+).value='';
+
+document.getElementById(
+'matReorder'
+).value='';
+
+}
+
+function saveMaterial(){
+
+const code=
+document.getElementById(
+'matCode'
+).value;
+
+const name=
+document.getElementById(
+'matName'
+).value;
+
+const category=
+document.getElementById(
+'matCategory'
+).value;
+
+const unit=
+document.getElementById(
+'matUnit'
+).value;
+
+const stock=
+parseInt(
+document.getElementById(
+'matStock'
+).value
+);
+
+const reorder=
+parseInt(
+document.getElementById(
+'matReorder'
+).value
+);
+
+if(
+!code ||
+!name ||
+!category ||
+!unit ||
+isNaN(stock) ||
+isNaN(reorder)
+){
+
+Swal.fire(
+'Error',
+'Fill all fields',
+'error'
+);
+
+return;
+
+}
+
+materials.push({
+
+code,
+name,
+category,
+unit,
+stock,
+reorder
+
+});
+
+renderTable();
+
+clearMaterialForm();
+
+Swal.fire(
+'Success',
+'Material Added',
+'success'
+);
+
+}
+
+function editMaterial(index){
+
+currentEditIndex=index;
+
+const item=
+materials[index];
+
+document.getElementById(
+'editPopup'
+).style.display='flex';
+
+document.getElementById(
+'editCode'
+).value=
+item.code;
+
+document.getElementById(
+'editName'
+).value=
+item.name;
+
+document.getElementById(
+'editCategory'
+).value=
+item.category;
+
+document.getElementById(
+'editUnit'
+).value=
+item.unit;
+
+document.getElementById(
+'editStock'
+).value=
+item.stock;
+
+document.getElementById(
+'editReorder'
+).value=
+item.reorder;
+
+}
+
+function closeEditPopup(){
+
+document.getElementById(
+'editPopup'
+).style.display='none';
+
+}
+
+function updateMaterial(){
+
+const item=
+materials[currentEditIndex];
+
+item.code=
+document.getElementById(
+'editCode'
+).value;
+
+item.name=
+document.getElementById(
+'editName'
+).value;
+
+item.category=
+document.getElementById(
+'editCategory'
+).value;
+
+item.unit=
+document.getElementById(
+'editUnit'
+).value;
+
+item.stock=
+parseInt(
+document.getElementById(
+'editStock'
+).value
+);
+
+item.reorder=
+parseInt(
+document.getElementById(
+'editReorder'
+).value
+);
+
+saveData();
+
+renderTable();
+
+closeEditPopup();
+
+Swal.fire(
+'Updated',
+'Material Updated Successfully',
+'success'
+);
 
 }
 
@@ -996,8 +1423,6 @@ date:new Date().toISOString()
 
 });
 
-saveData();
-
 renderTable();
 
 Swal.fire(
@@ -1005,171 +1430,6 @@ Swal.fire(
 'Transaction Successful',
 'success'
 );
-
-}
-
-function saveMaterial(){
-
-const code=
-document.getElementById(
-'matCode'
-).value;
-
-const name=
-document.getElementById(
-'matName'
-).value;
-
-const category=
-document.getElementById(
-'matCategory'
-).value;
-
-const unit=
-document.getElementById(
-'matUnit'
-).value;
-
-const stock=
-parseInt(
-document.getElementById(
-'matStock'
-).value
-);
-
-const reorder=
-parseInt(
-document.getElementById(
-'matReorder'
-).value
-);
-
-if(
-!code ||
-!name ||
-!category ||
-!unit ||
-isNaN(stock) ||
-isNaN(reorder)
-){
-
-Swal.fire(
-'Error',
-'Fill all fields',
-'error'
-);
-
-return;
-
-}
-
-const existing=
-materials.find(
-m => m.code===code
-);
-
-if(existing){
-
-existing.name=name;
-existing.category=category;
-existing.unit=unit;
-existing.stock=stock;
-existing.reorder=reorder;
-
-Swal.fire(
-'Updated',
-'Material Updated',
-'success'
-);
-
-}
-else{
-
-materials.push({
-
-code,
-name,
-category,
-unit,
-stock,
-reorder
-
-});
-
-Swal.fire(
-'Success',
-'Material Added',
-'success'
-);
-
-}
-
-clearMaterialForm();
-
-renderTable();
-
-}
-
-function editMaterial(index){
-
-const item=
-materials[index];
-
-toggleSection(
-'materialSection'
-);
-
-document.getElementById(
-'matCode'
-).value=item.code;
-
-document.getElementById(
-'matName'
-).value=item.name;
-
-document.getElementById(
-'matCategory'
-).value=item.category;
-
-document.getElementById(
-'matUnit'
-).value=item.unit;
-
-document.getElementById(
-'matStock'
-).value=item.stock;
-
-document.getElementById(
-'matReorder'
-).value=item.reorder;
-
-}
-
-function clearMaterialForm(){
-
-document.getElementById(
-'matCode'
-).value='';
-
-document.getElementById(
-'matName'
-).value='';
-
-document.getElementById(
-'matCategory'
-).value='';
-
-document.getElementById(
-'matUnit'
-).value='';
-
-document.getElementById(
-'matStock'
-).value='';
-
-document.getElementById(
-'matReorder'
-).value='';
 
 }
 
@@ -1391,6 +1651,9 @@ tDate<=toDate
 
 });
 
+window.filteredTransactions=
+filtered;
+
 if(filtered.length===0){
 
 container.innerHTML=`
@@ -1442,9 +1705,6 @@ ${new Date(item.date)
 `;
 
 });
-
-window.filteredTransactions=
-filtered;
 
 }
 
@@ -1513,26 +1773,6 @@ pdf.save(
 
 }
 
-function showTodayTransactions(){
-
-toggleSection(
-'reportSection'
-);
-
-}
-
-function scrollToInventory(){
-
-document.getElementById(
-'inventorySection'
-).scrollIntoView({
-
-behavior:'smooth'
-
-});
-
-}
-
 function showLowStock(){
 
 const low=
@@ -1589,6 +1829,18 @@ else{
 row.style.display='none';
 
 }
+
+});
+
+}
+
+function scrollToInventory(){
+
+document.getElementById(
+'inventorySection'
+).scrollIntoView({
+
+behavior:'smooth'
 
 });
 
