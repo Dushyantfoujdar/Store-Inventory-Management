@@ -17,7 +17,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -258,10 +258,6 @@ background:linear-gradient(to right,#22c55e,#15803d);
 background:linear-gradient(to right,#3b82f6,#1d4ed8);
 }
 
-.theme{
-background:linear-gradient(to right,#8b5cf6,#6d28d9);
-}
-
 .download{
 background:linear-gradient(to right,#f59e0b,#d97706);
 }
@@ -280,46 +276,6 @@ rgba(255,255,255,0.08);
 backdrop-filter:blur(12px);
 
 display:none;
-
-}
-
-.transactionBox{
-
-margin-top:35px;
-
-padding:25px;
-
-border-radius:25px;
-
-background:
-rgba(255,255,255,0.08);
-
-backdrop-filter:blur(12px);
-
-}
-
-.transaction{
-
-padding:18px;
-
-border-radius:18px;
-
-margin-top:15px;
-
-background:
-rgba(255,255,255,0.08);
-
-}
-
-.filterBox{
-
-display:flex;
-
-gap:15px;
-
-flex-wrap:wrap;
-
-margin-top:20px;
 
 }
 
@@ -355,10 +311,13 @@ text-align:center;
 
 }
 
+#reader{
+margin-top:25px;
+}
+
 @media(max-width:768px){
 
-.buttons,
-.filterBox{
+.buttons{
 flex-direction:column;
 }
 
@@ -443,11 +402,11 @@ Scan QR
 Generate QR
 </button>
 
-<button class="download" onclick="downloadPNG()">
+<button class="download" onclick="downloadDashboardPNG()">
 Download PNG
 </button>
 
-<button class="download" onclick="downloadPDF()">
+<button class="download" onclick="downloadDashboardPDF()">
 Download PDF
 </button>
 
@@ -511,44 +470,11 @@ Download QR PNG
 
 <div id="reader"></div>
 
-<div class="transactionBox">
-
-<h2>Material Wise Report</h2>
-
-<div class="filterBox">
-
-<select id="reportMaterial" class="searchBox"></select>
-
-<input
-type="date"
-id="fromDate"
-class="searchBox"
->
-
-<input
-type="date"
-id="toDate"
-class="searchBox"
->
-
-<button
-class="scan"
-onclick="generateReport()"
->
-Generate Report
-</button>
-
-</div>
-
-<div id="reportResults"></div>
-
-</div>
-
 </div>
 
 <script>
 
-const defaultMaterials=[
+const materials=[
 
 {code:'0838181493',name:'TES',unit:'Nos.',stock:95,reorder:20},
 
@@ -589,12 +515,6 @@ const defaultMaterials=[
 {code:'0838920203',name:'LOT CAP',unit:'Nos.',stock:110,reorder:25}
 
 ];
-
-let materials=
-JSON.parse(localStorage.getItem('materials'))
-|| defaultMaterials;
-
-let transactionHistory=[];
 
 let currentAction='';
 
@@ -658,15 +578,10 @@ function fillDropdowns(){
 const materialSelect=
 document.getElementById('materialSelect');
 
-const reportMaterial=
-document.getElementById('reportMaterial');
-
 const qrMaterial=
 document.getElementById('qrMaterial');
 
 materialSelect.innerHTML='';
-
-reportMaterial.innerHTML='';
 
 qrMaterial.innerHTML='';
 
@@ -675,12 +590,6 @@ materials.forEach(item=>{
 materialSelect.innerHTML += `
 <option value="${item.code}">
 ${item.code} - ${item.name}
-</option>
-`;
-
-reportMaterial.innerHTML += `
-<option value="${item.name}">
-${item.name}
 </option>
 `;
 
@@ -839,45 +748,55 @@ document.getElementById(
 
 function generateQRLabel(){
 
-const code=
+const code =
 document.getElementById('qrMaterial').value;
 
-const material=
-materials.find(m=>m.code===code);
+const material =
+materials.find(m => m.code === code);
 
-const qrDiv=
+const qrDiv =
 document.getElementById('qrcode');
 
-qrDiv.innerHTML='';
+qrDiv.innerHTML = '';
 
-const qrContainer=
-document.createElement('div');
+const canvas =
+document.createElement('canvas');
 
-qrDiv.appendChild(qrContainer);
+qrDiv.appendChild(canvas);
 
-new QRCode(qrContainer,{
+QRCode.toCanvas(
 
-text:
+canvas,
+
 `${material.code}`,
 
+{
 width:220,
+margin:2,
+color:{
+dark:'#000000',
+light:'#FFFFFF'
+}
+},
 
-height:220,
+function(error){
 
-colorDark:"#000000",
+if(error){
 
-colorLight:"#ffffff",
+console.error(error);
 
-correctLevel:QRCode.CorrectLevel.H
+alert('QR Generation Failed');
 
-});
+return;
 
-const label=
+}
+
+const label =
 document.createElement('div');
 
 label.className='qrLabel';
 
-label.innerHTML=`
+label.innerHTML = `
 
 <h3>${material.name}</h3>
 
@@ -890,6 +809,10 @@ label.innerHTML=`
 `;
 
 qrDiv.appendChild(label);
+
+}
+
+);
 
 }
 
@@ -915,7 +838,7 @@ link.click();
 
 }
 
-async function downloadPNG(){
+async function downloadDashboardPNG(){
 
 const canvas=
 await html2canvas(
@@ -934,7 +857,7 @@ link.click();
 
 }
 
-async function downloadPDF(){
+async function downloadDashboardPDF(){
 
 const canvas=
 await html2canvas(
