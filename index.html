@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>TES Inventory Dashboard</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(to right, #dff6ff, #ffffff);
+    }
+
+    .app {
+      padding: 20px;
+    }
+
+    h1 {
+      color: #003566;
+    }
+
+    .cards {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      flex: 1;
+      min-width: 150px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    .card p {
+      font-size: 30px;
+      color: #3a0ca3;
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 25px;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    th {
+      background: #caf0f8;
+      padding: 15px;
+      text-align: left;
+    }
+
+    td {
+      padding: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 25px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 15px 25px;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 16px;
+    }
+
+    .issue {
+      background: red;
+    }
+
+    .receive {
+      background: green;
+    }
+
+    .scanBtn {
+      background: #0077b6;
+      margin-top: 20px;
+    }
+
+    #reader {
+      width: 300px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .cards {
+        flex-direction: column;
+      }
+
+      .buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+
+<body>
+
+<div class="app">
+  <h1>TES Inventory Dashboard</h1>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Total Materials</h3>
+      <p>1</p>
+    </div>
+
+    <div class="card">
+      <h3>Total Stock</h3>
+      <p id="stock">95</p>
+    </div>
+
+    <div class="card">
+      <h3>Low Stock</h3>
+      <p>0</p>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Material</th>
+        <th>Stock</th>
+        <th>Rack</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr>
+        <td>0838181493</td>
+        <td>TES</td>
+        <td id="tableStock">95</td>
+        <td>A1</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="buttons">
+    <button class="issue" onclick="issueMaterial()">
+      Issue TES
+    </button>
+
+    <button class="receive" onclick="receiveMaterial()">
+      Receive TES
+    </button>
+  </div>
+
+  <button onclick="startScanner()" class="scanBtn">
+    Scan QR Code
+  </button>
+
+  <div id="reader"></div>
+
+  <h3 id="result"></h3>
+</div>
+
+<script>
+  let stock = 95;
+
+  function updateStock() {
+    document.getElementById("stock").innerHTML = stock;
+    document.getElementById("tableStock").innerHTML = stock;
+  }
+
+  function issueMaterial() {
+    stock = stock - 1;
+    updateStock();
+  }
+
+  function receiveMaterial() {
+    stock = stock + 1;
+    updateStock();
+  }
+
+  function startScanner() {
+    const html5QrCode = new Html5Qrcode("reader");
+
+    html5QrCode.start(
+      { facingMode: "environment" },
+      {
+        fps: 10,
+        qrbox: 250
+      },
+      (decodedText) => {
+        document.getElementById("result").innerHTML =
+          "Scanned Material: " + decodedText;
+
+        alert("Scanned: " + decodedText);
+
+        html5QrCode.stop();
+      }
+    );
+  }
+</script>
+
+</body>
+</html>
