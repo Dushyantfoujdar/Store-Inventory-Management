@@ -4,14 +4,23 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Store Inventory Dashboard</title>
+<title>Advanced Store Inventory Dashboard</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <style>
+
+*{
+box-sizing:border-box;
+}
 
 body{
 margin:0;
@@ -19,6 +28,24 @@ font-family:Arial,sans-serif;
 background:linear-gradient(135deg,#0f172a,#1e3a8a,#0f766e);
 color:white;
 min-height:100vh;
+transition:0.3s;
+}
+
+.light-mode{
+background:#f1f5f9;
+color:black;
+}
+
+.light-mode table{
+background:white;
+color:black;
+}
+
+.light-mode .card,
+.light-mode .transactionBox,
+.light-mode .panel{
+background:white;
+color:black;
 }
 
 .app{
@@ -57,9 +84,8 @@ width:100%;
 padding:15px;
 border:none;
 border-radius:15px;
-margin-top:20px;
+margin-top:15px;
 font-size:16px;
-box-sizing:border-box;
 }
 
 .tableContainer{
@@ -132,6 +158,10 @@ background:linear-gradient(to right,#22c55e,#15803d);
 background:linear-gradient(to right,#3b82f6,#1d4ed8);
 }
 
+.theme{
+background:linear-gradient(to right,#8b5cf6,#6d28d9);
+}
+
 .panel{
 margin-top:25px;
 padding:20px;
@@ -156,10 +186,6 @@ border-radius:15px;
 margin-top:10px;
 }
 
-#reader{
-margin-top:20px;
-}
-
 .filterBox{
 display:flex;
 gap:10px;
@@ -167,16 +193,23 @@ flex-wrap:wrap;
 margin-top:20px;
 }
 
+#reader{
+margin-top:20px;
+}
+
+#qrcode{
+margin-top:20px;
+padding:20px;
+background:white;
+border-radius:20px;
+display:inline-block;
+color:black;
+}
+
 @media(max-width:700px){
 
-.cards{
-flex-direction:column;
-}
-
-.buttons{
-flex-direction:column;
-}
-
+.cards,
+.buttons,
 .filterBox{
 flex-direction:column;
 }
@@ -193,7 +226,7 @@ flex-direction:column;
 
 <h1>Store Inventory Dashboard</h1>
 
-<p>QR Based Inventory Management System</p>
+<p>Advanced QR Based Inventory Management System</p>
 
 <div class="cards">
 
@@ -253,6 +286,14 @@ Receive Material
 Scan QR
 </button>
 
+<button class="receive" onclick="openQRPanel()">
+Generate QR Label
+</button>
+
+<button class="theme" onclick="toggleTheme()">
+Dark / Light Mode
+</button>
+
 </div>
 
 <div id="transactionPanel" class="panel">
@@ -285,39 +326,70 @@ Submit Transaction
 
 </div>
 
+<div id="qrPanel" class="panel">
+
+<h2>QR Label Generator</h2>
+
+<select id="qrMaterial" class="searchBox"></select>
+
+<button
+class="scan"
+style="margin-top:20px;"
+onclick="generateQRLabel()"
+>
+Generate QR Label
+</button>
+
+<div id="qrcode"></div>
+
+</div>
+
 <div id="reader"></div>
 
 <div class="transactionBox">
 
-<h2>Last 30 Transactions</h2>
+<h2>Material Wise Transaction Report</h2>
 
 <div class="filterBox">
+
+<select id="reportMaterial" class="searchBox"></select>
 
 <input
 type="date"
 id="fromDate"
 class="searchBox"
-style="flex:1;"
 >
 
 <input
 type="date"
 id="toDate"
 class="searchBox"
-style="flex:1;"
 >
 
 <button
 class="scan"
-onclick="filterTransactions()"
-style="flex:1;"
+onclick="generateReport()"
 >
-Filter Transactions
+Generate Report
+</button>
+
+<button
+class="receive"
+onclick="downloadExcel()"
+>
+Download Excel
+</button>
+
+<button
+class="issue"
+onclick="downloadPDF()"
+>
+Download PDF
 </button>
 
 </div>
 
-<div id="transactions"></div>
+<div id="reportResults"></div>
 
 </div>
 
@@ -325,7 +397,7 @@ Filter Transactions
 
 <script>
 
-const materials = [
+const defaultMaterials = [
 
 {code:'0838181493',name:'TES',unit:'Nos.',stock:95,reorder:20},
 
@@ -367,9 +439,31 @@ const materials = [
 
 ];
 
+let materials =
+JSON.parse(localStorage.getItem('materials'))
+|| defaultMaterials;
+
+let transactionHistory =
+JSON.parse(localStorage.getItem('transactions'))
+|| [];
+
 let currentAction='';
 
-let transactionHistory=[];
+let currentReportData=[];
+
+function saveData(){
+
+localStorage.setItem(
+'materials',
+JSON.stringify(materials)
+);
+
+localStorage.setItem(
+'transactions',
+JSON.stringify(transactionHistory)
+);
+
+}
 
 function renderTable(){
 
@@ -417,25 +511,45 @@ document.getElementById('lowStock').innerHTML=low;
 document.getElementById('totalMaterials').innerHTML=
 materials.length;
 
-fillDropdown();
+fillDropdowns();
+
+checkLowStockAlerts();
 
 }
 
-function fillDropdown(){
+function fillDropdowns(){
 
 const dropdown =
 document.getElementById('materialSelect');
 
+const report =
+document.getElementById('reportMaterial');
+
+const qr =
+document.getElementById('qrMaterial');
+
 dropdown.innerHTML='';
+report.innerHTML='';
+qr.innerHTML='';
 
 materials.forEach(item=>{
 
 dropdown.innerHTML += `
-
 <option value="${item.code}">
 ${item.code} - ${item.name}
 </option>
+`;
 
+report.innerHTML += `
+<option value="${item.name}">
+${item.name}
+</option>
+`;
+
+qr.innerHTML += `
+<option value="${item.code}">
+${item.code} - ${item.name}
+</option>
 `;
 
 });
@@ -513,6 +627,8 @@ person
 
 }
 
+saveData();
+
 renderTable();
 
 document.getElementById('qtyInput').value='';
@@ -525,8 +641,6 @@ alert('Transaction Successful');
 
 function addHistory(action,name,qty,balance,person){
 
-const timestamp = new Date();
-
 const transaction = {
 
 action,
@@ -534,67 +648,20 @@ name,
 qty,
 balance,
 person,
-time: timestamp
+time:new Date()
 
 };
 
 transactionHistory.unshift(transaction);
 
-if(transactionHistory.length>30){
-
-transactionHistory.pop();
+saveData();
 
 }
 
-renderTransactions(transactionHistory);
+function generateReport(){
 
-}
-
-function renderTransactions(data){
-
-const container =
-document.getElementById('transactions');
-
-container.innerHTML='';
-
-data.forEach(item=>{
-
-const div =
-document.createElement('div');
-
-div.className='transaction';
-
-div.innerHTML=`
-
-<b>${item.action}</b> - ${item.name}
-
-<br><br>
-
-<b>Quantity:</b> ${item.qty}
-
-<br>
-
-<b>${item.action==='Issued'?'Issued To':'Received From'}:</b> ${item.person}
-
-<br>
-
-<b>Balance Stock:</b> ${item.balance}
-
-<br>
-
-<b>Date & Time:</b>
-
-${new Date(item.time).toLocaleString()}
-
-`;
-
-container.appendChild(div);
-
-});
-
-}
-
-function filterTransactions(){
+const material =
+document.getElementById('reportMaterial').value;
 
 const from =
 document.getElementById('fromDate').value;
@@ -604,32 +671,182 @@ document.getElementById('toDate').value;
 
 if(!from || !to){
 
-renderTransactions(transactionHistory);
+alert('Select Dates');
 
 return;
 
 }
 
-const fromDate =
-new Date(from);
+const fromDate = new Date(from);
 
-const toDate =
-new Date(to);
+const toDate = new Date(to);
 
 toDate.setHours(23,59,59,999);
 
-const filtered =
+currentReportData =
 transactionHistory.filter(item=>{
 
-const itemDate =
-new Date(item.time);
+const d = new Date(item.time);
 
-return itemDate >= fromDate &&
-itemDate <= toDate;
+return item.name===material &&
+d>=fromDate &&
+d<=toDate;
 
 });
 
-renderTransactions(filtered);
+const container =
+document.getElementById('reportResults');
+
+container.innerHTML='';
+
+if(currentReportData.length===0){
+
+container.innerHTML=
+'<div class="transaction">No Transactions Found</div>';
+
+return;
+
+}
+
+currentReportData.forEach(item=>{
+
+container.innerHTML += `
+
+<div class="transaction">
+
+<b>${item.action}</b> - ${item.name}
+
+<br><br>
+
+<b>Quantity:</b> ${item.qty}
+
+<br>
+
+<b>Person:</b> ${item.person}
+
+<br>
+
+<b>Balance:</b> ${item.balance}
+
+<br>
+
+<b>Date:</b>
+${new Date(item.time).toLocaleString()}
+
+</div>
+
+`;
+
+});
+
+}
+
+function downloadExcel(){
+
+if(currentReportData.length===0){
+
+alert('Generate Report First');
+
+return;
+
+}
+
+const worksheet =
+XLSX.utils.json_to_sheet(currentReportData);
+
+const workbook =
+XLSX.utils.book_new();
+
+XLSX.utils.book_append_sheet(
+workbook,
+worksheet,
+'Transactions'
+);
+
+XLSX.writeFile(
+workbook,
+'Material_Report.xlsx'
+);
+
+}
+
+async function downloadPDF(){
+
+if(currentReportData.length===0){
+
+alert('Generate Report First');
+
+return;
+
+}
+
+const { jsPDF } = window.jspdf;
+
+const doc = new jsPDF();
+
+let y = 20;
+
+doc.setFontSize(16);
+
+doc.text('Material Transaction Report',20,y);
+
+y += 20;
+
+currentReportData.forEach(item=>{
+
+doc.setFontSize(11);
+
+doc.text(
+`${item.action} | ${item.name} | Qty:${item.qty} | ${item.person}`,
+20,
+y
+);
+
+y += 10;
+
+doc.text(
+`Balance:${item.balance} | ${new Date(item.time).toLocaleString()}`,
+20,
+y
+);
+
+y += 15;
+
+if(y>270){
+
+doc.addPage();
+
+y=20;
+
+}
+
+});
+
+doc.save('Material_Report.pdf');
+
+}
+
+function checkLowStockAlerts(){
+
+const lowItems =
+materials.filter(item=>
+item.stock<=item.reorder
+);
+
+if(lowItems.length>0){
+
+const names =
+lowItems.map(item=>
+`${item.name} (${item.stock})`
+).join(', ');
+
+setTimeout(()=>{
+
+console.log('Low Stock:',names);
+
+},500);
+
+}
 
 }
 
@@ -701,7 +918,75 @@ html5QrCode.stop();
 
 }
 
+function openQRPanel(){
+
+document.getElementById('qrPanel').style.display='block';
+
+}
+
+function generateQRLabel(){
+
+const code =
+document.getElementById('qrMaterial').value;
+
+const material =
+materials.find(m=>m.code===code);
+
+const qrDiv =
+document.getElementById('qrcode');
+
+qrDiv.innerHTML='';
+
+new QRCode(qrDiv,{
+
+text:`${material.code} - ${material.name}`,
+
+width:200,
+
+height:200
+
+});
+
+qrDiv.innerHTML += `
+
+<p style="margin-top:15px;">
+
+<b>${material.code}</b>
+
+<br>
+
+${material.name}
+
+</p>
+
+`;
+
+}
+
+function toggleTheme(){
+
+document.body.classList.toggle('light-mode');
+
+localStorage.setItem(
+'theme',
+document.body.classList.contains('light-mode')
+? 'light'
+: 'dark'
+);
+
+}
+
+window.onload = function(){
+
+if(localStorage.getItem('theme')==='light'){
+
+document.body.classList.add('light-mode');
+
+}
+
 renderTable();
+
+};
 
 </script>
 
