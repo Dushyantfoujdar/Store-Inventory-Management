@@ -1,583 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Professional Inventory ERP Dashboard</title>
-
-<!-- LIBRARIES -->
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script src="https://unpkg.com/html5-qrcode"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Segoe UI',sans-serif;
-}
-
-body{
-
-background:
-linear-gradient(
-135deg,
-#0f172a,
-#1e293b,
-#1d4ed8,
-#0f766e
-);
-
-color:white;
-min-height:100vh;
-
-}
-
-.app{
-padding:20px;
-}
-
-h1{
-font-size:34px;
-margin-bottom:10px;
-}
-
-.topButtons{
-
-display:grid;
-
-grid-template-columns:
-repeat(auto-fit,minmax(220px,1fr));
-
-gap:15px;
-
-margin-top:25px;
-
-position:sticky;
-
-top:0;
-
-z-index:100;
-
-padding-bottom:10px;
-
-background:
-linear-gradient(
-135deg,
-#0f172a,
-#1e293b,
-#1d4ed8,
-#0f766e
-);
-
-}
-
-.topButtons button{
-
-padding:18px;
-
-border:none;
-
-border-radius:20px;
-
-font-size:16px;
-
-font-weight:bold;
-
-cursor:pointer;
-
-color:white;
-
-transition:0.3s;
-
-box-shadow:
-0 10px 25px rgba(0,0,0,0.3);
-
-}
-
-.topButtons button:hover{
-transform:translateY(-4px);
-}
-
-.issue{
-background:linear-gradient(to right,#ef4444,#dc2626);
-}
-
-.receive{
-background:linear-gradient(to right,#22c55e,#15803d);
-}
-
-.scan{
-background:linear-gradient(to right,#2563eb,#1d4ed8);
-}
-
-.report{
-background:linear-gradient(to right,#f59e0b,#d97706);
-}
-
-.cards{
-
-display:grid;
-
-grid-template-columns:
-repeat(auto-fit,minmax(220px,1fr));
-
-gap:20px;
-
-margin-top:30px;
-
-}
-
-.card{
-
-padding:25px;
-
-border-radius:25px;
-
-background:
-rgba(255,255,255,0.08);
-
-backdrop-filter:blur(12px);
-
-box-shadow:
-0 10px 30px rgba(0,0,0,0.3);
-
-cursor:pointer;
-
-transition:0.3s;
-
-}
-
-.card:hover{
-transform:translateY(-5px);
-}
-
-.card p{
-
-font-size:38px;
-
-font-weight:bold;
-
-margin-top:15px;
-
-}
-
-.section{
-
-display:none;
-
-margin-top:25px;
-
-padding:25px;
-
-border-radius:25px;
-
-background:
-rgba(255,255,255,0.08);
-
-backdrop-filter:blur(12px);
-
-animation:fade 0.3s ease;
-
-}
-
-@keyframes fade{
-
-from{
-opacity:0;
-transform:translateY(10px);
-}
-
-to{
-opacity:1;
-transform:translateY(0px);
-}
-
-}
-
-.searchBox{
-
-width:100%;
-
-padding:15px;
-
-margin-top:18px;
-
-border:none;
-
-border-radius:15px;
-
-background:
-rgba(255,255,255,0.08);
-
-color:white;
-
-outline:none;
-
-font-size:15px;
-
-}
-
-.searchBox::placeholder{
-color:#ddd;
-}
-
-select{
-background:#0f172a !important;
-color:white !important;
-}
-
-option{
-background:#0f172a;
-color:white;
-}
-
-.tableContainer{
-
-overflow-x:auto;
-
-margin-top:25px;
-
-border-radius:20px;
-
-}
-
-table{
-
-width:100%;
-
-border-collapse:collapse;
-
-}
-
-th{
-
-padding:16px;
-
-background:
-linear-gradient(
-to right,
-#2563eb,
-#06b6d4
-);
-
-}
-
-td{
-
-padding:15px;
-
-border-bottom:
-1px solid rgba(255,255,255,0.1);
-
-}
-
-tr:hover{
-background:rgba(255,255,255,0.05);
-}
-
-.low{
-color:#ff4d6d;
-font-weight:bold;
-}
-
-.normal{
-color:#4ade80;
-font-weight:bold;
-}
-
-.panelButton{
-
-margin-top:20px;
-
-padding:15px;
-
-width:100%;
-
-border:none;
-
-border-radius:15px;
-
-font-size:16px;
-
-font-weight:bold;
-
-cursor:pointer;
-
-background:
-linear-gradient(
-to right,
-#2563eb,
-#06b6d4
-);
-
-color:white;
-
-}
-
-#qrcode{
-
-background:white;
-
-padding:25px;
-
-border-radius:20px;
-
-margin-top:20px;
-
-display:flex;
-
-flex-direction:column;
-
-align-items:center;
-
-justify-content:center;
-
-min-height:300px;
-
-color:black;
-
-}
-
-.transaction{
-
-padding:15px;
-
-margin-top:15px;
-
-border-radius:15px;
-
-background:
-rgba(255,255,255,0.08);
-
-}
-
-#reader{
-margin-top:20px;
-}
-
-@media(max-width:768px){
-
-.topButtons{
-grid-template-columns:1fr;
-}
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="app">
-
-<h1>📦 Inventory ERP Dashboard</h1>
-
-<p>Professional QR Based Inventory Management System</p>
-
-<!-- TOP BUTTONS -->
-
-<div class="topButtons">
-
-<button
-class="issue"
-onclick="toggleSection('transactionSection')"
->
-Issue / Receive
-</button>
-
-<button
-class="receive"
-onclick="toggleSection('qrSection')"
->
-Generate QR
-</button>
-
-<button
-class="scan"
-onclick="toggleScanner()"
->
-Scan QR
-</button>
-
-<button
-class="report"
-onclick="toggleSection('reportSection')"
->
-Reports
-</button>
-
-</div>
-
-<!-- ISSUE RECEIVE -->
-
-<div
-id="transactionSection"
-class="section"
->
-
-<h2>Issue / Receive Material</h2>
-
-<select
-id="actionSelect"
-class="searchBox"
->
-
-<option value="issue">
-Issue Material
-</option>
-
-<option value="receive">
-Receive Material
-</option>
-
-</select>
-
-<select
-id="materialSelect"
-class="searchBox"
-></select>
-
-<input
-type="number"
-id="qtyInput"
-class="searchBox"
-placeholder="Enter Quantity"
->
-
-<input
-type="text"
-id="personInput"
-class="searchBox"
-placeholder="Issued To / Received From"
->
-
-<button
-class="panelButton"
-onclick="submitTransaction()"
->
-Submit Transaction
-</button>
-
-</div>
-
-<!-- QR SECTION -->
-
-<div
-id="qrSection"
-class="section"
->
-
-<h2>QR Generator</h2>
-
-<select
-id="qrMaterial"
-class="searchBox"
-></select>
-
-<button
-class="panelButton"
-onclick="generateQRLabel()"
->
-Generate QR
-</button>
-
-<button
-class="panelButton"
-onclick="downloadQR()"
->
-Download QR PNG
-</button>
-
-<div id="qrcode"></div>
-
-</div>
-
-<!-- SCANNER -->
-
-<div
-id="scannerSection"
-class="section"
->
-
-<h2>QR Scanner</h2>
-
-<div id="reader"></div>
-
-</div>
-
-<!-- REPORT SECTION -->
-
-<div
-id="reportSection"
-class="section"
->
-
-<h2>Material Transaction Reports</h2>
-
-<select
-id="reportMaterial"
-class="searchBox"
-></select>
-
-<input
-type="date"
-id="fromDate"
-class="searchBox"
->
-
-<input
-type="date"
-id="toDate"
-class="searchBox"
->
-
-<button
-class="panelButton"
-onclick="generateHistory()"
->
-Generate Report
-</button>
-
-<button
-class="panelButton"
-onclick="downloadExcel()"
->
-Download Excel
-</button>
-
-<button
-class="panelButton"
-onclick="downloadPDF()"
->
-Download PDF
-</button>
-
-<div id="historyContainer"></div>
-
-</div>
-
-<!-- KPI CARDS -->
+<!-- REPLACE YOUR EXISTING KPI CARDS SECTION WITH THIS -->
 
 <div class="cards">
 
-<div class="card">
+<div
+class="card"
+onclick="scrollToInventory()"
+>
 
 <h3>Total Materials</h3>
 
@@ -596,284 +24,96 @@ onclick="showLowStock()"
 
 </div>
 
-<div class="card">
+<div
+class="card"
+onclick="showTodayTransactions()"
+>
 
-<h3>Total Inventory</h3>
+<h3>Today's Transactions</h3>
 
-<p id="totalStock"></p>
-
-</div>
-
-<div class="card">
-
-<h3>Total Transactions</h3>
-
-<p id="totalTransactions"></p>
+<p id="todayTransactions"></p>
 
 </div>
 
 </div>
 
-<!-- INVENTORY TABLE -->
+<!-- ADD THIS BUTTON BELOW TOP BUTTONS -->
 
-<div class="section" style="display:block;">
+<button
+class="panelButton"
+style="margin-top:20px;"
+onclick="toggleSection('addMaterialSection')"
+>
+➕ Add / Edit Material
+</button>
 
-<h2>Inventory Table</h2>
+<!-- ADD THIS COMPLETE SECTION BELOW REPORT SECTION -->
+
+<div
+id="addMaterialSection"
+class="section"
+>
+
+<h2>Add / Edit Material</h2>
 
 <input
 type="text"
+id="matCode"
 class="searchBox"
-placeholder="Search Material"
-onkeyup="searchMaterial(this.value)"
+placeholder="Material Code"
 >
 
-<div class="tableContainer">
+<input
+type="text"
+id="matName"
+class="searchBox"
+placeholder="Material Name"
+>
 
-<table>
+<input
+type="text"
+id="matCategory"
+class="searchBox"
+placeholder="Category"
+>
 
-<thead>
+<input
+type="text"
+id="matUnit"
+class="searchBox"
+placeholder="Unit"
+>
 
-<tr>
-<th>Code</th>
-<th>Name</th>
-<th>Category</th>
-<th>Unit</th>
-<th>Stock</th>
-<th>Reorder</th>
-<th>Status</th>
-</tr>
+<input
+type="number"
+id="matStock"
+class="searchBox"
+placeholder="Current Stock"
+>
 
-</thead>
+<input
+type="number"
+id="matReorder"
+class="searchBox"
+placeholder="Reorder Value"
+>
+
+<button
+class="panelButton"
+onclick="saveMaterial()"
+>
+Save Material
+</button>
+
+</div>
+
+<!-- REPLACE YOUR INVENTORY TABLE tbody CODE WITH THIS -->
 
 <tbody id="inventoryTable"></tbody>
 
-</table>
-
-</div>
-
-</div>
-
-</div>
+<!-- REPLACE YOUR renderTable() FUNCTION WITH THIS -->
 
 <script>
-
-let materials=[
-
-{
-code:'0838181493',
-name:'TES',
-category:'Valves',
-unit:'Nos.',
-stock:95,
-reorder:20
-},
-
-{
-code:'0838880104',
-name:'SC Valve New',
-category:'Valves',
-unit:'Nos.',
-stock:100,
-reorder:20
-},
-
-{
-code:'0838881066',
-name:'Combo Valve',
-category:'Valves',
-unit:'Nos.',
-stock:75,
-reorder:20
-},
-
-{
-code:'0838882104',
-name:'LOT Valve',
-category:'Valves',
-unit:'Nos.',
-stock:60,
-reorder:20
-},
-
-{
-code:'0838911014',
-name:'Pressure Regulator',
-category:'Safety',
-unit:'Nos.',
-stock:40,
-reorder:15
-},
-
-{
-code:'0838920104',
-name:'Safety Caps',
-category:'Safety',
-unit:'Nos.',
-stock:250,
-reorder:50
-},
-
-{
-code:'0838929014',
-name:'Nylon Thread',
-category:'Consumables',
-unit:'Nos.',
-stock:150,
-reorder:30
-},
-
-{
-code:'0838929034',
-name:'SS Clip',
-category:'Consumables',
-unit:'Nos.',
-stock:80,
-reorder:20
-},
-
-{
-code:'0838930764',
-name:'NBR O-Ring',
-category:'Consumables',
-unit:'Nos.',
-stock:120,
-reorder:25
-},
-
-{
-code:'0838930774',
-name:'FKM O-Ring',
-category:'Consumables',
-unit:'Nos.',
-stock:90,
-reorder:25
-}
-
-];
-
-let transactionHistory=
-JSON.parse(
-localStorage.getItem('transactions')
-)||[];
-
-function saveData(){
-
-localStorage.setItem(
-'transactions',
-JSON.stringify(transactionHistory)
-);
-
-localStorage.setItem(
-'materials',
-JSON.stringify(materials)
-);
-
-}
-
-function toggleSection(id){
-
-const section=
-document.getElementById(id);
-
-const visible=
-section.style.display==='block';
-
-hideSections();
-
-section.style.display=
-visible?'none':'block';
-
-}
-
-function hideSections(){
-
-document.querySelectorAll(
-'.section'
-).forEach(sec=>{
-
-if(
-sec.id!==''
-){
-sec.style.display='none';
-}
-
-});
-
-document.querySelectorAll(
-'.section'
-)[4].style.display='block';
-
-}
-
-function toggleScanner(){
-
-toggleSection('scannerSection');
-
-document.getElementById(
-'reader'
-).innerHTML='';
-
-const html5QrCode =
-new Html5Qrcode('reader');
-
-html5QrCode.start(
-
-{ facingMode:'environment' },
-
-{
-fps:10,
-qrbox:250
-},
-
-(decodedText)=>{
-
-try{
-
-const qrData=
-JSON.parse(decodedText);
-
-const material=
-materials.find(
-m => m.code===qrData.code
-);
-
-if(material){
-
-html5QrCode.stop();
-
-toggleSection(
-'transactionSection'
-);
-
-document.getElementById(
-'materialSelect'
-).value=
-material.code;
-
-Swal.fire(
-'QR Scanned',
-material.name,
-'success'
-);
-
-}
-
-}
-catch(err){
-
-Swal.fire(
-'Error',
-'Invalid QR',
-'error'
-);
-
-}
-
-}
-
-);
-
-}
 
 function renderTable(){
 
@@ -885,11 +125,8 @@ document.getElementById(
 table.innerHTML='';
 
 let low=0;
-let total=0;
 
-materials.forEach(item=>{
-
-total += item.stock;
+materials.forEach((item,index)=>{
 
 if(item.stock<=item.reorder){
 low++;
@@ -925,6 +162,24 @@ item.stock<=item.reorder
 
 </td>
 
+<td>
+
+<button
+onclick="editMaterial(${index})"
+style="
+padding:8px 12px;
+border:none;
+border-radius:10px;
+background:#2563eb;
+color:white;
+cursor:pointer;
+"
+>
+Edit
+</button>
+
+</td>
+
 </tr>
 
 `;
@@ -941,249 +196,226 @@ document.getElementById(
 ).innerHTML=
 low;
 
-document.getElementById(
-'totalStock'
-).innerHTML=
-total;
+const today=
+new Date().toDateString();
+
+const todayCount=
+transactionHistory.filter(t=>{
+
+return new Date(t.date)
+.toDateString()===today;
+
+}).length;
 
 document.getElementById(
-'totalTransactions'
+'todayTransactions'
 ).innerHTML=
-transactionHistory.length;
+todayCount;
 
 fillDropdowns();
 
-}
-
-function fillDropdowns(){
-
-const ids=[
-'materialSelect',
-'qrMaterial',
-'reportMaterial'
-];
-
-ids.forEach(id=>{
-
-const dropdown=
-document.getElementById(id);
-
-dropdown.innerHTML='';
-
-materials.forEach(item=>{
-
-dropdown.innerHTML += `
-
-<option value="${item.code}">
-${item.code} - ${item.name}
-</option>
-
-`;
-
-});
-
-});
+saveData();
 
 }
 
-function submitTransaction(){
+</script>
 
-const action=
-document.getElementById(
-'actionSelect'
-).value;
+<!-- ADD THESE FUNCTIONS INSIDE YOUR SCRIPT -->
+
+<script>
+
+function saveMaterial(){
 
 const code=
 document.getElementById(
-'materialSelect'
+'matCode'
 ).value;
 
-const qty=
+const name=
+document.getElementById(
+'matName'
+).value;
+
+const category=
+document.getElementById(
+'matCategory'
+).value;
+
+const unit=
+document.getElementById(
+'matUnit'
+).value;
+
+const stock=
 parseInt(
 document.getElementById(
-'qtyInput'
+'matStock'
 ).value
 );
 
-const person=
+const reorder=
+parseInt(
 document.getElementById(
-'personInput'
-).value;
+'matReorder'
+).value
+);
 
-const material=
+if(
+!code ||
+!name ||
+!category ||
+!unit ||
+!stock ||
+!reorder
+){
+
+Swal.fire(
+'Error',
+'Fill all fields',
+'error'
+);
+
+return;
+
+}
+
+const existing=
 materials.find(
 m => m.code===code
 );
 
-if(!qty || !person){
+if(existing){
+
+existing.name=name;
+
+existing.category=category;
+
+existing.unit=unit;
+
+existing.stock=stock;
+
+existing.reorder=reorder;
 
 Swal.fire(
-'Error',
-'Fill all details',
-'error'
+'Updated',
+'Material Updated',
+'success'
 );
-
-return;
-
-}
-
-if(action==='issue'){
-
-if(qty>material.stock){
-
-Swal.fire(
-'Error',
-'Insufficient Stock',
-'error'
-);
-
-return;
-
-}
-
-material.stock -= qty;
 
 }
 else{
 
-material.stock += qty;
+materials.push({
 
-}
-
-transactionHistory.unshift({
-
-material:material.name,
-
-action:action,
-
-qty:qty,
-
-person:person,
-
-balance:material.stock,
-
-date:new Date().toLocaleString()
+code,
+name,
+category,
+unit,
+stock,
+reorder
 
 });
 
-saveData();
-
-renderTable();
-
 Swal.fire(
 'Success',
-'Transaction Successful',
+'Material Added',
 'success'
 );
 
 }
 
-function generateQRLabel(){
+renderTable();
 
-const code=
-document.getElementById(
-'qrMaterial'
-).value;
-
-const material=
-materials.find(
-m => m.code===code
-);
-
-const qrDiv=
-document.getElementById(
-'qrcode'
-);
-
-qrDiv.innerHTML='';
-
-const canvas=
-document.createElement(
-'canvas'
-);
-
-qrDiv.appendChild(canvas);
-
-const qrData=
-JSON.stringify({
-
-code:material.code,
-
-name:material.name
-
-});
-
-QRCode.toCanvas(
-
-canvas,
-
-qrData,
-
-{
-width:220
-},
-
-function(error){
-
-if(error){
-
-Swal.fire(
-'Error',
-'QR Generation Failed',
-'error'
-);
-
-return;
+clearMaterialForm();
 
 }
 
-const label=
-document.createElement('div');
+function editMaterial(index){
 
-label.innerHTML=`
+const item=
+materials[index];
 
-<h3>
-${material.name}
-</h3>
-
-<p>
-${material.code}
-</p>
-
-`;
-
-qrDiv.appendChild(label);
-
-}
-
+toggleSection(
+'addMaterialSection'
 );
 
+document.getElementById(
+'matCode'
+).value=
+item.code;
+
+document.getElementById(
+'matName'
+).value=
+item.name;
+
+document.getElementById(
+'matCategory'
+).value=
+item.category;
+
+document.getElementById(
+'matUnit'
+).value=
+item.unit;
+
+document.getElementById(
+'matStock'
+).value=
+item.stock;
+
+document.getElementById(
+'matReorder'
+).value=
+item.reorder;
+
 }
 
-function downloadQR(){
+function clearMaterialForm(){
 
-html2canvas(
 document.getElementById(
-'qrcode'
-)
+'matCode'
+).value='';
 
-).then(canvas=>{
+document.getElementById(
+'matName'
+).value='';
 
-const link=
-document.createElement('a');
+document.getElementById(
+'matCategory'
+).value='';
 
-link.download='QR.png';
+document.getElementById(
+'matUnit'
+).value='';
 
-link.href=
-canvas.toDataURL();
+document.getElementById(
+'matStock'
+).value='';
 
-link.click();
+document.getElementById(
+'matReorder'
+).value='';
+
+}
+
+function scrollToInventory(){
+
+document.querySelector(
+'.tableContainer'
+).scrollIntoView({
+
+behavior:'smooth'
 
 });
 
 }
 
-function generateHistory(){
+function showTodayTransactions(){
+
+toggleSection(
+'reportSection'
+);
 
 const container=
 document.getElementById(
@@ -1192,7 +424,18 @@ document.getElementById(
 
 container.innerHTML='';
 
-transactionHistory.forEach(item=>{
+const today=
+new Date().toDateString();
+
+const filtered=
+transactionHistory.filter(t=>{
+
+return new Date(t.date)
+.toDateString()===today;
+
+});
+
+filtered.forEach(item=>{
 
 container.innerHTML += `
 
@@ -1212,7 +455,7 @@ ${item.qty}
 
 <br>
 
-Person:
+Issued To / Received From:
 ${item.person}
 
 <br>
@@ -1233,140 +476,4 @@ ${item.date}
 
 }
 
-function downloadExcel(){
-
-const ws=
-XLSX.utils.json_to_sheet(
-transactionHistory
-);
-
-const wb=
-XLSX.utils.book_new();
-
-XLSX.utils.book_append_sheet(
-wb,
-ws,
-'Transactions'
-);
-
-XLSX.writeFile(
-wb,
-'Inventory_Report.xlsx'
-);
-
-}
-
-function downloadPDF(){
-
-const { jsPDF }=
-window.jspdf;
-
-const pdf=
-new jsPDF();
-
-pdf.text(
-'Inventory Report',
-20,
-20
-);
-
-let y=40;
-
-transactionHistory.forEach(item=>{
-
-pdf.text(
-
-`${item.material}
- | ${item.action}
- | Qty:${item.qty}`,
-
-10,
-y
-
-);
-
-y += 10;
-
-});
-
-pdf.save(
-'Inventory_Report.pdf'
-);
-
-}
-
-function searchMaterial(value){
-
-value=
-value.toLowerCase();
-
-const rows=
-document.querySelectorAll(
-'#inventoryTable tr'
-);
-
-rows.forEach(row=>{
-
-if(
-row.innerText
-.toLowerCase()
-.includes(value)
-){
-
-row.style.display='';
-
-}
-else{
-
-row.style.display='none';
-
-}
-
-});
-
-}
-
-function showLowStock(){
-
-const low=
-materials.filter(
-m => m.stock<=m.reorder
-);
-
-let text='';
-
-low.forEach(item=>{
-
-text += `
-${item.name}
- - Stock:
-${item.stock}<br>
-`;
-
-});
-
-Swal.fire({
-
-title:'Low Stock Materials',
-
-html:text ||
-
-'No Low Stock',
-
-icon:'warning'
-
-});
-
-}
-
-window.onload=function(){
-
-renderTable();
-
-};
-
 </script>
-
-</body>
-
-</html>
