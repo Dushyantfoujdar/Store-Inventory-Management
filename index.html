@@ -11,10 +11,15 @@
 <!-- LIBRARIES -->
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script src="https://unpkg.com/html5-qrcode"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
@@ -38,25 +43,18 @@ linear-gradient(
 );
 
 color:white;
+
 min-height:100vh;
-text-align:center;
 
 }
 
 .app{
 padding:20px;
-max-width:1400px;
-margin:auto;
 }
 
 h1{
 font-size:34px;
 margin-bottom:10px;
-text-align:center;
-}
-
-p{
-text-align:center;
 }
 
 .topButtons{
@@ -67,6 +65,7 @@ grid-template-columns:
 repeat(auto-fit,minmax(220px,1fr));
 
 gap:15px;
+
 margin-top:25px;
 
 }
@@ -74,12 +73,19 @@ margin-top:25px;
 .topButtons button{
 
 padding:18px;
+
 border:none;
+
 border-radius:20px;
+
 font-size:16px;
+
 font-weight:bold;
+
 cursor:pointer;
+
 color:white;
+
 transition:0.3s;
 
 box-shadow:
@@ -119,6 +125,7 @@ grid-template-columns:
 repeat(auto-fit,minmax(220px,1fr));
 
 gap:20px;
+
 margin-top:30px;
 
 }
@@ -126,6 +133,7 @@ margin-top:30px;
 .card{
 
 padding:25px;
+
 border-radius:25px;
 
 background:
@@ -134,12 +142,11 @@ rgba(255,255,255,0.08);
 backdrop-filter:blur(12px);
 
 cursor:pointer;
+
 transition:0.3s;
 
 box-shadow:
 0 10px 30px rgba(0,0,0,0.3);
-
-text-align:center;
 
 }
 
@@ -176,25 +183,20 @@ outline:none;
 
 font-size:15px;
 
-text-align:center;
-
 }
 
 .searchBox::placeholder{
 color:#ddd;
-text-align:center;
 }
 
 select{
 background:#0f172a !important;
 color:white !important;
-text-align:center;
 }
 
 option{
 background:#0f172a;
 color:white;
-text-align:center;
 }
 
 .tableContainer{
@@ -226,8 +228,6 @@ to right,
 #06b6d4
 );
 
-text-align:center;
-
 }
 
 td{
@@ -236,8 +236,6 @@ padding:15px;
 
 border-bottom:
 1px solid rgba(255,255,255,0.1);
-
-text-align:center;
 
 }
 
@@ -282,8 +280,6 @@ to right,
 
 color:white;
 
-text-align:center;
-
 }
 
 .transaction{
@@ -296,8 +292,6 @@ border-radius:15px;
 
 background:
 rgba(255,255,255,0.08);
-
-text-align:center;
 
 }
 
@@ -370,8 +364,6 @@ box-shadow:
 
 animation:popup 0.3s ease;
 
-text-align:center;
-
 }
 
 @keyframes popup{
@@ -398,11 +390,6 @@ align-items:center;
 
 margin-bottom:20px;
 
-}
-
-.popupTop h2{
-flex:1;
-text-align:center;
 }
 
 .closePopup{
@@ -445,27 +432,15 @@ min-height:280px;
 
 color:black;
 
-text-align:center;
-
 }
 
 #reader{
 margin-top:20px;
-display:flex;
-justify-content:center;
-}
-
-#inventorySection{
-text-align:center;
 }
 
 @media(max-width:768px){
 
 .topButtons{
-grid-template-columns:1fr;
-}
-
-.cards{
 grid-template-columns:1fr;
 }
 
@@ -601,6 +576,399 @@ onclick="showTodayTransactionsPopup()"
 
 </div>
 
+<!-- ISSUE RECEIVE POPUP -->
+
+<div
+id="transactionPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Issue / Receive Material</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('transactionPopup')"
+>
+X
+</button>
+
+</div>
+
+<select
+id="actionSelect"
+class="searchBox"
+>
+
+<option value="issue">
+Issue Material
+</option>
+
+<option value="receive">
+Receive Material
+</option>
+
+</select>
+
+<select
+id="materialSelect"
+class="searchBox"
+></select>
+
+<input
+type="number"
+id="qtyInput"
+class="searchBox"
+placeholder="Enter Quantity"
+>
+
+<input
+type="text"
+id="personInput"
+class="searchBox"
+placeholder="Issued To / Received From"
+>
+
+<button
+class="panelButton"
+onclick="submitTransaction()"
+>
+Submit Transaction
+</button>
+
+</div>
+
+</div>
+
+<!-- QR POPUP -->
+
+<div
+id="qrPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Generate QR</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('qrPopup')"
+>
+X
+</button>
+
+</div>
+
+<select
+id="qrMaterial"
+class="searchBox"
+></select>
+
+<button
+class="panelButton"
+onclick="generateQRLabel()"
+>
+Generate QR
+</button>
+
+<button
+class="panelButton"
+onclick="downloadQR()"
+>
+Download QR
+</button>
+
+<div id="qrcode"></div>
+
+</div>
+
+</div>
+
+<!-- SCANNER POPUP -->
+
+<div
+id="scannerPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>QR Scanner</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('scannerPopup')"
+>
+X
+</button>
+
+</div>
+
+<div id="reader"></div>
+
+</div>
+
+</div>
+
+<!-- REPORT POPUP -->
+
+<div
+id="reportPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Material Transaction Report</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('reportPopup')"
+>
+X
+</button>
+
+</div>
+
+<select
+id="reportMaterial"
+class="searchBox"
+></select>
+
+<input
+type="date"
+id="fromDate"
+class="searchBox"
+>
+
+<input
+type="date"
+id="toDate"
+class="searchBox"
+>
+
+<button
+class="panelButton"
+onclick="generateReport()"
+>
+Generate Report
+</button>
+
+<div
+id="downloadButtons"
+style="display:none;"
+>
+
+<button
+class="panelButton"
+onclick="downloadExcel()"
+>
+Download Excel
+</button>
+
+<button
+class="panelButton"
+onclick="downloadPDF()"
+>
+Download PDF
+</button>
+
+</div>
+
+<div id="historyContainer"></div>
+
+</div>
+
+</div>
+
+<!-- ADD MATERIAL POPUP -->
+
+<div
+id="materialPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Add Material</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('materialPopup')"
+>
+X
+</button>
+
+</div>
+
+<input
+type="text"
+id="matCode"
+class="searchBox"
+placeholder="Material Code"
+>
+
+<input
+type="text"
+id="matName"
+class="searchBox"
+placeholder="Material Name"
+>
+
+<input
+type="text"
+id="matCategory"
+class="searchBox"
+placeholder="Category"
+>
+
+<input
+type="text"
+id="matUnit"
+class="searchBox"
+placeholder="Unit"
+>
+
+<input
+type="number"
+id="matStock"
+class="searchBox"
+placeholder="Current Stock"
+>
+
+<input
+type="number"
+id="matReorder"
+class="searchBox"
+placeholder="Reorder Value"
+>
+
+<button
+class="panelButton"
+onclick="saveMaterial()"
+>
+Save Material
+</button>
+
+</div>
+
+</div>
+
+<!-- EDIT POPUP -->
+
+<div
+id="editPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Edit Material</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('editPopup')"
+>
+X
+</button>
+
+</div>
+
+<input
+type="text"
+id="editCode"
+class="searchBox"
+placeholder="Material Code"
+>
+
+<input
+type="text"
+id="editName"
+class="searchBox"
+placeholder="Material Name"
+>
+
+<input
+type="text"
+id="editCategory"
+class="searchBox"
+placeholder="Category"
+>
+
+<input
+type="text"
+id="editUnit"
+class="searchBox"
+placeholder="Unit"
+>
+
+<input
+type="number"
+id="editStock"
+class="searchBox"
+placeholder="Current Stock"
+>
+
+<input
+type="number"
+id="editReorder"
+class="searchBox"
+placeholder="Reorder Value"
+>
+
+<button
+class="panelButton"
+onclick="updateMaterial()"
+>
+Update Material
+</button>
+
+</div>
+
+</div>
+
+<!-- TODAY POPUP -->
+
+<div
+id="todayPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Today's Transactions</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('todayPopup')"
+>
+X
+</button>
+
+</div>
+
+<div id="todayTransactionList"></div>
+
+</div>
+
+</div>
+
 <script>
 
 let materials=[
@@ -697,6 +1065,36 @@ reorder:25
 
 ];
 
+let transactionHistory=
+JSON.parse(
+localStorage.getItem('transactions')
+)||[];
+
+const savedMaterials=
+JSON.parse(
+localStorage.getItem('materials')
+);
+
+if(savedMaterials){
+materials=savedMaterials;
+}
+
+let currentEditIndex=null;
+
+function saveData(){
+
+localStorage.setItem(
+'transactions',
+JSON.stringify(transactionHistory)
+);
+
+localStorage.setItem(
+'materials',
+JSON.stringify(materials)
+);
+
+}
+
 function renderTable(){
 
 const table=
@@ -706,7 +1104,13 @@ document.getElementById(
 
 table.innerHTML='';
 
+let low=0;
+
 materials.forEach((item,index)=>{
+
+if(item.stock<=item.reorder){
+low++;
+}
 
 table.innerHTML += `
 
@@ -731,10 +1135,11 @@ item.stock<=item.reorder
 }
 </td>
 
-<td>
+<td style="text-align:center;">
 
 <button
 class="editBtn"
+onclick="editMaterial(${index})"
 >
 Edit
 </button>
@@ -755,13 +1160,861 @@ materials.length;
 document.getElementById(
 'lowStock'
 ).innerHTML=
-materials.filter(
-m => m.stock<=m.reorder
-).length;
+low;
+
+const today=
+new Date().toDateString();
+
+const todayCount=
+transactionHistory.filter(t=>{
+
+return new Date(t.date)
+.toDateString()===today;
+
+}).length;
 
 document.getElementById(
 'todayTransactions'
-).innerHTML='0';
+).innerHTML=
+todayCount;
+
+fillDropdowns();
+
+saveData();
+
+}
+
+function fillDropdowns(){
+
+const ids=[
+'materialSelect',
+'qrMaterial',
+'reportMaterial'
+];
+
+ids.forEach(id=>{
+
+const dropdown=
+document.getElementById(id);
+
+dropdown.innerHTML='';
+
+materials.forEach(item=>{
+
+dropdown.innerHTML += `
+
+<option value="${item.code}">
+${item.code} - ${item.name}
+</option>
+
+`;
+
+});
+
+});
+
+}
+
+function openTransactionPopup(){
+
+document.getElementById(
+'transactionPopup'
+).style.display='flex';
+
+}
+
+function openQRPopup(){
+
+document.getElementById(
+'qrPopup'
+).style.display='flex';
+
+}
+
+function openScannerPopup(){
+
+document.getElementById(
+'scannerPopup'
+).style.display='flex';
+
+startScanner();
+
+}
+
+function openReportPopup(){
+
+document.getElementById(
+'reportPopup'
+).style.display='flex';
+
+}
+
+function openMaterialPopup(){
+
+document.getElementById(
+'materialPopup'
+).style.display='flex';
+
+}
+
+function closePopup(id){
+
+document.getElementById(id)
+.style.display='none';
+
+}
+
+function clearMaterialForm(){
+
+document.getElementById(
+'matCode'
+).value='';
+
+document.getElementById(
+'matName'
+).value='';
+
+document.getElementById(
+'matCategory'
+).value='';
+
+document.getElementById(
+'matUnit'
+).value='';
+
+document.getElementById(
+'matStock'
+).value='';
+
+document.getElementById(
+'matReorder'
+).value='';
+
+}
+
+function saveMaterial(){
+
+const code=
+document.getElementById(
+'matCode'
+).value;
+
+const name=
+document.getElementById(
+'matName'
+).value;
+
+const category=
+document.getElementById(
+'matCategory'
+).value;
+
+const unit=
+document.getElementById(
+'matUnit'
+).value;
+
+const stock=
+parseInt(
+document.getElementById(
+'matStock'
+).value
+);
+
+const reorder=
+parseInt(
+document.getElementById(
+'matReorder'
+).value
+);
+
+if(
+!code ||
+!name ||
+!category ||
+!unit ||
+isNaN(stock) ||
+isNaN(reorder)
+){
+
+Swal.fire(
+'Error',
+'Fill all fields',
+'error'
+);
+
+return;
+
+}
+
+materials.push({
+
+code,
+name,
+category,
+unit,
+stock,
+reorder
+
+});
+
+renderTable();
+
+clearMaterialForm();
+
+closePopup(
+'materialPopup'
+);
+
+Swal.fire(
+'Success',
+'Material Added',
+'success'
+);
+
+}
+
+function editMaterial(index){
+
+currentEditIndex=index;
+
+const item=
+materials[index];
+
+document.getElementById(
+'editPopup'
+).style.display='flex';
+
+document.getElementById(
+'editCode'
+).value=
+item.code;
+
+document.getElementById(
+'editName'
+).value=
+item.name;
+
+document.getElementById(
+'editCategory'
+).value=
+item.category;
+
+document.getElementById(
+'editUnit'
+).value=
+item.unit;
+
+document.getElementById(
+'editStock'
+).value=
+item.stock;
+
+document.getElementById(
+'editReorder'
+).value=
+item.reorder;
+
+}
+
+function updateMaterial(){
+
+const item=
+materials[currentEditIndex];
+
+item.code=
+document.getElementById(
+'editCode'
+).value;
+
+item.name=
+document.getElementById(
+'editName'
+).value;
+
+item.category=
+document.getElementById(
+'editCategory'
+).value;
+
+item.unit=
+document.getElementById(
+'editUnit'
+).value;
+
+item.stock=
+parseInt(
+document.getElementById(
+'editStock'
+).value
+);
+
+item.reorder=
+parseInt(
+document.getElementById(
+'editReorder'
+).value
+);
+
+saveData();
+
+renderTable();
+
+closePopup(
+'editPopup'
+);
+
+Swal.fire(
+'Updated',
+'Material Updated Successfully',
+'success'
+);
+
+}
+
+function submitTransaction(){
+
+const action=
+document.getElementById(
+'actionSelect'
+).value;
+
+const code=
+document.getElementById(
+'materialSelect'
+).value;
+
+const qty=
+parseInt(
+document.getElementById(
+'qtyInput'
+).value
+);
+
+const person=
+document.getElementById(
+'personInput'
+).value;
+
+const material=
+materials.find(
+m => m.code===code
+);
+
+if(!qty || !person){
+
+Swal.fire(
+'Error',
+'Fill all details',
+'error'
+);
+
+return;
+
+}
+
+if(action==='issue'){
+
+if(qty>material.stock){
+
+Swal.fire(
+'Error',
+'Insufficient Stock',
+'error'
+);
+
+return;
+
+}
+
+material.stock -= qty;
+
+}
+else{
+
+material.stock += qty;
+
+}
+
+transactionHistory.unshift({
+
+material:material.name,
+materialCode:material.code,
+action:action,
+qty:qty,
+person:person,
+balance:material.stock,
+date:new Date().toISOString()
+
+});
+
+renderTable();
+
+closePopup(
+'transactionPopup'
+);
+
+Swal.fire(
+'Success',
+'Transaction Successful',
+'success'
+);
+
+}
+
+function generateQRLabel(){
+
+const code=
+document.getElementById(
+'qrMaterial'
+).value;
+
+const material=
+materials.find(
+m => m.code===code
+);
+
+const qrDiv=
+document.getElementById(
+'qrcode'
+);
+
+qrDiv.innerHTML='';
+
+const canvas=
+document.createElement(
+'canvas'
+);
+
+qrDiv.appendChild(canvas);
+
+QRCode.toCanvas(
+
+canvas,
+
+JSON.stringify({
+
+code:material.code,
+name:material.name
+
+}),
+
+{
+width:220
+},
+
+function(error){
+
+if(error){
+
+Swal.fire(
+'Error',
+'QR Generation Failed',
+'error'
+);
+
+return;
+
+}
+
+const label=
+document.createElement('div');
+
+label.innerHTML=`
+
+<h3>${material.name}</h3>
+<p>${material.code}</p>
+
+`;
+
+qrDiv.appendChild(label);
+
+}
+
+);
+
+}
+
+function downloadQR(){
+
+html2canvas(
+document.getElementById(
+'qrcode'
+)
+
+).then(canvas=>{
+
+const link=
+document.createElement('a');
+
+link.download='QR.png';
+
+link.href=
+canvas.toDataURL();
+
+link.click();
+
+});
+
+}
+
+function startScanner(){
+
+document.getElementById(
+'reader'
+).innerHTML='';
+
+const html5QrCode=
+new Html5Qrcode('reader');
+
+html5QrCode.start(
+
+{ facingMode:'environment' },
+
+{
+fps:10,
+qrbox:250
+},
+
+(decodedText)=>{
+
+try{
+
+const qrData=
+JSON.parse(decodedText);
+
+const material=
+materials.find(
+m => m.code===qrData.code
+);
+
+if(material){
+
+html5QrCode.stop();
+
+closePopup(
+'scannerPopup'
+);
+
+openTransactionPopup();
+
+document.getElementById(
+'materialSelect'
+).value=
+material.code;
+
+Swal.fire(
+'QR Scanned',
+material.name,
+'success'
+);
+
+}
+
+}
+catch(err){
+
+Swal.fire(
+'Error',
+'Invalid QR',
+'error'
+);
+
+}
+
+}
+
+);
+
+}
+
+function generateReport(){
+
+const materialCode=
+document.getElementById(
+'reportMaterial'
+).value;
+
+const from=
+document.getElementById(
+'fromDate'
+).value;
+
+const to=
+document.getElementById(
+'toDate'
+).value;
+
+const container=
+document.getElementById(
+'historyContainer'
+);
+
+container.innerHTML='';
+
+const filtered=
+transactionHistory.filter(t=>{
+
+const tDate=
+new Date(t.date);
+
+const fromDate=
+new Date(from);
+
+const toDate=
+new Date(to);
+
+toDate.setHours(23,59,59,999);
+
+return (
+
+t.materialCode===materialCode &&
+
+tDate>=fromDate &&
+
+tDate<=toDate
+
+);
+
+});
+
+window.filteredTransactions=
+filtered;
+
+if(filtered.length===0){
+
+container.innerHTML=`
+<div class="transaction">
+No Transactions Found
+</div>
+`;
+
+document.getElementById(
+'downloadButtons'
+).style.display='none';
+
+return;
+
+}
+
+document.getElementById(
+'downloadButtons'
+).style.display='block';
+
+filtered.forEach(item=>{
+
+container.innerHTML += `
+
+<div class="transaction">
+
+<b>${item.material}</b>
+
+<br><br>
+
+Action:
+${item.action}
+
+<br>
+
+Quantity:
+${item.qty}
+
+<br>
+
+Issued To / Received From:
+${item.person}
+
+<br>
+
+Balance:
+${item.balance}
+
+<br>
+
+Date:
+${new Date(item.date)
+.toLocaleString()}
+
+</div>
+
+`;
+
+});
+
+}
+
+function downloadExcel(){
+
+const data=
+window.filteredTransactions || [];
+
+const ws=
+XLSX.utils.json_to_sheet(data);
+
+const wb=
+XLSX.utils.book_new();
+
+XLSX.utils.book_append_sheet(
+wb,
+ws,
+'Transactions'
+);
+
+XLSX.writeFile(
+wb,
+'Material_Report.xlsx'
+);
+
+}
+
+function downloadPDF(){
+
+const { jsPDF }=
+window.jspdf;
+
+const pdf=
+new jsPDF();
+
+pdf.text(
+'Material Transaction Report',
+20,
+20
+);
+
+let y=40;
+
+(
+window.filteredTransactions || []
+).forEach(item=>{
+
+pdf.text(
+
+`${item.material}
+ | ${item.action}
+ | Qty:${item.qty}`,
+
+10,
+y
+
+);
+
+y += 10;
+
+});
+
+pdf.save(
+'Material_Report.pdf'
+);
+
+}
+
+function showLowStock(){
+
+const low=
+materials.filter(
+m => m.stock<=m.reorder
+);
+
+let text='';
+
+low.forEach(item=>{
+
+text += `
+${item.name}
+ - Stock:
+${item.stock}<br>
+`;
+
+});
+
+Swal.fire({
+
+title:'Low Stock Materials',
+html:text ||
+'No Low Stock',
+icon:'warning'
+
+});
+
+}
+
+function showTodayTransactionsPopup(){
+
+document.getElementById(
+'todayPopup'
+).style.display='flex';
+
+const container=
+document.getElementById(
+'todayTransactionList'
+);
+
+container.innerHTML='';
+
+const today=
+new Date().toDateString();
+
+const filtered=
+transactionHistory.filter(t=>{
+
+return new Date(t.date)
+.toDateString()===today;
+
+});
+
+if(filtered.length===0){
+
+container.innerHTML=`
+
+<div class="transaction">
+No Transactions Today
+</div>
+
+`;
+
+return;
+
+}
+
+filtered.forEach(item=>{
+
+container.innerHTML += `
+
+<div class="transaction">
+
+<b>${item.material}</b>
+
+<br><br>
+
+Action:
+${item.action}
+
+<br>
+
+Quantity:
+${item.qty}
+
+<br>
+
+Issued To / Received From:
+${item.person}
+
+<br>
+
+Balance:
+${item.balance}
+
+<br>
+
+Date:
+${new Date(item.date)
+.toLocaleString()}
+
+</div>
+
+`;
+
+});
 
 }
 
@@ -787,4 +2040,4 @@ renderTable();
 
 </body>
 
-</html> 
+</html>
