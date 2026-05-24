@@ -1,19 +1,16 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Advanced Store Inventory Dashboard</title>
+<title>Inventory Dashboard</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
@@ -36,24 +33,20 @@ background:#f1f5f9;
 color:black;
 }
 
-.light-mode table{
+.light-mode .card,
+.light-mode .panel,
+.light-mode .transactionBox{
 background:white;
 color:black;
 }
 
-.light-mode .card,
-.light-mode .transactionBox,
-.light-mode .panel{
+.light-mode table{
 background:white;
 color:black;
 }
 
 .app{
 padding:20px;
-}
-
-h1{
-margin-bottom:5px;
 }
 
 .cards{
@@ -65,18 +58,16 @@ margin-top:20px;
 
 .card{
 flex:1;
-min-width:200px;
+min-width:220px;
 padding:20px;
 border-radius:20px;
 background:rgba(255,255,255,0.15);
 backdrop-filter:blur(10px);
-box-shadow:0 8px 20px rgba(0,0,0,0.3);
 }
 
 .card p{
-font-size:32px;
+font-size:30px;
 font-weight:bold;
-margin-top:10px;
 }
 
 .searchBox{
@@ -112,10 +103,6 @@ text-align:left;
 td{
 padding:15px;
 border-bottom:1px solid #eee;
-}
-
-tr:hover{
-background:#eff6ff;
 }
 
 .low{
@@ -173,9 +160,9 @@ display:none;
 
 .transactionBox{
 margin-top:30px;
-background:rgba(255,255,255,0.15);
 padding:20px;
 border-radius:20px;
+background:rgba(255,255,255,0.15);
 }
 
 .transaction{
@@ -193,10 +180,6 @@ flex-wrap:wrap;
 margin-top:20px;
 }
 
-#reader{
-margin-top:20px;
-}
-
 #qrcode{
 margin-top:20px;
 padding:20px;
@@ -207,13 +190,11 @@ color:black;
 }
 
 @media(max-width:700px){
-
 .cards,
 .buttons,
 .filterBox{
 flex-direction:column;
 }
-
 }
 
 </style>
@@ -225,8 +206,7 @@ flex-direction:column;
 <div class="app">
 
 <h1>Store Inventory Dashboard</h1>
-
-<p>Advanced QR Based Inventory Management System</p>
+<p>QR Based Inventory Management System</p>
 
 <div class="cards">
 
@@ -243,8 +223,8 @@ flex-direction:column;
 </div>
 
 <input
-type="text"
 class="searchBox"
+type="text"
 placeholder="Search Material"
 onkeyup="searchMaterial(this.value)"
 >
@@ -252,9 +232,7 @@ onkeyup="searchMaterial(this.value)"
 <div class="tableContainer">
 
 <table>
-
 <thead>
-
 <tr>
 <th>Material Code</th>
 <th>Material Name</th>
@@ -263,9 +241,7 @@ onkeyup="searchMaterial(this.value)"
 <th>Reorder Value</th>
 <th>Status</th>
 </tr>
-
 </thead>
-
 <tbody id="inventoryTable"></tbody>
 
 </table>
@@ -303,16 +279,16 @@ Dark / Light Mode
 <select id="materialSelect" class="searchBox"></select>
 
 <input
-type="number"
 id="qtyInput"
 class="searchBox"
+type="number"
 placeholder="Enter Quantity"
 >
 
 <input
-type="text"
 id="personInput"
 class="searchBox"
+type="text"
 placeholder="Issued To / Received From"
 >
 
@@ -354,36 +330,19 @@ Generate QR Label
 
 <select id="reportMaterial" class="searchBox"></select>
 
-<input
-type="date"
-id="fromDate"
-class="searchBox"
->
+<input id="fromDate" class="searchBox" type="date">
 
-<input
-type="date"
-id="toDate"
-class="searchBox"
->
+<input id="toDate" class="searchBox" type="date">
 
-<button
-class="scan"
-onclick="generateReport()"
->
+<button class="scan" onclick="generateReport()">
 Generate Report
 </button>
 
-<button
-class="receive"
-onclick="downloadExcel()"
->
+<button class="receive" onclick="downloadExcel()">
 Download Excel
 </button>
 
-<button
-class="issue"
-onclick="downloadPDF()"
->
+<button class="issue" onclick="downloadPDF()">
 Download PDF
 </button>
 
@@ -400,52 +359,30 @@ Download PDF
 const defaultMaterials = [
 
 {code:'0838181493',name:'TES',unit:'Nos.',stock:95,reorder:20},
-
 {code:'0838880104',name:'SC Valve New',unit:'Nos.',stock:100,reorder:20},
-
 {code:'0838881066',name:'Combo Valve',unit:'Nos.',stock:75,reorder:20},
-
 {code:'0838882104',name:'LOT Valve',unit:'Nos.',stock:60,reorder:20},
-
 {code:'0838911014',name:'Pressure Regulator',unit:'Nos.',stock:40,reorder:15},
-
 {code:'0838920104',name:'Safety Caps',unit:'Nos.',stock:250,reorder:50},
-
 {code:'0838929014',name:'Nylon Thread',unit:'Nos.',stock:150,reorder:30},
-
 {code:'0838929034',name:'SS Clip',unit:'Nos.',stock:80,reorder:20},
-
 {code:'0838930764',name:'NBR O-Ring',unit:'Nos.',stock:120,reorder:25},
-
 {code:'0838930774',name:'FKM O-Ring',unit:'Nos.',stock:90,reorder:25},
-
 {code:'6183050164',name:'Teflon Tape',unit:'Nos.',stock:200,reorder:40},
-
 {code:'8601061404',name:'Zinc Chrome Primer',unit:'Litres',stock:50,reorder:10},
-
 {code:'8614022944',name:'Paint Enamel Signal Red',unit:'Litres',stock:70,reorder:15},
-
 {code:'8614023204',name:'Paint Enamel White',unit:'Litres',stock:65,reorder:15},
-
 {code:'8614023664',name:'Paint Synthetic Enamel Oxford Blue',unit:'Litres',stock:55,reorder:15},
-
 {code:'8630200504',name:'Thinner F/Enamel Paint',unit:'Litres',stock:85,reorder:20},
-
 {code:'8740155404',name:'Brown Soap F/LPG Conveyor',unit:'Kg',stock:45,reorder:10},
-
 {code:'9532500114',name:'Gloves Hand Cotton 10IN',unit:'Nos.',stock:300,reorder:60},
-
 {code:'0838920203',name:'LOT CAP',unit:'Nos.',stock:110,reorder:25}
 
 ];
 
-let materials =
-JSON.parse(localStorage.getItem('materials'))
-|| defaultMaterials;
+let materials = JSON.parse(localStorage.getItem('materials')) || defaultMaterials;
 
-let transactionHistory =
-JSON.parse(localStorage.getItem('transactions'))
-|| [];
+let transactionHistory = JSON.parse(localStorage.getItem('transactions')) || [];
 
 let currentAction='';
 
@@ -453,22 +390,14 @@ let currentReportData=[];
 
 function saveData(){
 
-localStorage.setItem(
-'materials',
-JSON.stringify(materials)
-);
-
-localStorage.setItem(
-'transactions',
-JSON.stringify(transactionHistory)
-);
+localStorage.setItem('materials',JSON.stringify(materials));
+localStorage.setItem('transactions',JSON.stringify(transactionHistory));
 
 }
 
 function renderTable(){
 
-const table =
-document.getElementById('inventoryTable');
+const table = document.getElementById('inventoryTable');
 
 table.innerHTML='';
 
@@ -481,52 +410,34 @@ low++;
 }
 
 table.innerHTML += `
-
 <tr>
-
 <td>${item.code}</td>
-
 <td>${item.name}</td>
-
 <td>${item.unit}</td>
-
 <td>${item.stock}</td>
-
 <td>${item.reorder}</td>
-
 <td class="${item.stock<=item.reorder?'low':'normal'}">
-
 ${item.stock<=item.reorder?'Low':'Normal'}
-
 </td>
-
 </tr>
-
 `;
 
 });
 
-document.getElementById('lowStock').innerHTML=low;
-
-document.getElementById('totalMaterials').innerHTML=
-materials.length;
-
 fillDropdowns();
 
-checkLowStockAlerts();
+checkLowStock();
+
+document.getElementById('totalMaterials').innerHTML=materials.length;
+document.getElementById('lowStock').innerHTML=low;
 
 }
 
 function fillDropdowns(){
 
-const dropdown =
-document.getElementById('materialSelect');
-
-const report =
-document.getElementById('reportMaterial');
-
-const qr =
-document.getElementById('qrMaterial');
+const dropdown=document.getElementById('materialSelect');
+const report=document.getElementById('reportMaterial');
+const qr=document.getElementById('qrMaterial');
 
 dropdown.innerHTML='';
 report.innerHTML='';
@@ -534,23 +445,21 @@ qr.innerHTML='';
 
 materials.forEach(item=>{
 
-dropdown.innerHTML += `
+const option=`
 <option value="${item.code}">
 ${item.code} - ${item.name}
 </option>
 `;
 
-report.innerHTML += `
+const reportOption=`
 <option value="${item.name}">
 ${item.name}
 </option>
 `;
 
-qr.innerHTML += `
-<option value="${item.code}">
-${item.code} - ${item.name}
-</option>
-`;
+dropdown.innerHTML += option;
+qr.innerHTML += option;
+report.innerHTML += reportOption;
 
 });
 
@@ -569,47 +478,27 @@ action.toUpperCase()+' Material';
 
 function submitTransaction(){
 
-const code =
-document.getElementById('materialSelect').value;
+const code=document.getElementById('materialSelect').value;
+const qty=parseInt(document.getElementById('qtyInput').value);
+const person=document.getElementById('personInput').value;
 
-const qty =
-parseInt(
-document.getElementById('qtyInput').value
-);
+const material=materials.find(m=>m.code===code);
 
-const person =
-document.getElementById('personInput').value;
-
-const material =
-materials.find(m=>m.code===code);
-
-if(!material || !qty || !person){
-
+if(!qty || !person){
 alert('Please Fill All Details');
-
 return;
-
 }
 
 if(currentAction==='issue'){
 
 if(qty>material.stock){
-
 alert('Insufficient Stock');
-
 return;
-
 }
 
 material.stock -= qty;
 
-addHistory(
-'Issued',
-material.name,
-qty,
-material.stock,
-person
-);
+addHistory('Issued',material.name,qty,material.stock,person);
 
 }
 
@@ -617,23 +506,12 @@ if(currentAction==='receive'){
 
 material.stock += qty;
 
-addHistory(
-'Received',
-material.name,
-qty,
-material.stock,
-person
-);
+addHistory('Received',material.name,qty,material.stock,person);
 
 }
 
 saveData();
-
 renderTable();
-
-document.getElementById('qtyInput').value='';
-
-document.getElementById('personInput').value='';
 
 alert('Transaction Successful');
 
@@ -641,18 +519,14 @@ alert('Transaction Successful');
 
 function addHistory(action,name,qty,balance,person){
 
-const transaction = {
-
+transactionHistory.unshift({
 action,
 name,
 qty,
 balance,
 person,
 time:new Date()
-
-};
-
-transactionHistory.unshift(transaction);
+});
 
 saveData();
 
@@ -660,81 +534,51 @@ saveData();
 
 function generateReport(){
 
-const material =
-document.getElementById('reportMaterial').value;
-
-const from =
-document.getElementById('fromDate').value;
-
-const to =
-document.getElementById('toDate').value;
+const material=document.getElementById('reportMaterial').value;
+const from=document.getElementById('fromDate').value;
+const to=document.getElementById('toDate').value;
 
 if(!from || !to){
-
 alert('Select Dates');
-
 return;
-
 }
 
-const fromDate = new Date(from);
-
-const toDate = new Date(to);
+const fromDate=new Date(from);
+const toDate=new Date(to);
 
 toDate.setHours(23,59,59,999);
 
-currentReportData =
-transactionHistory.filter(item=>{
+currentReportData=transactionHistory.filter(item=>{
 
-const d = new Date(item.time);
+const d=new Date(item.time);
 
-return item.name===material &&
-d>=fromDate &&
-d<=toDate;
+return item.name===material && d>=fromDate && d<=toDate;
 
 });
 
-const container =
-document.getElementById('reportResults');
+const container=document.getElementById('reportResults');
 
 container.innerHTML='';
 
 if(currentReportData.length===0){
-
-container.innerHTML=
-'<div class="transaction">No Transactions Found</div>';
-
+container.innerHTML='<div class="transaction">No Transactions Found</div>';
 return;
-
 }
 
 currentReportData.forEach(item=>{
 
 container.innerHTML += `
-
 <div class="transaction">
-
 <b>${item.action}</b> - ${item.name}
-
 <br><br>
-
 <b>Quantity:</b> ${item.qty}
-
 <br>
-
 <b>Person:</b> ${item.person}
-
 <br>
-
 <b>Balance:</b> ${item.balance}
-
 <br>
-
-<b>Date:</b>
-${new Date(item.time).toLocaleString()}
-
+<b>Date:</b> ${new Date(item.time).toLocaleString()}
 </div>
-
 `;
 
 });
@@ -744,80 +588,47 @@ ${new Date(item.time).toLocaleString()}
 function downloadExcel(){
 
 if(currentReportData.length===0){
-
 alert('Generate Report First');
-
 return;
-
 }
 
-const worksheet =
-XLSX.utils.json_to_sheet(currentReportData);
+const worksheet=XLSX.utils.json_to_sheet(currentReportData);
+const workbook=XLSX.utils.book_new();
 
-const workbook =
-XLSX.utils.book_new();
+XLSX.utils.book_append_sheet(workbook,worksheet,'Transactions');
 
-XLSX.utils.book_append_sheet(
-workbook,
-worksheet,
-'Transactions'
-);
-
-XLSX.writeFile(
-workbook,
-'Material_Report.xlsx'
-);
+XLSX.writeFile(workbook,'Material_Report.xlsx');
 
 }
 
 async function downloadPDF(){
 
 if(currentReportData.length===0){
-
 alert('Generate Report First');
-
 return;
-
 }
 
 const { jsPDF } = window.jspdf;
 
-const doc = new jsPDF();
+const doc=new jsPDF();
 
-let y = 20;
-
-doc.setFontSize(16);
-
-doc.text('Material Transaction Report',20,y);
-
-y += 20;
+let y=20;
 
 currentReportData.forEach(item=>{
 
-doc.setFontSize(11);
+const line=`${item.action} | ${item.name} | Qty:${item.qty}`;
 
-doc.text(
-`${item.action} | ${item.name} | Qty:${item.qty} | ${item.person}`,
-20,
-y
-);
+doc.text(line,20,y);
 
 y += 10;
 
-doc.text(
-`Balance:${item.balance} | ${new Date(item.time).toLocaleString()}`,
-20,
-y
-);
+doc.text(`${item.person} | Balance:${item.balance}`,20,y);
 
 y += 15;
 
 if(y>270){
-
 doc.addPage();
-
 y=20;
-
 }
 
 });
@@ -826,26 +637,12 @@ doc.save('Material_Report.pdf');
 
 }
 
-function checkLowStockAlerts(){
+function checkLowStock(){
 
-const lowItems =
-materials.filter(item=>
-item.stock<=item.reorder
-);
+const lowItems=materials.filter(item=>item.stock<=item.reorder);
 
 if(lowItems.length>0){
-
-const names =
-lowItems.map(item=>
-`${item.name} (${item.stock})`
-).join(', ');
-
-setTimeout(()=>{
-
-console.log('Low Stock:',names);
-
-},500);
-
+console.log('Low Stock Items',lowItems);
 }
 
 }
@@ -854,23 +651,15 @@ function searchMaterial(value){
 
 value=value.toLowerCase();
 
-const rows =
-document.querySelectorAll('#inventoryTable tr');
+const rows=document.querySelectorAll('#inventoryTable tr');
 
 rows.forEach(row=>{
 
-if(
-row.innerText.toLowerCase().includes(value)
-){
-
+if(row.innerText.toLowerCase().includes(value)){
 row.style.display='';
-
 }
-
 else{
-
 row.style.display='none';
-
 }
 
 });
@@ -879,33 +668,22 @@ row.style.display='none';
 
 function startScanner(){
 
-const html5QrCode =
-new Html5Qrcode('reader');
+const html5QrCode=new Html5Qrcode('reader');
 
 html5QrCode.start(
 
-{ facingMode:'environment' },
+{facingMode:'environment'},
 
-{
-fps:10,
-qrbox:250
-},
+{fps:10,qrbox:250},
 
 (decodedText)=>{
 
-const material =
-materials.find(m=>
-decodedText.includes(m.code)
-);
+const material=materials.find(m=>decodedText.includes(m.code));
 
 if(!material){
-
 alert('Unknown Material');
-
 html5QrCode.stop();
-
 return;
-
 }
 
 alert('Scanned: '+material.name);
@@ -926,39 +704,26 @@ document.getElementById('qrPanel').style.display='block';
 
 function generateQRLabel(){
 
-const code =
-document.getElementById('qrMaterial').value;
+const code=document.getElementById('qrMaterial').value;
 
-const material =
-materials.find(m=>m.code===code);
+const material=materials.find(m=>m.code===code);
 
-const qrDiv =
-document.getElementById('qrcode');
+const qrDiv=document.getElementById('qrcode');
 
 qrDiv.innerHTML='';
 
 new QRCode(qrDiv,{
-
 text:`${material.code} - ${material.name}`,
-
 width:200,
-
 height:200
-
 });
 
 qrDiv.innerHTML += `
-
-<p style="margin-top:15px;">
-
+<p>
 <b>${material.code}</b>
-
 <br>
-
 ${material.name}
-
 </p>
-
 `;
 
 }
@@ -969,27 +734,22 @@ document.body.classList.toggle('light-mode');
 
 localStorage.setItem(
 'theme',
-document.body.classList.contains('light-mode')
-? 'light'
-: 'dark'
+document.body.classList.contains('light-mode') ? 'light':'dark'
 );
 
 }
 
-window.onload = function(){
+window.onload=function(){
 
 if(localStorage.getItem('theme')==='light'){
-
 document.body.classList.add('light-mode');
-
 }
 
 renderTable();
 
-};
+}
 
 </script>
 
 </body>
-
 </html>
