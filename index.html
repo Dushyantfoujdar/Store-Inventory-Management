@@ -1,5 +1,3 @@
-# Multi-Material Store Inventory Dashboard
-
 <!DOCTYPE html>
 <html>
 
@@ -52,6 +50,7 @@
       font-size: 30px;
       color: #3a0ca3;
       font-weight: bold;
+      margin: 10px 0 0 0;
     }
 
     .searchBox {
@@ -213,10 +212,9 @@
     <thead>
       <tr>
         <th>Material Code</th>
-        <th>Material</th>
+        <th>Material Name</th>
         <th>Unit</th>
         <th>Stock</th>
-        <th>Rack</th>
         <th>Status</th>
       </tr>
     </thead>
@@ -258,69 +256,140 @@
 <script>
 
 const materials = [
+
   {
     code: '0838181493',
     name: 'TES',
     unit: 'Nos.',
-    stock: 95,
-    rack: 'A1'
+    stock: 95
   },
+
   {
     code: '0838880104',
     name: 'SC Valve New',
     unit: 'Nos.',
-    stock: 100,
-    rack: 'A2'
+    stock: 100
   },
+
   {
     code: '0838881066',
     name: 'Combo Valve',
     unit: 'Nos.',
-    stock: 75,
-    rack: 'A3'
+    stock: 75
   },
+
   {
     code: '0838882104',
     name: 'LOT Valve',
     unit: 'Nos.',
-    stock: 60,
-    rack: 'A4'
+    stock: 60
   },
+
   {
     code: '0838911014',
     name: 'Pressure Regulator',
     unit: 'Nos.',
-    stock: 40,
-    rack: 'B1'
+    stock: 40
   },
+
   {
     code: '0838920104',
     name: 'Safety Caps',
     unit: 'Nos.',
-    stock: 250,
-    rack: 'B2'
+    stock: 250
   },
+
   {
     code: '0838929014',
     name: 'Nylon Thread',
     unit: 'Nos.',
-    stock: 150,
-    rack: 'B3'
+    stock: 150
   },
+
   {
     code: '0838929034',
     name: 'SS Clip',
     unit: 'Nos.',
-    stock: 80,
-    rack: 'B4'
+    stock: 80
   },
+
   {
     code: '0838930764',
     name: 'NBR O-Ring',
     unit: 'Nos.',
-    stock: 120,
-    rack: 'C1'
+    stock: 120
+  },
+
+  {
+    code: '0838930774',
+    name: 'FKM O-Ring',
+    unit: 'Nos.',
+    stock: 90
+  },
+
+  {
+    code: '6183050164',
+    name: 'Teflon Tape',
+    unit: 'Nos.',
+    stock: 200
+  },
+
+  {
+    code: '8601061404',
+    name: 'Zinc Chrome Primer',
+    unit: 'Litres',
+    stock: 50
+  },
+
+  {
+    code: '8614022944',
+    name: 'Paint Enamel Signal Red IS 2932-1',
+    unit: 'Litres',
+    stock: 70
+  },
+
+  {
+    code: '8614023204',
+    name: 'Paint Enamel White IS-2932',
+    unit: 'Litres',
+    stock: 65
+  },
+
+  {
+    code: '8614023664',
+    name: 'Paint Synthetic Enamel Oxford Blue',
+    unit: 'Litres',
+    stock: 55
+  },
+
+  {
+    code: '8630200504',
+    name: 'Thinner F/Enamel Paint',
+    unit: 'Litres',
+    stock: 85
+  },
+
+  {
+    code: '8740155404',
+    name: 'Brown Soap F/LPG Conveyor',
+    unit: 'Kg',
+    stock: 45
+  },
+
+  {
+    code: '9532500114',
+    name: 'Gloves Hand Cotton 10IN',
+    unit: 'Nos.',
+    stock: 300
+  },
+
+  {
+    code: '0838920203',
+    name: 'LOT CAP',
+    unit: 'Nos.',
+    stock: 110
   }
+
 ];
 
 const minStock = 20;
@@ -334,7 +403,7 @@ function renderTable() {
   let totalStock = 0;
   let lowStock = 0;
 
-  materials.forEach((item, index) => {
+  materials.forEach((item) => {
 
     totalStock += item.stock;
 
@@ -349,25 +418,30 @@ function renderTable() {
         <td>${item.name}</td>
         <td>${item.unit}</td>
         <td>${item.stock}</td>
-        <td>${item.rack}</td>
+
         <td class="${item.stock < minStock ? 'low' : 'normal'}">
           ${item.stock < minStock ? 'Low Stock' : 'Normal'}
         </td>
+
       </tr>
 
     `;
   });
 
-  document.getElementById('materialCount').innerHTML = materials.length;
+  document.getElementById('materialCount').innerHTML =
+    materials.length;
 
-  document.getElementById('totalStock').innerHTML = totalStock;
+  document.getElementById('totalStock').innerHTML =
+    totalStock;
 
-  document.getElementById('lowStockCount').innerHTML = lowStock;
+  document.getElementById('lowStockCount').innerHTML =
+    lowStock;
 }
 
 function addTransaction(text, cls) {
 
-  const transactions = document.getElementById('transactions');
+  const transactions =
+    document.getElementById('transactions');
 
   const div = document.createElement('div');
 
@@ -384,24 +458,33 @@ function addTransaction(text, cls) {
 
 function manualIssue() {
 
-  const code = prompt('Enter material code');
+  const code =
+    prompt('Enter material code');
 
-  const material = materials.find(m => m.code === code);
+  const material =
+    materials.find(m => m.code === code);
 
   if (!material) {
+
     alert('Material not found');
+
     return;
   }
 
-  const qty = parseInt(prompt('Enter issue quantity'));
+  const qty =
+    parseInt(prompt('Enter issue quantity'));
 
   if (!qty || qty <= 0) {
+
     alert('Invalid quantity');
+
     return;
   }
 
   if (qty > material.stock) {
+
     alert('Insufficient stock');
+
     return;
   }
 
@@ -417,19 +500,26 @@ function manualIssue() {
 
 function manualReceive() {
 
-  const code = prompt('Enter material code');
+  const code =
+    prompt('Enter material code');
 
-  const material = materials.find(m => m.code === code);
+  const material =
+    materials.find(m => m.code === code);
 
   if (!material) {
+
     alert('Material not found');
+
     return;
   }
 
-  const qty = parseInt(prompt('Enter receive quantity'));
+  const qty =
+    parseInt(prompt('Enter receive quantity'));
 
   if (!qty || qty <= 0) {
+
     alert('Invalid quantity');
+
     return;
   }
 
@@ -447,16 +537,20 @@ function searchMaterial(value) {
 
   value = value.toLowerCase();
 
-  const rows = document.querySelectorAll('#inventoryTable tr');
+  const rows =
+    document.querySelectorAll('#inventoryTable tr');
 
   rows.forEach(row => {
 
     if (
       row.innerText.toLowerCase().includes(value)
     ) {
+
       row.style.display = '';
     }
+
     else {
+
       row.style.display = 'none';
     }
   });
@@ -464,7 +558,8 @@ function searchMaterial(value) {
 
 function startScanner() {
 
-  const html5QrCode = new Html5Qrcode('reader');
+  const html5QrCode =
+    new Html5Qrcode('reader');
 
   html5QrCode.start(
 
@@ -485,8 +580,11 @@ function startScanner() {
       );
 
       if (!material) {
+
         alert('Unknown Material');
+
         html5QrCode.stop();
+
         return;
       }
 
@@ -495,7 +593,9 @@ function startScanner() {
       );
 
       if (!action) {
+
         html5QrCode.stop();
+
         return;
       }
 
@@ -504,14 +604,20 @@ function startScanner() {
       );
 
       if (!qty || qty <= 0) {
+
         alert('Invalid quantity');
+
         html5QrCode.stop();
+
         return;
       }
 
-      if (action.toLowerCase() === 'issue') {
+      if (
+        action.toLowerCase() === 'issue'
+      ) {
 
         if (qty > material.stock) {
+
           alert('Insufficient stock');
         }
 
@@ -548,7 +654,9 @@ function startScanner() {
 
       else {
 
-        alert('Type ISSUE or RECEIVE only');
+        alert(
+          'Type ISSUE or RECEIVE only'
+        );
       }
 
       html5QrCode.stop();
