@@ -63,11 +63,12 @@ h1{
 .searchBox{
   width:100%;
   padding:15px;
-  margin-top:25px;
+  margin-top:20px;
   border:none;
   border-radius:15px;
   font-size:16px;
   outline:none;
+  box-sizing:border-box;
 }
 
 .tableContainer{
@@ -177,6 +178,24 @@ button:hover{
   font-weight:bold;
 }
 
+.panel{
+  margin-top:25px;
+  background:white;
+  color:black;
+  border-radius:20px;
+  padding:20px;
+  display:none;
+}
+
+.panel h2{
+  margin-top:0;
+}
+
+.submitBtn{
+  background:linear-gradient(to right,#2563eb,#1d4ed8);
+  margin-top:20px;
+}
+
 @media(max-width:600px){
 
   .cards{
@@ -204,11 +223,6 @@ QR Based Mobile Inventory Management System
 </div>
 
 <div class="cards">
-
-<div class="card">
-<h3>Total Materials</h3>
-<p id="materialCount"></p>
-</div>
 
 <div class="card">
 <h3>Low Stock Materials</h3>
@@ -247,15 +261,15 @@ onkeyup="searchMaterial(this.value)"
 
 <div class="buttons">
 
-<button class="issue" onclick="manualIssue()">
+<button class="issue" onclick="openIssuePanel()">
 Issue Material
 </button>
 
-<button class="receive" onclick="manualReceive()">
+<button class="receive" onclick="openReceivePanel()">
 Receive Material
 </button>
 
-<button class="scanBtn" onclick="startScanner()">
+<button class="scanBtn" onclick="openScanPanel()">
 Scan QR Code
 </button>
 
@@ -263,7 +277,33 @@ Scan QR Code
 
 <div id="reader"></div>
 
-<h3 id="result"></h3>
+<div id="transactionPanel" class="panel">
+
+<h2 id="panelTitle"></h2>
+
+<select id="materialSelect" class="searchBox">
+
+<option value="">
+Select Material
+</option>
+
+</select>
+
+<input
+type="number"
+id="qtyInput"
+class="searchBox"
+placeholder="Enter Quantity"
+>
+
+<button
+class="submitBtn"
+onclick="submitTransaction()"
+>
+Submit Transaction
+</button>
+
+</div>
 
 <div class="transactionBox">
 
@@ -433,6 +473,8 @@ reorder:25
 
 ];
 
+let currentAction='';
+
 function renderTable(){
 
 const table=document.getElementById('inventoryTable');
@@ -473,11 +515,137 @@ ${item.stock<item.reorder?'Low Stock':'Normal'}
 
 });
 
-document.getElementById('materialCount').innerHTML=
-materials.length;
-
 document.getElementById('lowStockCount').innerHTML=
 lowStock;
+
+}
+
+function fillDropdown(){
+
+const dropdown=
+document.getElementById('materialSelect');
+
+dropdown.innerHTML=
+'<option value="">Select Material</option>';
+
+materials.forEach(item=>{
+
+dropdown.innerHTML+=`
+
+<option value="${item.code}">
+
+${item.code} - ${item.name}
+
+</option>
+
+`;
+
+});
+
+}
+
+function openIssuePanel(){
+
+currentAction='issue';
+
+document.getElementById('panelTitle').innerHTML=
+'Issue Material';
+
+document.getElementById('transactionPanel').style.display=
+'block';
+
+fillDropdown();
+
+}
+
+function openReceivePanel(){
+
+currentAction='receive';
+
+document.getElementById('panelTitle').innerHTML=
+'Receive Material';
+
+document.getElementById('transactionPanel').style.display=
+'block';
+
+fillDropdown();
+
+}
+
+function openScanPanel(){
+
+document.getElementById('transactionPanel').style.display=
+'none';
+
+startScanner();
+
+}
+
+function submitTransaction(){
+
+const code=
+document.getElementById('materialSelect').value;
+
+const qty=
+parseInt(
+document.getElementById('qtyInput').value
+);
+
+if(!code){
+alert('Select material');
+return;
+}
+
+if(!qty || qty<=0){
+alert('Enter valid quantity');
+return;
+}
+
+const material=
+materials.find(m=>m.code===code);
+
+if(!material){
+alert('Material not found');
+return;
+}
+
+if(currentAction==='issue'){
+
+if(qty>material.stock){
+
+alert('Insufficient stock');
+
+return;
+
+}
+
+material.stock-=qty;
+
+addTransaction(
+`Issued ${qty} ${material.name}`,
+'redText'
+);
+
+}
+
+if(currentAction==='receive'){
+
+material.stock+=qty;
+
+addTransaction(
+`Received ${qty} ${material.name}`,
+'greenText'
+);
+
+}
+
+renderTable();
+
+document.getElementById('qtyInput').value='';
+
+document.getElementById('materialSelect').value='';
+
+alert('Transaction Successful');
 
 }
 
@@ -497,73 +665,6 @@ div.innerHTML=`
 `;
 
 transactions.prepend(div);
-
-}
-
-function manualIssue(){
-
-const code=prompt('Enter material code');
-
-const material=
-materials.find(m=>m.code===code);
-
-if(!material){
-alert('Material not found');
-return;
-}
-
-const qty=
-parseInt(prompt('Enter issue quantity'));
-
-if(!qty||qty<=0){
-alert('Invalid quantity');
-return;
-}
-
-if(qty>material.stock){
-alert('Insufficient stock');
-return;
-}
-
-material.stock-=qty;
-
-renderTable();
-
-addTransaction(
-`Issued ${qty} ${material.name}`,
-'redText'
-);
-
-}
-
-function manualReceive(){
-
-const code=prompt('Enter material code');
-
-const material=
-materials.find(m=>m.code===code);
-
-if(!material){
-alert('Material not found');
-return;
-}
-
-const qty=
-parseInt(prompt('Enter receive quantity'));
-
-if(!qty||qty<=0){
-alert('Invalid quantity');
-return;
-}
-
-material.stock+=qty;
-
-renderTable();
-
-addTransaction(
-`Received ${qty} ${material.name}`,
-'greenText'
-);
 
 }
 
@@ -610,9 +711,6 @@ qrbox:250
 
 (decodedText)=>{
 
-document.getElementById('result').innerHTML=
-'Scanned Material: '+decodedText;
-
 const material=
 materials.find(m=>
 decodedText.includes(m.code)
@@ -628,21 +726,10 @@ return;
 
 }
 
-const action=
-prompt('Type ISSUE or RECEIVE');
-
-if(!action){
-
-html5QrCode.stop();
-
-return;
-
-}
-
 const qty=
 parseInt(prompt('Enter quantity'));
 
-if(!qty||qty<=0){
+if(!qty || qty<=0){
 
 alert('Invalid quantity');
 
@@ -651,6 +738,9 @@ html5QrCode.stop();
 return;
 
 }
+
+const action=
+prompt('Type ISSUE or RECEIVE');
 
 if(action.toLowerCase()==='issue'){
 
@@ -664,12 +754,12 @@ else{
 
 material.stock-=qty;
 
-renderTable();
-
 addTransaction(
 `QR Issued ${qty} ${material.name}`,
 'redText'
 );
+
+renderTable();
 
 alert('Material issued successfully');
 
@@ -681,20 +771,14 @@ else if(action.toLowerCase()==='receive'){
 
 material.stock+=qty;
 
-renderTable();
-
 addTransaction(
 `QR Received ${qty} ${material.name}`,
 'greenText'
 );
 
+renderTable();
+
 alert('Material received successfully');
-
-}
-
-else{
-
-alert('Type ISSUE or RECEIVE only');
 
 }
 
