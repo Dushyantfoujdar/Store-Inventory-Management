@@ -10,10 +10,6 @@
 <title>Store Inventory Dashboard</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
 
@@ -136,14 +132,6 @@ background:linear-gradient(to right,#22c55e,#15803d);
 background:linear-gradient(to right,#3b82f6,#1d4ed8);
 }
 
-.export{
-background:linear-gradient(to right,#7c3aed,#5b21b6);
-}
-
-.dark{
-background:linear-gradient(to right,#f59e0b,#d97706);
-}
-
 .panel{
 margin-top:25px;
 padding:20px;
@@ -170,21 +158,6 @@ margin-top:10px;
 
 #reader{
 margin-top:20px;
-}
-
-canvas{
-background:white;
-border-radius:20px;
-padding:20px;
-margin-top:30px;
-}
-
-#qrcode{
-margin-top:20px;
-background:white;
-padding:20px;
-display:inline-block;
-border-radius:20px;
 }
 
 @media(max-width:700px){
@@ -241,6 +214,7 @@ onkeyup="searchMaterial(this.value)"
 <tr>
 <th>Material Code</th>
 <th>Material Name</th>
+<th>Unit</th>
 <th>Current Stock</th>
 <th>Reorder Value</th>
 <th>Status</th>
@@ -268,14 +242,6 @@ Receive Material
 Scan QR
 </button>
 
-<button class="export" onclick="downloadPDF()">
-Export PDF
-</button>
-
-<button class="export" onclick="exportExcel()">
-Export Excel
-</button>
-
 </div>
 
 <div id="transactionPanel" class="panel">
@@ -291,6 +257,13 @@ class="searchBox"
 placeholder="Enter Quantity"
 >
 
+<input
+type="text"
+id="personInput"
+class="searchBox"
+placeholder="Issued To / Received From"
+>
+
 <button
 class="scan"
 style="margin-top:20px;"
@@ -302,18 +275,6 @@ Submit Transaction
 </div>
 
 <div id="reader"></div>
-
-<div style="margin-top:25px;">
-
-<button class="scan" onclick="generateQR()">
-Generate QR Label
-</button>
-
-<div id="qrcode"></div>
-
-</div>
-
-<canvas id="stockChart"></canvas>
 
 <div class="transactionBox">
 
@@ -327,73 +288,49 @@ Generate QR Label
 
 <script>
 
-const defaultMaterials = [
+const materials = [
 
-{code:'0838181493',name:'TES',stock:95,reorder:20},
-{code:'0838880104',name:'SC Valve New',stock:100,reorder:20},
-{code:'0838881066',name:'Combo Valve',stock:75,reorder:20},
-{code:'0838882104',name:'LOT Valve',stock:60,reorder:20},
-{code:'0838911014',name:'Pressure Regulator',stock:40,reorder:15},
-{code:'0838920104',name:'Safety Caps',stock:250,reorder:50},
-{code:'0838929014',name:'Nylon Thread',stock:150,reorder:30},
-{code:'0838929034',name:'SS Clip',stock:80,reorder:20},
-{code:'0838930764',name:'NBR O-Ring',stock:120,reorder:25},
-{code:'0838930774',name:'FKM O-Ring',stock:90,reorder:25},
-{code:'6183050164',name:'Teflon Tape',stock:200,reorder:40},
-{code:'8601061404',name:'Zinc Chrome Primer',stock:50,reorder:10},
-{code:'8614022944',name:'Paint Enamel Signal Red',stock:70,reorder:15},
-{code:'8614023204',name:'Paint Enamel White',stock:65,reorder:15},
-{code:'8614023664',name:'Paint Synthetic Enamel Oxford Blue',stock:55,reorder:15},
-{code:'8630200504',name:'Thinner F/Enamel Paint',stock:85,reorder:20},
-{code:'8740155404',name:'Brown Soap F/LPG Conveyor',stock:45,reorder:10},
-{code:'9532500114',name:'Gloves Hand Cotton 10IN',stock:300,reorder:60},
-{code:'0838920203',name:'LOT CAP',stock:110,reorder:25},
-{code:'0838920404',name:'Spindle',stock:95,reorder:20},
-{code:'0838920504',name:'Valve Spring',stock:140,reorder:30},
-{code:'0838920604',name:'Rubber Washer',stock:180,reorder:35},
-{code:'0838920704',name:'Dust Cap',stock:210,reorder:50},
-{code:'0838920804',name:'Hex Nut',stock:500,reorder:100},
-{code:'0838920904',name:'MS Bolt',stock:450,reorder:100},
-{code:'0838921004',name:'Lubrication Oil',stock:70,reorder:20},
-{code:'0838921104',name:'Hydraulic Oil',stock:55,reorder:15},
-{code:'0838921204',name:'Grease',stock:90,reorder:20},
-{code:'0838921304',name:'Cotton Waste',stock:150,reorder:30},
-{code:'0838921404',name:'Cleaning Cloth',stock:180,reorder:40},
-{code:'0838921504',name:'Industrial Gloves',stock:220,reorder:50},
-{code:'0838921604',name:'Safety Goggles',stock:80,reorder:20},
-{code:'0838921704',name:'Face Shield',stock:60,reorder:15},
-{code:'0838921804',name:'Fire Extinguisher',stock:25,reorder:10},
-{code:'0838921904',name:'Pressure Gauge',stock:45,reorder:10},
-{code:'0838922004',name:'Temperature Sensor',stock:30,reorder:10},
-{code:'0838922104',name:'Electrical Cable',stock:300,reorder:50},
-{code:'0838922204',name:'Cable Tie',stock:500,reorder:100},
-{code:'0838922304',name:'MCB Switch',stock:40,reorder:10},
-{code:'0838922404',name:'LED Indicator',stock:70,reorder:20},
-{code:'0838922504',name:'Push Button',stock:85,reorder:20},
-{code:'0838922604',name:'Contact Relay',stock:35,reorder:10},
-{code:'0838922704',name:'Bearing',stock:95,reorder:20},
-{code:'0838922804',name:'Chain Sprocket',stock:45,reorder:10},
-{code:'0838922904',name:'Conveyor Chain',stock:25,reorder:10},
-{code:'0838923004',name:'Air Filter',stock:65,reorder:15},
-{code:'0838923104',name:'Oil Filter',stock:70,reorder:15},
-{code:'0838923204',name:'Water Filter',stock:50,reorder:10}
+{code:'0838181493',name:'TES',unit:'Nos.',stock:95,reorder:20},
+
+{code:'0838880104',name:'SC Valve New',unit:'Nos.',stock:100,reorder:20},
+
+{code:'0838881066',name:'Combo Valve',unit:'Nos.',stock:75,reorder:20},
+
+{code:'0838882104',name:'LOT Valve',unit:'Nos.',stock:60,reorder:20},
+
+{code:'0838911014',name:'Pressure Regulator',unit:'Nos.',stock:40,reorder:15},
+
+{code:'0838920104',name:'Safety Caps',unit:'Nos.',stock:250,reorder:50},
+
+{code:'0838929014',name:'Nylon Thread',unit:'Nos.',stock:150,reorder:30},
+
+{code:'0838929034',name:'SS Clip',unit:'Nos.',stock:80,reorder:20},
+
+{code:'0838930764',name:'NBR O-Ring',unit:'Nos.',stock:120,reorder:25},
+
+{code:'0838930774',name:'FKM O-Ring',unit:'Nos.',stock:90,reorder:25},
+
+{code:'6183050164',name:'Teflon Tape',unit:'Nos.',stock:200,reorder:40},
+
+{code:'8601061404',name:'Zinc Chrome Primer',unit:'Litres',stock:50,reorder:10},
+
+{code:'8614022944',name:'Paint Enamel Signal Red',unit:'Litres',stock:70,reorder:15},
+
+{code:'8614023204',name:'Paint Enamel White',unit:'Litres',stock:65,reorder:15},
+
+{code:'8614023664',name:'Paint Synthetic Enamel Oxford Blue',unit:'Litres',stock:55,reorder:15},
+
+{code:'8630200504',name:'Thinner F/Enamel Paint',unit:'Litres',stock:85,reorder:20},
+
+{code:'8740155404',name:'Brown Soap F/LPG Conveyor',unit:'Kg',stock:45,reorder:10},
+
+{code:'9532500114',name:'Gloves Hand Cotton 10IN',unit:'Nos.',stock:300,reorder:60},
+
+{code:'0838920203',name:'LOT CAP',unit:'Nos.',stock:110,reorder:25}
 
 ];
 
-let materials =
-JSON.parse(localStorage.getItem('materials')) ||
-defaultMaterials;
-
 let currentAction='';
-
-function saveData(){
-
-localStorage.setItem(
-'materials',
-JSON.stringify(materials)
-);
-
-}
 
 function renderTable(){
 
@@ -415,8 +352,13 @@ table.innerHTML += `
 <tr>
 
 <td>${item.code}</td>
+
 <td>${item.name}</td>
+
+<td>${item.unit}</td>
+
 <td>${item.stock}</td>
+
 <td>${item.reorder}</td>
 
 <td class="${item.stock<=item.reorder?'low':'normal'}">
@@ -437,10 +379,6 @@ document.getElementById('totalMaterials').innerHTML=
 materials.length;
 
 fillDropdown();
-
-saveData();
-
-createChart();
 
 }
 
@@ -486,12 +424,15 @@ parseInt(
 document.getElementById('qtyInput').value
 );
 
+const person =
+document.getElementById('personInput').value;
+
 const material =
 materials.find(m=>m.code===code);
 
-if(!material || !qty){
+if(!material || !qty || !person){
 
-alert('Invalid Data');
+alert('Please Fill All Details');
 
 return;
 
@@ -513,7 +454,8 @@ addHistory(
 'Issued',
 material.name,
 qty,
-material.stock
+material.stock,
+person
 );
 
 }
@@ -526,22 +468,23 @@ addHistory(
 'Received',
 material.name,
 qty,
-material.stock
+material.stock,
+person
 );
 
 }
-
-saveData();
 
 renderTable();
 
 document.getElementById('qtyInput').value='';
 
+document.getElementById('personInput').value='';
+
 alert('Transaction Successful');
 
 }
 
-function addHistory(action,name,qty,balance){
+function addHistory(action,name,qty,balance,person){
 
 const div =
 document.createElement('div');
@@ -552,17 +495,21 @@ div.innerHTML=`
 
 <b>${action}</b> - ${name}
 
-<br>
+<br><br>
 
-Quantity: ${qty}
-
-<br>
-
-Balance Stock: ${balance}
+<b>Quantity:</b> ${qty}
 
 <br>
 
-${new Date().toLocaleString()}
+<b>${action==='Issued'?'Issued To':'Received From'}:</b> ${person}
+
+<br>
+
+<b>Balance Stock:</b> ${balance}
+
+<br>
+
+<b>Date:</b> ${new Date().toLocaleString()}
 
 `;
 
@@ -635,116 +582,6 @@ html5QrCode.stop();
 
 }
 
-);
-
-}
-
-function generateQR(){
-
-const code =
-prompt('Enter Material Code');
-
-document.getElementById('qrcode').innerHTML='';
-
-new QRCode(
-document.getElementById('qrcode'),
-{
-text:code,
-width:200,
-height:200
-}
-);
-
-}
-
-let chart;
-
-function createChart(){
-
-const ctx =
-document.getElementById('stockChart');
-
-if(chart){
-chart.destroy();
-}
-
-chart = new Chart(ctx,{
-
-type:'bar',
-
-data:{
-
-labels:
-materials.map(m=>m.name),
-
-datasets:[{
-
-label:'Current Stock',
-
-data:
-materials.map(m=>m.stock),
-
-backgroundColor:'#2563eb'
-
-}]
-
-}
-
-});
-
-}
-
-function downloadPDF(){
-
-const { jsPDF } = window.jspdf;
-
-const doc = new jsPDF();
-
-let y=20;
-
-doc.text(
-'Inventory Report',
-10,
-10
-);
-
-materials.forEach(item=>{
-
-doc.text(
-
-item.name+
-' - Stock: '+item.stock,
-
-10,
-y
-
-);
-
-y+=10;
-
-});
-
-doc.save('InventoryReport.pdf');
-
-}
-
-function exportExcel(){
-
-const worksheet =
-XLSX.utils.json_to_sheet(materials);
-
-const workbook =
-XLSX.utils.book_new();
-
-XLSX.utils.book_append_sheet(
-workbook,
-worksheet,
-'Inventory'
-);
-
-XLSX.writeFile(
-workbook,
-'Inventory.xlsx'
 );
 
 }
