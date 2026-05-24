@@ -7,7 +7,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Professional Smart Inventory Dashboard</title>
+<title>Professional Inventory ERP Dashboard</title>
 
 <!-- LIBRARIES -->
 
@@ -40,124 +40,81 @@ background:
 linear-gradient(
 135deg,
 #0f172a,
-#1e3a8a,
+#1e293b,
+#1d4ed8,
 #0f766e
 );
 
 color:white;
 min-height:100vh;
-display:flex;
 
 }
 
-.sidebar{
-
-width:260px;
-
-background:
-rgba(0,0,0,0.3);
-
-backdrop-filter:blur(10px);
-
-padding:25px;
-
-position:fixed;
-
-height:100vh;
-
-overflow:auto;
-
+.app{
+padding:20px;
 }
 
-.logo{
-
-font-size:28px;
-font-weight:bold;
-margin-bottom:40px;
-
+h1{
+font-size:36px;
+margin-bottom:10px;
 }
 
-.menu button{
+.topButtons{
 
-width:100%;
+display:grid;
 
-padding:15px;
-
-margin-bottom:15px;
-
-border:none;
-
-border-radius:15px;
-
-background:
-rgba(255,255,255,0.08);
-
-color:white;
-
-font-size:15px;
-
-cursor:pointer;
-
-transition:0.3s;
-
-}
-
-.menu button:hover{
-
-background:
-linear-gradient(
-to right,
-#2563eb,
-#06b6d4
-);
-
-}
-
-.main{
-
-margin-left:280px;
-
-padding:25px;
-
-width:100%;
-
-}
-
-.topBar{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-flex-wrap:wrap;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
 
 gap:15px;
 
+margin-top:25px;
+
 }
 
-.toggleBtn{
+.topButtons button{
 
-padding:12px 20px;
+padding:18px;
 
 border:none;
 
-border-radius:15px;
+border-radius:20px;
 
-background:
-linear-gradient(
-to right,
-#7c3aed,
-#2563eb
-);
-
-color:white;
-
-cursor:pointer;
+font-size:16px;
 
 font-weight:bold;
 
+cursor:pointer;
+
+color:white;
+
+transition:0.3s;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,0.3);
+
+}
+
+.topButtons button:hover{
+
+transform:translateY(-4px);
+
+}
+
+.issue{
+background:linear-gradient(to right,#ef4444,#dc2626);
+}
+
+.receive{
+background:linear-gradient(to right,#22c55e,#15803d);
+}
+
+.scan{
+background:linear-gradient(to right,#2563eb,#1d4ed8);
+}
+
+.report{
+background:linear-gradient(to right,#f59e0b,#d97706);
 }
 
 .cards{
@@ -185,11 +142,11 @@ rgba(255,255,255,0.08);
 backdrop-filter:blur(12px);
 
 box-shadow:
-0 10px 25px rgba(0,0,0,0.3);
-
-transition:0.3s;
+0 10px 30px rgba(0,0,0,0.3);
 
 cursor:pointer;
+
+transition:0.3s;
 
 }
 
@@ -199,21 +156,19 @@ transform:translateY(-5px);
 
 }
 
-.card h3{
-font-size:18px;
-}
-
 .card p{
 
 font-size:38px;
+
 font-weight:bold;
+
 margin-top:15px;
 
 }
 
 .section{
 
-margin-top:35px;
+margin-top:30px;
 
 padding:25px;
 
@@ -224,6 +179,24 @@ rgba(255,255,255,0.08);
 
 backdrop-filter:blur(12px);
 
+display:none;
+
+animation:fade 0.3s ease;
+
+}
+
+@keyframes fade{
+
+from{
+opacity:0;
+transform:translateY(10px);
+}
+
+to{
+opacity:1;
+transform:translateY(0px);
+}
+
 }
 
 .searchBox{
@@ -232,7 +205,7 @@ width:100%;
 
 padding:15px;
 
-margin-top:20px;
+margin-top:18px;
 
 border:none;
 
@@ -245,6 +218,8 @@ color:white;
 
 outline:none;
 
+font-size:15px;
+
 }
 
 .searchBox::placeholder{
@@ -254,6 +229,7 @@ color:#ddd;
 select{
 
 background:#0f172a !important;
+
 color:white !important;
 
 }
@@ -261,6 +237,7 @@ color:white !important;
 option{
 
 background:#0f172a;
+
 color:white;
 
 }
@@ -268,20 +245,24 @@ color:white;
 .tableContainer{
 
 overflow-x:auto;
-margin-top:20px;
+
+margin-top:25px;
+
+border-radius:20px;
 
 }
 
 table{
 
 width:100%;
+
 border-collapse:collapse;
 
 }
 
 th{
 
-padding:15px;
+padding:16px;
 
 background:
 linear-gradient(
@@ -294,7 +275,7 @@ to right,
 
 td{
 
-padding:14px;
+padding:15px;
 
 border-bottom:
 1px solid rgba(255,255,255,0.1);
@@ -315,80 +296,32 @@ color:#4ade80;
 font-weight:bold;
 }
 
-.buttons{
+.panelButton{
 
-display:flex;
-gap:15px;
-flex-wrap:wrap;
-margin-top:25px;
+margin-top:20px;
 
-}
+padding:15px;
 
-button{
-
-padding:14px 18px;
+width:100%;
 
 border:none;
 
 border-radius:15px;
 
+font-size:16px;
+
 font-weight:bold;
 
 cursor:pointer;
 
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+
 color:white;
-
-transition:0.3s;
-
-}
-
-button:hover{
-
-transform:translateY(-3px);
-
-}
-
-.issue{
-background:linear-gradient(to right,#ef4444,#dc2626);
-}
-
-.receive{
-background:linear-gradient(to right,#22c55e,#15803d);
-}
-
-.scan{
-background:linear-gradient(to right,#3b82f6,#1d4ed8);
-}
-
-.download{
-background:linear-gradient(to right,#f59e0b,#d97706);
-}
-
-.panel{
-
-display:none;
-
-margin-top:25px;
-
-padding:25px;
-
-border-radius:25px;
-
-background:
-rgba(255,255,255,0.08);
-
-}
-
-.transaction{
-
-padding:15px;
-
-margin-top:15px;
-
-border-radius:15px;
-
-background:
-rgba(255,255,255,0.08);
 
 }
 
@@ -410,58 +343,46 @@ align-items:center;
 
 justify-content:center;
 
+min-height:300px;
+
 color:black;
 
 }
 
-.chartContainer{
+.transaction{
 
-margin-top:25px;
+padding:15px;
 
-height:350px;
+margin-top:15px;
 
-}
+border-radius:15px;
 
-.lightMode{
-
-background:#f1f5f9;
-color:black;
+background:
+rgba(255,255,255,0.08);
 
 }
 
-.lightMode .sidebar{
-background:white;
+.chartBox{
+
+margin-top:30px;
+
+padding:25px;
+
+border-radius:25px;
+
+background:
+rgba(255,255,255,0.08);
+
 }
 
-.lightMode .section,
-.lightMode .card{
-background:white;
-color:black;
+#reader{
+margin-top:20px;
 }
 
-.lightMode table{
-color:black;
-}
+@media(max-width:768px){
 
-.lightMode .searchBox{
-background:#e2e8f0;
-color:black;
-}
-
-@media(max-width:900px){
-
-.sidebar{
-position:relative;
-width:100%;
-height:auto;
-}
-
-.main{
-margin-left:0;
-}
-
-body{
-flex-direction:column;
+.topButtons{
+grid-template-columns:1fr;
 }
 
 }
@@ -472,104 +393,100 @@ flex-direction:column;
 
 <body>
 
-<!-- SIDEBAR -->
+<div class="app">
 
-<div class="sidebar">
+<h1>📦 Inventory ERP Dashboard</h1>
 
-<div class="logo">
-📦 Inventory ERP
-</div>
+<p>Professional QR Based Inventory Management System</p>
 
-<div class="menu">
+<!-- TOP BUTTONS -->
 
-<button onclick="scrollToSection('dashboard')">
-Dashboard
-</button>
+<div class="topButtons">
 
-<button onclick="scrollToSection('inventory')">
-Inventory
-</button>
-
-<button onclick="scrollToSection('transactionPanel')">
+<button
+class="issue"
+onclick="showSection('transactionSection')"
+>
 Issue / Receive
 </button>
 
-<button onclick="scrollToSection('qrPanel')">
-QR Generator
+<button
+class="receive"
+onclick="showSection('qrSection')"
+>
+Generate QR
 </button>
-
-<button onclick="scrollToSection('historyPanel')">
-Reports
-</button>
-
-</div>
-
-</div>
-
-<!-- MAIN -->
-
-<div class="main">
-
-<div class="topBar">
-
-<div>
-
-<h1>Professional Inventory Dashboard</h1>
-
-<p>Enterprise QR Based Inventory Management System</p>
-
-</div>
 
 <button
-class="toggleBtn"
-onclick="toggleMode()"
+class="scan"
+onclick="showScanner()"
 >
-🌙 Dark / Light
+Scan QR
+</button>
+
+<button
+class="report"
+onclick="showSection('reportSection')"
+>
+Reports
 </button>
 
 </div>
 
 <!-- KPI CARDS -->
 
-<div class="cards" id="dashboard">
+<div class="cards">
 
 <div class="card">
+
 <h3>Total Materials</h3>
+
 <p id="totalMaterials"></p>
+
 </div>
 
-<div class="card" onclick="showLowStock()">
+<div
+class="card"
+onclick="showLowStock()"
+>
+
 <h3>Low Stock</h3>
+
 <p id="lowStock"></p>
+
 </div>
 
 <div class="card">
-<h3>Transactions Today</h3>
-<p id="todayTransactions">0</p>
-</div>
 
-<div class="card">
 <h3>Total Inventory</h3>
-<p id="totalStock">0</p>
+
+<p id="totalStock"></p>
+
+</div>
+
+<div class="card">
+
+<h3>Total Transactions</h3>
+
+<p id="totalTransactions"></p>
+
 </div>
 
 </div>
 
 <!-- CHART -->
 
-<div class="section">
+<div class="chartBox">
 
 <h2>Inventory Analytics</h2>
 
-<div class="chartContainer">
 <canvas id="stockChart"></canvas>
-</div>
 
 </div>
 
-<!-- INVENTORY -->
+<!-- INVENTORY TABLE -->
 
-<div class="section" id="inventory">
+<div class="chartBox">
 
 <h2>Inventory Table</h2>
 
@@ -606,35 +523,19 @@ onkeyup="searchMaterial(this.value)"
 
 </div>
 
-<!-- BUTTONS -->
-
-<div class="buttons">
-
-<button class="issue" onclick="openPanel()">
-Issue / Receive
-</button>
-
-<button class="scan" onclick="startScanner()">
-Scan QR
-</button>
-
-<button class="receive" onclick="openQRPanel()">
-Generate QR
-</button>
-
-<button class="download" onclick="openHistoryPanel()">
-Reports
-</button>
-
-</div>
-
 <!-- ISSUE RECEIVE -->
 
-<div id="transactionPanel" class="panel section">
+<div
+id="transactionSection"
+class="section"
+>
 
-<h2>Material Transaction</h2>
+<h2>Issue / Receive Material</h2>
 
-<select id="actionSelect" class="searchBox">
+<select
+id="actionSelect"
+class="searchBox"
+>
 
 <option value="issue">
 Issue Material
@@ -646,13 +547,16 @@ Receive Material
 
 </select>
 
-<select id="materialSelect" class="searchBox"></select>
+<select
+id="materialSelect"
+class="searchBox"
+></select>
 
 <input
 type="number"
 id="qtyInput"
 class="searchBox"
-placeholder="Quantity"
+placeholder="Enter Quantity"
 >
 
 <input
@@ -663,8 +567,7 @@ placeholder="Issued To / Received From"
 >
 
 <button
-class="scan"
-style="margin-top:20px;"
+class="panelButton"
 onclick="submitTransaction()"
 >
 Submit Transaction
@@ -672,25 +575,29 @@ Submit Transaction
 
 </div>
 
-<!-- QR PANEL -->
+<!-- QR SECTION -->
 
-<div id="qrPanel" class="panel section">
+<div
+id="qrSection"
+class="section"
+>
 
 <h2>QR Generator</h2>
 
-<select id="qrMaterial" class="searchBox"></select>
+<select
+id="qrMaterial"
+class="searchBox"
+></select>
 
 <button
-class="scan"
-style="margin-top:20px;"
+class="panelButton"
 onclick="generateQRLabel()"
 >
 Generate QR
 </button>
 
 <button
-class="download"
-style="margin-top:20px;"
+class="panelButton"
 onclick="downloadQR()"
 >
 Download QR PNG
@@ -700,17 +607,32 @@ Download QR PNG
 
 </div>
 
-<!-- QR READER -->
+<!-- SCANNER -->
+
+<div
+id="scannerSection"
+class="section"
+>
+
+<h2>QR Scanner</h2>
 
 <div id="reader"></div>
 
-<!-- REPORTS -->
+</div>
 
-<div id="historyPanel" class="panel section">
+<!-- REPORT SECTION -->
+
+<div
+id="reportSection"
+class="section"
+>
 
 <h2>Material Transaction Reports</h2>
 
-<select id="reportMaterial" class="searchBox"></select>
+<select
+id="reportMaterial"
+class="searchBox"
+></select>
 
 <input
 type="date"
@@ -724,21 +646,26 @@ id="toDate"
 class="searchBox"
 >
 
-<div class="buttons">
-
-<button class="scan" onclick="generateHistory()">
+<button
+class="panelButton"
+onclick="generateHistory()"
+>
 Generate Report
 </button>
 
-<button class="download" onclick="downloadExcel()">
+<button
+class="panelButton"
+onclick="downloadExcel()"
+>
 Download Excel
 </button>
 
-<button class="download" onclick="downloadPDF()">
+<button
+class="panelButton"
+onclick="downloadPDF()"
+>
 Download PDF
 </button>
-
-</div>
 
 <div id="historyContainer"></div>
 
@@ -847,20 +774,6 @@ JSON.parse(
 localStorage.getItem('transactions')
 )||[];
 
-function saveData(){
-
-localStorage.setItem(
-'transactions',
-JSON.stringify(transactionHistory)
-);
-
-localStorage.setItem(
-'materials',
-JSON.stringify(materials)
-);
-
-}
-
 const savedMaterials=
 JSON.parse(
 localStorage.getItem('materials')
@@ -868,6 +781,111 @@ localStorage.getItem('materials')
 
 if(savedMaterials){
 materials=savedMaterials;
+}
+
+function saveData(){
+
+localStorage.setItem(
+'materials',
+JSON.stringify(materials)
+);
+
+localStorage.setItem(
+'transactions',
+JSON.stringify(transactionHistory)
+);
+
+}
+
+function showSection(id){
+
+hideSections();
+
+document.getElementById(id)
+.style.display='block';
+
+}
+
+function hideSections(){
+
+document.querySelectorAll(
+'.section'
+).forEach(sec=>{
+
+sec.style.display='none';
+
+});
+
+}
+
+function showScanner(){
+
+showSection('scannerSection');
+
+document.getElementById(
+'reader'
+).innerHTML='';
+
+const html5QrCode =
+new Html5Qrcode('reader');
+
+html5QrCode.start(
+
+{ facingMode:'environment' },
+
+{
+fps:10,
+qrbox:250
+},
+
+(decodedText)=>{
+
+try{
+
+const qrData=
+JSON.parse(decodedText);
+
+const material=
+materials.find(
+m => m.code===qrData.code
+);
+
+if(material){
+
+html5QrCode.stop();
+
+showSection(
+'transactionSection'
+);
+
+document.getElementById(
+'materialSelect'
+).value=
+material.code;
+
+Swal.fire(
+'QR Scanned',
+material.name,
+'success'
+);
+
+}
+
+}
+catch(err){
+
+Swal.fire(
+'Error',
+'Invalid QR',
+'error'
+);
+
+}
+
+}
+
+);
+
 }
 
 function renderTable(){
@@ -907,11 +925,15 @@ table.innerHTML += `
 <td>${item.reorder}</td>
 
 <td class="${
-item.stock<=item.reorder?'low':'normal'
+item.stock<=item.reorder
+?'low'
+:'normal'
 }">
 
 ${
-item.stock<=item.reorder?'Low':'Normal'
+item.stock<=item.reorder
+?'Low'
+:'Normal'
 }
 
 </td>
@@ -938,7 +960,7 @@ document.getElementById(
 total;
 
 document.getElementById(
-'todayTransactions'
+'totalTransactions'
 ).innerHTML=
 transactionHistory.length;
 
@@ -950,156 +972,32 @@ renderChart();
 
 function fillDropdowns(){
 
-const dropdowns=[
+const ids=[
 'materialSelect',
 'qrMaterial',
 'reportMaterial'
 ];
 
-dropdowns.forEach(id=>{
+ids.forEach(id=>{
 
-const d=
+const dropdown=
 document.getElementById(id);
 
-d.innerHTML='';
+dropdown.innerHTML='';
 
 materials.forEach(item=>{
 
-d.innerHTML += `
+dropdown.innerHTML += `
+
 <option value="${item.code}">
 ${item.code} - ${item.name}
 </option>
+
 `;
 
 });
 
 });
-
-}
-
-function renderChart(){
-
-const ctx=
-document.getElementById(
-'stockChart'
-);
-
-let normal=0;
-let low=0;
-
-materials.forEach(item=>{
-
-if(item.stock<=item.reorder){
-low++;
-}
-else{
-normal++;
-}
-
-});
-
-new Chart(ctx,{
-
-type:'doughnut',
-
-data:{
-
-labels:[
-'Normal Stock',
-'Low Stock'
-],
-
-datasets:[{
-
-data:[
-normal,
-low
-]
-
-}]
-
-}
-
-});
-
-}
-
-function showLowStock(){
-
-const lowMaterials=
-materials.filter(
-m => m.stock<=m.reorder
-);
-
-let text='';
-
-lowMaterials.forEach(item=>{
-
-text += `
-${item.name}
- - Stock:
-${item.stock}<br>
-`;
-
-});
-
-Swal.fire({
-
-title:'Low Stock Materials',
-
-html:text ||
-
-'No Low Stock',
-
-icon:'warning'
-
-});
-
-}
-
-function openPanel(){
-
-hidePanels();
-
-document.getElementById(
-'transactionPanel'
-).style.display='block';
-
-}
-
-function openQRPanel(){
-
-hidePanels();
-
-document.getElementById(
-'qrPanel'
-).style.display='block';
-
-}
-
-function openHistoryPanel(){
-
-hidePanels();
-
-document.getElementById(
-'historyPanel'
-).style.display='block';
-
-}
-
-function hidePanels(){
-
-document.getElementById(
-'transactionPanel'
-).style.display='none';
-
-document.getElementById(
-'qrPanel'
-).style.display='none';
-
-document.getElementById(
-'historyPanel'
-).style.display='none';
 
 }
 
@@ -1136,7 +1034,7 @@ if(!qty || !person){
 
 Swal.fire(
 'Error',
-'Fill All Details',
+'Fill all details',
 'error'
 );
 
@@ -1161,7 +1059,6 @@ return;
 material.stock -= qty;
 
 }
-
 else{
 
 material.stock += qty;
@@ -1190,15 +1087,16 @@ renderTable();
 
 Swal.fire(
 'Success',
-'Transaction Completed',
+'Transaction Successful',
 'success'
 );
 
 if(material.stock<=material.reorder){
 
 Swal.fire(
-'Warning',
-`${material.name} Low Stock`,
+'Low Stock',
+material.name +
+' is low stock',
 'warning'
 );
 
@@ -1248,7 +1146,8 @@ canvas,
 qrData,
 
 {
-width:220
+width:220,
+margin:2
 },
 
 function(error){
@@ -1257,7 +1156,7 @@ if(error){
 
 Swal.fire(
 'Error',
-'QR Failed',
+'QR Generation Failed',
 'error'
 );
 
@@ -1300,7 +1199,7 @@ document.getElementById(
 const link=
 document.createElement('a');
 
-link.download='QR.png';
+link.download='QR_Label.png';
 
 link.href=
 canvas.toDataURL();
@@ -1311,63 +1210,28 @@ link.click();
 
 }
 
-function startScanner(){
-
-const html5QrCode=
-new Html5Qrcode(
-'reader'
-);
-
-html5QrCode.start(
-
-{ facingMode:'environment' },
-
-{
-fps:10,
-qrbox:250
-},
-
-(decodedText)=>{
-
-const qrData=
-JSON.parse(decodedText);
-
-const material=
-materials.find(
-m => m.code===qrData.code
-);
-
-if(material){
-
-html5QrCode.stop();
-
-openPanel();
-
-document.getElementById(
-'materialSelect'
-).value=
-material.code;
-
-Swal.fire(
-'QR Scanned',
-material.name,
-'success'
-);
-
-}
-
-}
-
-);
-
-}
-
 function generateHistory(){
 
 const code=
 document.getElementById(
 'reportMaterial'
 ).value;
+
+const from=
+new Date(
+document.getElementById(
+'fromDate'
+).value
+);
+
+const to=
+new Date(
+document.getElementById(
+'toDate'
+).value
+);
+
+to.setHours(23,59,59,999);
 
 const container=
 document.getElementById(
@@ -1377,9 +1241,16 @@ document.getElementById(
 container.innerHTML='';
 
 const filtered=
-transactionHistory.filter(
-t => t.material.includes(code)
-);
+transactionHistory.filter(item=>{
+
+const d=
+new Date(item.date);
+
+return item.material &&
+d>=from &&
+d<=to;
+
+});
 
 filtered.forEach(item=>{
 
@@ -1466,8 +1337,8 @@ transactionHistory.forEach(item=>{
 pdf.text(
 
 `${item.material}
- ${item.action}
- Qty:${item.qty}`,
+ | ${item.action}
+ | Qty:${item.qty}`,
 
 10,
 y
@@ -1515,19 +1386,82 @@ row.style.display='none';
 
 }
 
-function toggleMode(){
+function showLowStock(){
 
-document.body.classList.toggle(
-'lightMode'
+const low=
+materials.filter(
+m => m.stock<=m.reorder
 );
+
+let text='';
+
+low.forEach(item=>{
+
+text += `
+${item.name}
+ - Stock:
+${item.stock}<br>
+`;
+
+});
+
+Swal.fire({
+
+title:'Low Stock Materials',
+
+html:text ||
+
+'No Low Stock',
+
+icon:'warning'
+
+});
 
 }
 
-function scrollToSection(id){
+function renderChart(){
 
-document.getElementById(id)
-.scrollIntoView({
-behavior:'smooth'
+const ctx=
+document.getElementById(
+'stockChart'
+);
+
+let normal=0;
+let low=0;
+
+materials.forEach(item=>{
+
+if(item.stock<=item.reorder){
+low++;
+}
+else{
+normal++;
+}
+
+});
+
+new Chart(ctx,{
+
+type:'doughnut',
+
+data:{
+
+labels:[
+'Normal',
+'Low Stock'
+],
+
+datasets:[{
+
+data:[
+normal,
+low
+]
+
+}]
+
+}
+
 });
 
 }
