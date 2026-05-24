@@ -1,13 +1,16 @@
-# TES Inventory Full Mobile App (Single index.html File)
 <!DOCTYPE html>
 <html>
+
 <head>
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>TES Inventory Dashboard</title>
 
   <script src="https://unpkg.com/html5-qrcode"></script>
 
   <style>
+
     body {
       margin: 0;
       font-family: Arial, sans-serif;
@@ -80,13 +83,13 @@
       border-top: 1px solid #eee;
     }
 
-    .low {
-      color: red;
+    .normal {
+      color: green;
       font-weight: bold;
     }
 
-    .normal {
-      color: green;
+    .low {
+      color: red;
       font-weight: bold;
     }
 
@@ -117,7 +120,6 @@
 
     .scanBtn {
       background: #0077b6;
-      margin-top: 20px;
     }
 
     #reader {
@@ -148,16 +150,8 @@
       font-weight: bold;
     }
 
-    .qrBox {
-      margin-top: 30px;
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
     @media (max-width: 600px) {
+
       .cards {
         flex-direction: column;
       }
@@ -170,8 +164,11 @@
         display: block;
         overflow-x: auto;
       }
+
     }
+
   </style>
+
 </head>
 
 <body>
@@ -179,7 +176,10 @@
 <div class="app">
 
   <h1>TES Inventory Dashboard</h1>
-  <div class="sub">QR Based Mobile Inventory Management System</div>
+
+  <div class="sub">
+    QR Based Mobile Inventory Management System
+  </div>
 
   <div class="cards">
 
@@ -194,7 +194,7 @@
     </div>
 
     <div class="card">
-      <h3>Low Stock Items</h3>
+      <h3>Low Stock</h3>
       <p id="lowStockCount">0</p>
     </div>
 
@@ -203,9 +203,9 @@
   <input
     type="text"
     class="searchBox"
-    placeholder="Search Material"
+    placeholder="Search TES"
     onkeyup="searchMaterial(this.value)"
-  />
+  >
 
   <table>
 
@@ -220,6 +220,7 @@
     </thead>
 
     <tbody id="inventoryTable">
+
       <tr>
         <td>0838181493</td>
         <td>TES</td>
@@ -227,6 +228,7 @@
         <td>A1</td>
         <td id="status" class="normal">Normal</td>
       </tr>
+
     </tbody>
 
   </table>
@@ -241,11 +243,11 @@
       Receive TES
     </button>
 
-  </div>
+    <button class="scanBtn" onclick="startScanner()">
+      Scan QR Code
+    </button>
 
-  <button onclick="startScanner()" class="scanBtn">
-    Scan QR Code
-  </button>
+  </div>
 
   <div id="reader"></div>
 
@@ -259,43 +261,45 @@
 
   </div>
 
-  <div class="qrBox">
-    <h2>TES QR Workflow</h2>
-
-    <p>
-      Scan QR → Enter Quantity → Stock Updates Automatically
-    </p>
-  </div>
-
 </div>
 
 <script>
 
   let stock = 95;
+
   const minStock = 20;
 
   function updateUI() {
 
     document.getElementById('totalStock').innerHTML = stock;
+
     document.getElementById('tableStock').innerHTML = stock;
 
     const status = document.getElementById('status');
 
     if (stock < minStock) {
+
       status.innerHTML = 'Low Stock';
+
       status.className = 'low';
+
       document.getElementById('lowStockCount').innerHTML = 1;
     }
+
     else {
+
       status.innerHTML = 'Normal';
+
       status.className = 'normal';
+
       document.getElementById('lowStockCount').innerHTML = 0;
     }
   }
 
   function addTransaction(text, cls) {
 
-    const transactions = document.getElementById('transactions');
+    const transactions =
+      document.getElementById('transactions');
 
     const div = document.createElement('div');
 
@@ -312,14 +316,21 @@
 
   function issueMaterial() {
 
-    const qty = parseInt(prompt('Enter issue quantity'));
+    const qty = parseInt(
+      prompt('Enter issue quantity')
+    );
 
     if (!qty || qty <= 0) {
+
+      alert('Invalid quantity');
+
       return;
     }
 
     if (qty > stock) {
+
       alert('Insufficient stock');
+
       return;
     }
 
@@ -327,14 +338,24 @@
 
     updateUI();
 
-    addTransaction(`Issued ${qty} TES`, 'redText');
+    addTransaction(
+      `Issued ${qty} TES`,
+      'redText'
+    );
+
+    alert(qty + ' TES issued successfully');
   }
 
   function receiveMaterial() {
 
-    const qty = parseInt(prompt('Enter receive quantity'));
+    const qty = parseInt(
+      prompt('Enter receive quantity')
+    );
 
     if (!qty || qty <= 0) {
+
+      alert('Invalid quantity');
+
       return;
     }
 
@@ -342,33 +363,45 @@
 
     updateUI();
 
-    addTransaction(`Received ${qty} TES`, 'greenText');
+    addTransaction(
+      `Received ${qty} TES`,
+      'greenText'
+    );
+
+    alert(qty + ' TES received successfully');
   }
 
   function searchMaterial(value) {
 
     value = value.toLowerCase();
 
-    const table = document.getElementById('inventoryTable');
+    const table =
+      document.getElementById('inventoryTable');
 
     if (
       value.includes('tes') ||
       value.includes('0838181493') ||
       value === ''
     ) {
+
       table.style.display = '';
     }
+
     else {
+
       table.style.display = 'none';
     }
   }
 
   function startScanner() {
 
-    const html5QrCode = new Html5Qrcode('reader');
+    const html5QrCode =
+      new Html5Qrcode('reader');
 
     html5QrCode.start(
+
       { facingMode: 'environment' },
+
       {
         fps: 10,
         qrbox: 250
@@ -377,35 +410,101 @@
       (decodedText) => {
 
         document.getElementById('result').innerHTML =
-          'Scanned Material Code: ' + decodedText;
+          'Scanned Material: ' + decodedText;
 
-        if (decodedText === '0838181493') {
+        if (
+          decodedText.includes('0838181493') ||
+          decodedText.toLowerCase().includes('tes')
+        ) {
 
-          const qty = parseInt(prompt('Enter issue quantity for TES'));
+          const action = prompt(
+            'Type ISSUE or RECEIVE'
+          );
 
-          if (qty && qty > 0 && qty <= stock) {
+          if (!action) {
 
-            stock = stock - qty;
+            html5QrCode.stop();
+
+            return;
+          }
+
+          const qty = parseInt(
+            prompt('Enter quantity')
+          );
+
+          if (!qty || qty <= 0) {
+
+            alert('Invalid quantity');
+
+            html5QrCode.stop();
+
+            return;
+          }
+
+          if (
+            action.toLowerCase() === 'issue'
+          ) {
+
+            if (qty > stock) {
+
+              alert('Insufficient stock');
+            }
+
+            else {
+
+              stock = stock - qty;
+
+              updateUI();
+
+              addTransaction(
+                `QR Issued ${qty} TES`,
+                'redText'
+              );
+
+              alert(
+                qty + ' TES issued successfully'
+              );
+            }
+          }
+
+          else if (
+            action.toLowerCase() === 'receive'
+          ) {
+
+            stock = stock + qty;
 
             updateUI();
 
             addTransaction(
-              `QR Issued ${qty} TES`,
-              'redText'
+              `QR Received ${qty} TES`,
+              'greenText'
             );
 
-            alert('TES issued successfully');
+            alert(
+              qty + ' TES received successfully'
+            );
+          }
+
+          else {
+
+            alert(
+              'Type ISSUE or RECEIVE only'
+            );
           }
         }
+
         else {
+
           alert('Unknown Material');
         }
 
         html5QrCode.stop();
       }
-    )
-    .catch(err => {
+
+    ).catch(err => {
+
       alert('Camera Error: ' + err);
+
     });
   }
 
@@ -415,27 +514,3 @@
 
 </body>
 </html>
-```
-
-After pasting:
-
-1. Commit changes in GitHub
-2. Wait 1 minute
-3. Open your GitHub Pages URL
-4. Test on mobile
-5. Allow camera permission
-6. Scan QR containing `0838181493`
-
-Features included:
-
-* Mobile responsive UI
-* QR scanner
-* Issue material
-* Receive material
-* Live stock update
-* Low stock alert
-* Transaction history
-* Search material
-* Camera support
-* QR-based stock deduction
-* Full-screen mobile app
