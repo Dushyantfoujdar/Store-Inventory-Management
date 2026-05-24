@@ -4,167 +4,336 @@
 <head>
 
 <meta charset="UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Inventory Dashboard</title>
+<title>Advanced Inventory Dashboard</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
 
-body{
+*{
 margin:0;
-font-family:Arial,sans-serif;
-background:linear-gradient(135deg,#0f172a,#1e3a8a,#0f766e);
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+
+font-family:'Segoe UI',sans-serif;
+
+background:
+linear-gradient(
+135deg,
+#0f172a,
+#111827,
+#1e3a8a,
+#0f766e
+);
+
+background-size:400% 400%;
+
+animation:bgmove 15s ease infinite;
+
 color:white;
+
 min-height:100vh;
+
+}
+
+@keyframes bgmove{
+
+0%{
+background-position:0% 50%;
+}
+
+50%{
+background-position:100% 50%;
+}
+
+100%{
+background-position:0% 50%;
+}
+
 }
 
 .app{
-padding:20px;
+padding:25px;
+}
+
+h1{
+font-size:38px;
+margin-bottom:10px;
 }
 
 .cards{
-display:flex;
+
+display:grid;
+
+grid-template-columns:
+repeat(auto-fit,minmax(250px,1fr));
+
 gap:20px;
-flex-wrap:wrap;
-margin-top:20px;
+
+margin-top:25px;
+
 }
 
 .card{
-flex:1;
-min-width:200px;
-padding:20px;
-border-radius:20px;
-background:rgba(255,255,255,0.15);
-backdrop-filter:blur(10px);
+
+padding:25px;
+
+border-radius:25px;
+
+background:
+rgba(255,255,255,0.08);
+
+backdrop-filter:blur(12px);
+
+border:
+1px solid rgba(255,255,255,0.12);
+
+box-shadow:
+0 10px 30px rgba(0,0,0,0.3);
+
 }
 
 .card p{
-font-size:30px;
+font-size:40px;
 font-weight:bold;
+margin-top:15px;
 }
 
 .searchBox{
+
 width:100%;
-padding:15px;
+
+padding:16px;
+
+margin-top:20px;
+
 border:none;
-border-radius:15px;
-margin-top:15px;
+
+border-radius:18px;
+
 font-size:16px;
+
+background:
+rgba(255,255,255,0.1);
+
+color:white;
+
+outline:none;
+
+}
+
+.searchBox::placeholder{
+color:#ddd;
 }
 
 .tableContainer{
+
+margin-top:30px;
+
 overflow-x:auto;
-margin-top:25px;
+
+padding:10px;
+
+border-radius:25px;
+
+background:
+rgba(255,255,255,0.08);
+
+backdrop-filter:blur(12px);
+
 }
 
 table{
 width:100%;
 border-collapse:collapse;
-background:white;
-color:black;
-border-radius:20px;
-overflow:hidden;
+color:white;
 }
 
 th{
-background:linear-gradient(to right,#06b6d4,#2563eb);
-color:white;
-padding:15px;
+
+padding:18px;
+
 text-align:left;
+
+background:
+linear-gradient(
+to right,
+#06b6d4,
+#2563eb,
+#7c3aed
+);
+
 }
 
 td{
-padding:15px;
-border-bottom:1px solid #eee;
+
+padding:16px;
+
+border-bottom:
+1px solid rgba(255,255,255,0.1);
+
+}
+
+tr:hover{
+background:rgba(255,255,255,0.05);
 }
 
 .low{
-color:red;
+color:#ff4d6d;
 font-weight:bold;
 }
 
 .normal{
-color:green;
+color:#4ade80;
 font-weight:bold;
 }
 
 .buttons{
+
 display:flex;
+
 gap:15px;
+
 flex-wrap:wrap;
-margin-top:25px;
+
+margin-top:30px;
+
 }
 
 button{
+
 flex:1;
-padding:15px;
+
+padding:16px;
+
 border:none;
-border-radius:15px;
-font-size:16px;
+
+border-radius:18px;
+
+font-size:15px;
+
 font-weight:bold;
+
 cursor:pointer;
+
 color:white;
+
+transition:0.3s;
+
+}
+
+button:hover{
+
+transform:translateY(-3px);
+
+opacity:0.95;
+
 }
 
 .issue{
-background:#dc2626;
+background:linear-gradient(to right,#ef4444,#dc2626);
 }
 
 .receive{
-background:#15803d;
+background:linear-gradient(to right,#22c55e,#15803d);
 }
 
 .scan{
-background:#1d4ed8;
+background:linear-gradient(to right,#3b82f6,#1d4ed8);
 }
 
 .theme{
-background:#6d28d9;
+background:linear-gradient(to right,#8b5cf6,#6d28d9);
+}
+
+.download{
+background:linear-gradient(to right,#f59e0b,#d97706);
 }
 
 .panel{
-margin-top:25px;
-padding:20px;
-background:white;
-color:black;
-border-radius:20px;
+
+margin-top:30px;
+
+padding:25px;
+
+border-radius:25px;
+
+background:
+rgba(255,255,255,0.08);
+
+backdrop-filter:blur(12px);
+
 display:none;
+
 }
 
 .transactionBox{
-margin-top:30px;
-padding:20px;
-border-radius:20px;
-background:rgba(255,255,255,0.15);
+
+margin-top:35px;
+
+padding:25px;
+
+border-radius:25px;
+
+background:
+rgba(255,255,255,0.08);
+
+backdrop-filter:blur(12px);
+
 }
 
 .transaction{
-background:white;
-color:black;
-padding:15px;
-border-radius:15px;
-margin-top:10px;
+
+padding:18px;
+
+border-radius:18px;
+
+margin-top:15px;
+
+background:
+rgba(255,255,255,0.08);
+
 }
 
 .filterBox{
+
 display:flex;
-gap:10px;
+
+gap:15px;
+
 flex-wrap:wrap;
+
 margin-top:20px;
+
 }
 
 #qrcode{
-margin-top:20px;
-padding:20px;
-background:white;
-display:inline-block;
+
+margin-top:25px;
+
+padding:25px;
+
 border-radius:20px;
-color:black;
+
+background:
+rgba(255,255,255,0.08);
+
+display:inline-block;
+
 }
 
 .light-mode{
@@ -174,14 +343,24 @@ color:black;
 
 .light-mode .card,
 .light-mode .panel,
-.light-mode .transactionBox{
+.light-mode .transactionBox,
+.light-mode .tableContainer,
+.light-mode #qrcode{
 background:white;
 color:black;
 }
 
-@media(max-width:700px){
+.light-mode table{
+color:black;
+}
 
-.cards,
+.light-mode .searchBox{
+background:#f1f5f9;
+color:black;
+}
+
+@media(max-width:768px){
+
 .buttons,
 .filterBox{
 flex-direction:column;
@@ -195,9 +374,11 @@ flex-direction:column;
 
 <body>
 
-<div class="app">
+<div class="app" id="dashboard">
 
 <h1>Store Inventory Dashboard</h1>
+
+<p>QR Based Inventory Management System</p>
 
 <div class="cards">
 
@@ -214,10 +395,15 @@ flex-direction:column;
 </div>
 
 <input
+
 type="text"
+
 class="searchBox"
+
 placeholder="Search Material"
+
 onkeyup="searchMaterial(this.value)"
+
 >
 
 <div class="tableContainer">
@@ -263,6 +449,18 @@ Generate QR
 
 <button class="theme" onclick="toggleTheme()">
 Dark / Light
+</button>
+
+<button class="download" onclick="downloadPNG()">
+Download PNG
+</button>
+
+<button class="download" onclick="downloadJPG()">
+Download JPG
+</button>
+
+<button class="download" onclick="downloadPDF()">
+Download PDF
 </button>
 
 </div>
@@ -325,20 +523,23 @@ Generate QR Label
 
 <select id="reportMaterial" class="searchBox"></select>
 
-<input type="date" id="fromDate" class="searchBox">
+<input
+type="date"
+id="fromDate"
+class="searchBox"
+>
 
-<input type="date" id="toDate" class="searchBox">
+<input
+type="date"
+id="toDate"
+class="searchBox"
+>
 
-<button class="scan" onclick="generateReport()">
+<button
+class="scan"
+onclick="generateReport()"
+>
 Generate Report
-</button>
-
-<button class="receive" onclick="downloadExcel()">
-Download Excel
-</button>
-
-<button class="issue" onclick="downloadPDF()">
-Download PDF
 </button>
 
 </div>
@@ -351,35 +552,53 @@ Download PDF
 
 <script>
 
-const defaultMaterials = [
+const defaultMaterials=[
 
 {code:'0838181493',name:'TES',unit:'Nos.',stock:95,reorder:20},
+
 {code:'0838880104',name:'SC Valve New',unit:'Nos.',stock:100,reorder:20},
+
 {code:'0838881066',name:'Combo Valve',unit:'Nos.',stock:75,reorder:20},
+
 {code:'0838882104',name:'LOT Valve',unit:'Nos.',stock:60,reorder:20},
+
 {code:'0838911014',name:'Pressure Regulator',unit:'Nos.',stock:40,reorder:15},
+
 {code:'0838920104',name:'Safety Caps',unit:'Nos.',stock:250,reorder:50},
+
 {code:'0838929014',name:'Nylon Thread',unit:'Nos.',stock:150,reorder:30},
+
 {code:'0838929034',name:'SS Clip',unit:'Nos.',stock:80,reorder:20},
+
 {code:'0838930764',name:'NBR O-Ring',unit:'Nos.',stock:120,reorder:25},
+
 {code:'0838930774',name:'FKM O-Ring',unit:'Nos.',stock:90,reorder:25},
+
 {code:'6183050164',name:'Teflon Tape',unit:'Nos.',stock:200,reorder:40},
+
 {code:'8601061404',name:'Zinc Chrome Primer',unit:'Litres',stock:50,reorder:10},
+
 {code:'8614022944',name:'Paint Enamel Signal Red',unit:'Litres',stock:70,reorder:15},
+
 {code:'8614023204',name:'Paint Enamel White',unit:'Litres',stock:65,reorder:15},
+
 {code:'8614023664',name:'Paint Synthetic Enamel Oxford Blue',unit:'Litres',stock:55,reorder:15},
+
 {code:'8630200504',name:'Thinner F/Enamel Paint',unit:'Litres',stock:85,reorder:20},
+
 {code:'8740155404',name:'Brown Soap F/LPG Conveyor',unit:'Kg',stock:45,reorder:10},
+
 {code:'9532500114',name:'Gloves Hand Cotton 10IN',unit:'Nos.',stock:300,reorder:60},
+
 {code:'0838920203',name:'LOT CAP',unit:'Nos.',stock:110,reorder:25}
 
 ];
 
-let materials =
+let materials=
 JSON.parse(localStorage.getItem('materials'))
 || defaultMaterials;
 
-let transactionHistory =
+let transactionHistory=
 JSON.parse(localStorage.getItem('transactions'))
 || [];
 
@@ -403,7 +622,7 @@ JSON.stringify(transactionHistory)
 
 function renderTable(){
 
-const table =
+const table=
 document.getElementById('inventoryTable');
 
 table.innerHTML='';
@@ -454,17 +673,19 @@ fillDropdowns();
 
 function fillDropdowns(){
 
-const materialSelect =
+const materialSelect=
 document.getElementById('materialSelect');
 
-const reportMaterial =
+const reportMaterial=
 document.getElementById('reportMaterial');
 
-const qrMaterial =
+const qrMaterial=
 document.getElementById('qrMaterial');
 
 materialSelect.innerHTML='';
+
 reportMaterial.innerHTML='';
+
 qrMaterial.innerHTML='';
 
 materials.forEach(item=>{
@@ -508,18 +729,18 @@ action.toUpperCase()+' Material';
 
 function submitTransaction(){
 
-const code =
+const code=
 document.getElementById('materialSelect').value;
 
-const qty =
+const qty=
 parseInt(
 document.getElementById('qtyInput').value
 );
 
-const person =
+const person=
 document.getElementById('personInput').value;
 
-const material =
+const material=
 materials.find(m=>m.code===code);
 
 if(!qty || !person){
@@ -593,13 +814,13 @@ saveData();
 
 function generateReport(){
 
-const material =
+const material=
 document.getElementById('reportMaterial').value;
 
-const from =
+const from=
 document.getElementById('fromDate').value;
 
-const to =
+const to=
 document.getElementById('toDate').value;
 
 if(!from || !to){
@@ -610,16 +831,16 @@ return;
 
 }
 
-const fromDate = new Date(from);
+const fromDate=new Date(from);
 
-const toDate = new Date(to);
+const toDate=new Date(to);
 
 toDate.setHours(23,59,59,999);
 
-currentReportData =
+currentReportData=
 transactionHistory.filter(item=>{
 
-const d = new Date(item.time);
+const d=new Date(item.time);
 
 return item.name===material &&
 d>=fromDate &&
@@ -627,7 +848,7 @@ d<=toDate;
 
 });
 
-const container =
+const container=
 document.getElementById('reportResults');
 
 container.innerHTML='';
@@ -675,96 +896,11 @@ ${new Date(item.time).toLocaleString()}
 
 }
 
-function downloadExcel(){
-
-if(currentReportData.length===0){
-
-alert('Generate Report First');
-
-return;
-
-}
-
-const worksheet =
-XLSX.utils.json_to_sheet(currentReportData);
-
-const workbook =
-XLSX.utils.book_new();
-
-XLSX.utils.book_append_sheet(
-workbook,
-worksheet,
-'Transactions'
-);
-
-XLSX.writeFile(
-workbook,
-'Material_Report.xlsx'
-);
-
-}
-
-async function downloadPDF(){
-
-if(currentReportData.length===0){
-
-alert('Generate Report First');
-
-return;
-
-}
-
-const { jsPDF } = window.jspdf;
-
-const doc = new jsPDF();
-
-let y = 20;
-
-doc.text(
-'Material Transaction Report',
-20,
-y
-);
-
-y += 20;
-
-currentReportData.forEach(item=>{
-
-doc.text(
-`${item.action} | ${item.name} | Qty:${item.qty}`,
-20,
-y
-);
-
-y += 10;
-
-doc.text(
-`${item.person} | Balance:${item.balance}`,
-20,
-y
-);
-
-y += 15;
-
-if(y>270){
-
-doc.addPage();
-
-y=20;
-
-}
-
-});
-
-doc.save('Material_Report.pdf');
-
-}
-
 function searchMaterial(value){
 
 value=value.toLowerCase();
 
-const rows =
+const rows=
 document.querySelectorAll(
 '#inventoryTable tr'
 );
@@ -791,7 +927,7 @@ row.style.display='none';
 
 function startScanner(){
 
-const html5QrCode =
+const html5QrCode=
 new Html5Qrcode('reader');
 
 html5QrCode.start(
@@ -805,7 +941,7 @@ qrbox:250
 
 (decodedText)=>{
 
-const material =
+const material=
 materials.find(m=>
 decodedText.includes(m.code)
 );
@@ -840,13 +976,13 @@ document.getElementById(
 
 function generateQRLabel(){
 
-const code =
+const code=
 document.getElementById('qrMaterial').value;
 
-const material =
+const material=
 materials.find(m=>m.code===code);
 
-const qrDiv =
+const qrDiv=
 document.getElementById('qrcode');
 
 qrDiv.innerHTML='';
@@ -884,32 +1020,82 @@ document.body.classList.toggle(
 'light-mode'
 );
 
-localStorage.setItem(
+}
 
-'theme',
+async function downloadPNG(){
 
-document.body.classList.contains(
-'light-mode'
-)
-? 'light'
-: 'dark'
-
+const canvas=
+await html2canvas(
+document.getElementById('dashboard')
 );
+
+const link=
+document.createElement('a');
+
+link.download='InventoryDashboard.png';
+
+link.href=
+canvas.toDataURL('image/png');
+
+link.click();
+
+}
+
+async function downloadJPG(){
+
+const canvas=
+await html2canvas(
+document.getElementById('dashboard')
+);
+
+const link=
+document.createElement('a');
+
+link.download='InventoryDashboard.jpg';
+
+link.href=
+canvas.toDataURL('image/jpeg',1);
+
+link.click();
+
+}
+
+async function downloadPDF(){
+
+const canvas=
+await html2canvas(
+document.getElementById('dashboard')
+);
+
+const imgData=
+canvas.toDataURL('image/png');
+
+const { jsPDF }=
+window.jspdf;
+
+const pdf=
+new jsPDF('p','mm','a4');
+
+const width=210;
+
+const height=
+(canvas.height * width)
+/ canvas.width;
+
+pdf.addImage(
+imgData,
+'PNG',
+0,
+0,
+width,
+height
+);
+
+pdf.save('InventoryDashboard.pdf');
 
 }
 
 window.onload=function(){
-
-if(
-localStorage.getItem('theme')
-==='light'
-){
-
-document.body.classList.add(
-'light-mode'
-);
-
-}
 
 renderTable();
 
