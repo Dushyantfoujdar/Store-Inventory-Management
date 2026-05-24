@@ -6,20 +6,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Inventory ERP Dashboard</title>
+<title>Professional Inventory ERP Dashboard</title>
 
 <!-- LIBRARIES -->
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script src="https://unpkg.com/html5-qrcode"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
@@ -44,11 +39,14 @@ linear-gradient(
 
 color:white;
 min-height:100vh;
+text-align:center;
 
 }
 
 .app{
 padding:20px;
+max-width:1400px;
+margin:auto;
 }
 
 h1{
@@ -57,9 +55,8 @@ margin-bottom:10px;
 text-align:center;
 }
 
-.mainText{
+p{
 text-align:center;
-margin-bottom:20px;
 }
 
 .topButtons{
@@ -158,10 +155,54 @@ margin-top:15px;
 
 }
 
+.searchBox{
+
+width:100%;
+
+padding:15px;
+
+margin-top:18px;
+
+border:none;
+
+border-radius:15px;
+
+background:
+rgba(255,255,255,0.08);
+
+color:white;
+
+outline:none;
+
+font-size:15px;
+
+text-align:center;
+
+}
+
+.searchBox::placeholder{
+color:#ddd;
+text-align:center;
+}
+
+select{
+background:#0f172a !important;
+color:white !important;
+text-align:center;
+}
+
+option{
+background:#0f172a;
+color:white;
+text-align:center;
+}
+
 .tableContainer{
 
 overflow-x:auto;
+
 margin-top:25px;
+
 border-radius:20px;
 
 }
@@ -197,7 +238,6 @@ border-bottom:
 1px solid rgba(255,255,255,0.1);
 
 text-align:center;
-vertical-align:middle;
 
 }
 
@@ -215,13 +255,64 @@ color:#4ade80;
 font-weight:bold;
 }
 
+.panelButton{
+
+margin-top:20px;
+
+padding:15px;
+
+width:100%;
+
+border:none;
+
+border-radius:15px;
+
+font-size:16px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+
+color:white;
+
+text-align:center;
+
+}
+
+.transaction{
+
+padding:15px;
+
+margin-top:15px;
+
+border-radius:15px;
+
+background:
+rgba(255,255,255,0.08);
+
+text-align:center;
+
+}
+
 .editBtn{
 
 padding:8px 14px;
+
 border:none;
+
 border-radius:10px;
+
 background:#2563eb;
+
 color:white;
+
 cursor:pointer;
 
 }
@@ -249,6 +340,7 @@ align-items:center;
 justify-content:center;
 
 z-index:9999;
+
 padding:20px;
 
 overflow:auto;
@@ -258,7 +350,7 @@ overflow:auto;
 .popupBox{
 
 width:100%;
-max-width:650px;
+max-width:600px;
 
 background:
 linear-gradient(
@@ -270,139 +362,110 @@ linear-gradient(
 );
 
 padding:25px;
+
 border-radius:25px;
 
 box-shadow:
 0 10px 40px rgba(0,0,0,0.5);
+
+animation:popup 0.3s ease;
+
+text-align:center;
+
+}
+
+@keyframes popup{
+
+from{
+transform:scale(0.8);
+opacity:0;
+}
+
+to{
+transform:scale(1);
+opacity:1;
+}
 
 }
 
 .popupTop{
 
 display:flex;
+
 justify-content:space-between;
+
 align-items:center;
 
 margin-bottom:20px;
 
 }
 
+.popupTop h2{
+flex:1;
+text-align:center;
+}
+
 .closePopup{
 
 background:red;
+
 border:none;
+
 color:white;
 
 padding:10px 15px;
 
 border-radius:10px;
-cursor:pointer;
-font-weight:bold;
-
-}
-
-.searchBox{
-
-width:100%;
-
-padding:15px;
-
-margin-top:15px;
-
-border:none;
-border-radius:15px;
-
-background:
-rgba(255,255,255,0.08);
-
-color:white;
-
-outline:none;
-font-size:15px;
-
-}
-
-.searchBox::placeholder{
-color:#ddd;
-}
-
-.panelButton{
-
-margin-top:20px;
-
-padding:15px;
-width:100%;
-
-border:none;
-border-radius:15px;
-
-font-size:16px;
-font-weight:bold;
 
 cursor:pointer;
 
-background:
-linear-gradient(
-to right,
-#2563eb,
-#06b6d4
-);
+font-weight:bold;
 
-color:white;
-
-}
-
-select{
-background:#0f172a !important;
-color:white !important;
-}
-
-option{
-background:#0f172a;
-color:white;
 }
 
 #qrcode{
 
 background:white;
+
 padding:20px;
+
 border-radius:20px;
+
 margin-top:20px;
 
 display:flex;
+
 flex-direction:column;
 
 align-items:center;
-justify-content:center;
 
-color:black;
+justify-content:center;
 
 min-height:280px;
 
-}
-
-.transaction{
-
-padding:15px;
-margin-top:15px;
-
-border-radius:15px;
-
-background:
-rgba(255,255,255,0.08);
+color:black;
 
 text-align:center;
 
 }
 
 #reader{
-width:100%;
 margin-top:20px;
+display:flex;
+justify-content:center;
+}
+
+#inventorySection{
+text-align:center;
 }
 
 @media(max-width:768px){
 
 .topButtons{
+grid-template-columns:1fr;
+}
+
+.cards{
 grid-template-columns:1fr;
 }
 
@@ -418,11 +481,9 @@ grid-template-columns:1fr;
 
 <h1>📦 Inventory ERP Dashboard</h1>
 
-<p class="mainText">
-Professional QR Based Inventory Management System
-</p>
+<p>Professional QR Based Inventory Management System</p>
 
-<!-- BUTTONS -->
+<!-- TOP BUTTONS -->
 
 <div class="topButtons">
 
@@ -456,7 +517,10 @@ Reports
 
 <button
 class="materialBtn"
-onclick="openMaterialPopup()"
+onclick="
+clearMaterialForm();
+openMaterialPopup();
+"
 >
 Add Material
 </button>
@@ -467,30 +531,44 @@ Add Material
 
 <div class="cards">
 
-<div class="card">
+<div
+class="card"
+onclick="scrollToInventory()"
+>
+
 <h3>Total Materials</h3>
+
 <p id="totalMaterials"></p>
+
 </div>
 
 <div
 class="card"
 onclick="showLowStock()"
 >
+
 <h3>Low Stock</h3>
+
 <p id="lowStock"></p>
+
 </div>
 
 <div
 class="card"
-onclick="openTodayPopup()"
+onclick="showTodayTransactionsPopup()"
 >
+
 <h3>Today's Transactions</h3>
+
 <p id="todayTransactions"></p>
-</div>
 
 </div>
 
-<!-- TABLE -->
+</div>
+
+<!-- INVENTORY -->
+
+<div id="inventorySection">
 
 <div class="tableContainer">
 
@@ -521,351 +599,103 @@ onclick="openTodayPopup()"
 
 </div>
 
-<!-- ISSUE RECEIVE POPUP -->
-
-<div
-id="transactionPopup"
-class="popupOverlay"
->
-
-<div class="popupBox">
-
-<div class="popupTop">
-
-<h2>Issue / Receive Material</h2>
-
-<button
-class="closePopup"
-onclick="closePopup('transactionPopup')"
->
-X
-</button>
-
-</div>
-
-<select
-id="actionSelect"
-class="searchBox"
->
-
-<option value="issue">
-Issue Material
-</option>
-
-<option value="receive">
-Receive Material
-</option>
-
-</select>
-
-<select
-id="materialSelect"
-class="searchBox"
-></select>
-
-<input
-type="number"
-id="qtyInput"
-class="searchBox"
-placeholder="Enter Quantity"
->
-
-<input
-type="text"
-id="personInput"
-class="searchBox"
-placeholder="Issued To / Received From"
->
-
-<button
-class="panelButton"
-onclick="submitTransaction()"
->
-Submit Transaction
-</button>
-
-</div>
-
-</div>
-
-<!-- QR POPUP -->
-
-<div
-id="qrPopup"
-class="popupOverlay"
->
-
-<div class="popupBox">
-
-<div class="popupTop">
-
-<h2>Generate QR</h2>
-
-<button
-class="closePopup"
-onclick="closePopup('qrPopup')"
->
-X
-</button>
-
-</div>
-
-<select
-id="qrMaterial"
-class="searchBox"
-></select>
-
-<button
-class="panelButton"
-onclick="generateQRLabel()"
->
-Generate QR
-</button>
-
-<button
-class="panelButton"
-onclick="downloadQR()"
->
-Download QR
-</button>
-
-<div id="qrcode"></div>
-
-</div>
-
-</div>
-
-<!-- SCANNER POPUP -->
-
-<div
-id="scannerPopup"
-class="popupOverlay"
->
-
-<div class="popupBox">
-
-<div class="popupTop">
-
-<h2>QR Scanner</h2>
-
-<button
-class="closePopup"
-onclick="closePopup('scannerPopup')"
->
-X
-</button>
-
-</div>
-
-<div id="reader"></div>
-
-</div>
-
-</div>
-
-<!-- REPORT POPUP -->
-
-<div
-id="reportPopup"
-class="popupOverlay"
->
-
-<div class="popupBox">
-
-<div class="popupTop">
-
-<h2>Material Report</h2>
-
-<button
-class="closePopup"
-onclick="closePopup('reportPopup')"
->
-X
-</button>
-
-</div>
-
-<select
-id="reportMaterial"
-class="searchBox"
-></select>
-
-<input
-type="date"
-id="fromDate"
-class="searchBox"
->
-
-<input
-type="date"
-id="toDate"
-class="searchBox"
->
-
-<button
-class="panelButton"
-onclick="generateReport()"
->
-Generate Report
-</button>
-
-<div
-id="downloadButtons"
-style="display:none;"
->
-
-<button
-class="panelButton"
-onclick="downloadExcel()"
->
-Download Excel
-</button>
-
-<button
-class="panelButton"
-onclick="downloadPDF()"
->
-Download PDF
-</button>
-
-</div>
-
-<div id="historyContainer"></div>
-
-</div>
-
-</div>
-
-<!-- ADD MATERIAL POPUP -->
-
-<div
-id="materialPopup"
-class="popupOverlay"
->
-
-<div class="popupBox">
-
-<div class="popupTop">
-
-<h2>Add Material</h2>
-
-<button
-class="closePopup"
-onclick="closePopup('materialPopup')"
->
-X
-</button>
-
-</div>
-
-<input
-type="text"
-id="matCode"
-class="searchBox"
-placeholder="Material Code"
->
-
-<input
-type="text"
-id="matName"
-class="searchBox"
-placeholder="Material Name"
->
-
-<input
-type="text"
-id="matCategory"
-class="searchBox"
-placeholder="Category"
->
-
-<input
-type="text"
-id="matUnit"
-class="searchBox"
-placeholder="Unit"
->
-
-<input
-type="number"
-id="matStock"
-class="searchBox"
-placeholder="Current Stock"
->
-
-<input
-type="number"
-id="matReorder"
-class="searchBox"
-placeholder="Reorder Value"
->
-
-<button
-class="panelButton"
-onclick="saveMaterial()"
->
-Save Material
-</button>
-
-</div>
-
-</div>
-
-<!-- TODAY POPUP -->
-
-<div
-id="todayPopup"
-class="popupOverlay"
->
-
-<div class="popupBox">
-
-<div class="popupTop">
-
-<h2>Today's Transactions</h2>
-
-<button
-class="closePopup"
-onclick="closePopup('todayPopup')"
->
-X
-</button>
-
-</div>
-
-<div id="todayTransactionList"></div>
-
-</div>
-
 </div>
 
 <script>
 
 let materials=[
 
-{code:'0838181493',name:'TES',category:'Valves',unit:'Nos.',stock:95,reorder:20},
-{code:'0838880104',name:'SC Valve New',category:'Valves',unit:'Nos.',stock:100,reorder:20},
-{code:'0838881066',name:'Combo Valve',category:'Valves',unit:'Nos.',stock:75,reorder:20},
-{code:'0838882104',name:'LOT Valve',category:'Valves',unit:'Nos.',stock:60,reorder:20},
-{code:'0838911014',name:'Pressure Regulator',category:'Safety',unit:'Nos.',stock:40,reorder:15},
-{code:'0838920104',name:'Safety Caps',category:'Safety',unit:'Nos.',stock:250,reorder:50},
-{code:'0838929014',name:'Nylon Thread',category:'Consumables',unit:'Nos.',stock:150,reorder:30},
-{code:'0838929034',name:'SS Clip',category:'Consumables',unit:'Nos.',stock:80,reorder:20},
-{code:'0838930764',name:'NBR O-Ring',category:'Consumables',unit:'Nos.',stock:120,reorder:25},
-{code:'0838930774',name:'FKM O-Ring',category:'Consumables',unit:'Nos.',stock:90,reorder:25},
-{code:'6183050164',name:'Teflon Tape',category:'Consumables',unit:'Nos.',stock:200,reorder:40},
-{code:'8601061404',name:'Zinc Chrome Primer',category:'Paint',unit:'Litres',stock:50,reorder:10},
-{code:'8614022944',name:'Paint Enamel Signal Red',category:'Paint',unit:'Litres',stock:70,reorder:15},
-{code:'8614023204',name:'Paint Enamel White',category:'Paint',unit:'Litres',stock:65,reorder:15},
-{code:'8614023664',name:'Paint Synthetic Enamel Oxford Blue',category:'Paint',unit:'Litres',stock:55,reorder:15},
-{code:'8630200504',name:'Thinner F/Enamel Paint',category:'Paint',unit:'Litres',stock:85,reorder:20},
-{code:'8740155404',name:'Brown Soap F/LPG Conveyor',category:'Cleaning',unit:'Kg',stock:45,reorder:10},
-{code:'9532500114',name:'Gloves Hand Cotton 10IN',category:'Safety',unit:'Nos.',stock:300,reorder:60},
-{code:'0838920203',name:'LOT CAP',category:'Valves',unit:'Nos.',stock:110,reorder:25}
+{
+code:'0838181493',
+name:'TES',
+category:'Valves',
+unit:'Nos.',
+stock:95,
+reorder:20
+},
+
+{
+code:'0838880104',
+name:'SC Valve New',
+category:'Valves',
+unit:'Nos.',
+stock:100,
+reorder:20
+},
+
+{
+code:'0838881066',
+name:'Combo Valve',
+category:'Valves',
+unit:'Nos.',
+stock:75,
+reorder:20
+},
+
+{
+code:'0838882104',
+name:'LOT Valve',
+category:'Valves',
+unit:'Nos.',
+stock:60,
+reorder:20
+},
+
+{
+code:'0838911014',
+name:'Pressure Regulator',
+category:'Safety',
+unit:'Nos.',
+stock:40,
+reorder:15
+},
+
+{
+code:'0838920104',
+name:'Safety Caps',
+category:'Safety',
+unit:'Nos.',
+stock:250,
+reorder:50
+},
+
+{
+code:'0838929014',
+name:'Nylon Thread',
+category:'Consumables',
+unit:'Nos.',
+stock:150,
+reorder:30
+},
+
+{
+code:'0838929034',
+name:'SS Clip',
+category:'Consumables',
+unit:'Nos.',
+stock:80,
+reorder:20
+},
+
+{
+code:'0838930764',
+name:'NBR O-Ring',
+category:'Consumables',
+unit:'Nos.',
+stock:120,
+reorder:25
+},
+
+{
+code:'0838930774',
+name:'FKM O-Ring',
+category:'Consumables',
+unit:'Nos.',
+stock:90,
+reorder:25
+}
 
 ];
-
-let transactionHistory=[];
 
 function renderTable(){
 
@@ -876,13 +706,7 @@ document.getElementById(
 
 table.innerHTML='';
 
-let low=0;
-
 materials.forEach((item,index)=>{
-
-if(item.stock<=item.reorder){
-low++;
-}
 
 table.innerHTML += `
 
@@ -907,11 +731,10 @@ item.stock<=item.reorder
 }
 </td>
 
-<td style="text-align:center;">
+<td>
 
 <button
 class="editBtn"
-onclick="editMaterial(${index})"
 >
 Edit
 </button>
@@ -932,132 +755,23 @@ materials.length;
 document.getElementById(
 'lowStock'
 ).innerHTML=
-low;
+materials.filter(
+m => m.stock<=m.reorder
+).length;
 
 document.getElementById(
 'todayTransactions'
-).innerHTML=
-transactionHistory.length;
-
-fillDropdowns();
+).innerHTML='0';
 
 }
 
-function fillDropdowns(){
-
-const ids=[
-'materialSelect',
-'qrMaterial',
-'reportMaterial'
-];
-
-ids.forEach(id=>{
-
-const dropdown=
-document.getElementById(id);
-
-dropdown.innerHTML='';
-
-materials.forEach(item=>{
-
-dropdown.innerHTML += `
-
-<option value="${item.code}">
-${item.code} - ${item.name}
-</option>
-
-`;
-
-});
-
-});
-
-}
-
-function openTransactionPopup(){
+function scrollToInventory(){
 
 document.getElementById(
-'transactionPopup'
-).style.display='flex';
+'inventorySection'
+).scrollIntoView({
 
-}
-
-function openQRPopup(){
-
-document.getElementById(
-'qrPopup'
-).style.display='flex';
-
-}
-
-function openScannerPopup(){
-
-document.getElementById(
-'scannerPopup'
-).style.display='flex';
-
-startScanner();
-
-}
-
-function openReportPopup(){
-
-document.getElementById(
-'reportPopup'
-).style.display='flex';
-
-}
-
-function openMaterialPopup(){
-
-document.getElementById(
-'materialPopup'
-).style.display='flex';
-
-}
-
-function openTodayPopup(){
-
-document.getElementById(
-'todayPopup'
-).style.display='flex';
-
-showTodayTransactions();
-
-}
-
-function closePopup(id){
-
-document.getElementById(id)
-.style.display='none';
-
-}
-
-function showLowStock(){
-
-const low=
-materials.filter(
-m => m.stock<=m.reorder
-);
-
-let text='';
-
-low.forEach(item=>{
-
-text += `
-${item.name}
- - Stock:
-${item.stock}<br>
-`;
-
-});
-
-Swal.fire({
-
-title:'Low Stock Materials',
-html:text ||
-'No Low Stock',
-icon:'warning'
+behavior:'smooth'
 
 });
 
@@ -1073,4 +787,4 @@ renderTable();
 
 </body>
 
-</html>
+</html> 
