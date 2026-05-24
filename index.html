@@ -1,6 +1,331 @@
-<script>
+<!DOCTYPE html>
+<html lang="en">
 
-localStorage.removeItem('materials');
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Store Inventory Dashboard</title>
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:linear-gradient(135deg,#0f172a,#1e3a8a,#0f766e);
+color:white;
+min-height:100vh;
+}
+
+.app{
+padding:20px;
+}
+
+h1{
+margin-bottom:5px;
+}
+
+.cards{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.card{
+flex:1;
+min-width:200px;
+padding:20px;
+border-radius:20px;
+background:rgba(255,255,255,0.15);
+backdrop-filter:blur(10px);
+box-shadow:0 8px 20px rgba(0,0,0,0.3);
+}
+
+.card p{
+font-size:32px;
+font-weight:bold;
+margin-top:10px;
+}
+
+.searchBox{
+width:100%;
+padding:15px;
+border:none;
+border-radius:15px;
+margin-top:20px;
+font-size:16px;
+box-sizing:border-box;
+}
+
+.tableContainer{
+overflow-x:auto;
+margin-top:25px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+color:black;
+border-radius:20px;
+overflow:hidden;
+}
+
+th{
+background:linear-gradient(to right,#06b6d4,#2563eb);
+color:white;
+padding:15px;
+text-align:left;
+}
+
+td{
+padding:15px;
+border-bottom:1px solid #eee;
+}
+
+tr:hover{
+background:#eff6ff;
+}
+
+.low{
+color:red;
+font-weight:bold;
+}
+
+.normal{
+color:green;
+font-weight:bold;
+}
+
+.buttons{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+margin-top:25px;
+}
+
+button{
+flex:1;
+padding:15px;
+border:none;
+border-radius:15px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+color:white;
+}
+
+.issue{
+background:linear-gradient(to right,#ef4444,#dc2626);
+}
+
+.receive{
+background:linear-gradient(to right,#22c55e,#15803d);
+}
+
+.scan{
+background:linear-gradient(to right,#3b82f6,#1d4ed8);
+}
+
+.export{
+background:linear-gradient(to right,#7c3aed,#5b21b6);
+}
+
+.dark{
+background:linear-gradient(to right,#f59e0b,#d97706);
+}
+
+.panel{
+margin-top:25px;
+padding:20px;
+background:white;
+color:black;
+border-radius:20px;
+display:none;
+}
+
+.transactionBox{
+margin-top:30px;
+background:rgba(255,255,255,0.15);
+padding:20px;
+border-radius:20px;
+}
+
+.transaction{
+background:white;
+color:black;
+padding:15px;
+border-radius:15px;
+margin-top:10px;
+}
+
+#reader{
+margin-top:20px;
+}
+
+canvas{
+background:white;
+border-radius:20px;
+padding:20px;
+margin-top:30px;
+}
+
+#qrcode{
+margin-top:20px;
+background:white;
+padding:20px;
+display:inline-block;
+border-radius:20px;
+}
+
+@media(max-width:700px){
+
+.cards{
+flex-direction:column;
+}
+
+.buttons{
+flex-direction:column;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="app">
+
+<h1>Store Inventory Dashboard</h1>
+
+<p>QR Based Inventory Management System</p>
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Materials</h3>
+<p id="totalMaterials"></p>
+</div>
+
+<div class="card">
+<h3>Low Stock Materials</h3>
+<p id="lowStock"></p>
+</div>
+
+</div>
+
+<input
+type="text"
+class="searchBox"
+placeholder="Search Material"
+onkeyup="searchMaterial(this.value)"
+>
+
+<div class="tableContainer">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Material Code</th>
+<th>Material Name</th>
+<th>Current Stock</th>
+<th>Reorder Value</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody id="inventoryTable"></tbody>
+
+</table>
+
+</div>
+
+<div class="buttons">
+
+<button class="issue" onclick="openPanel('issue')">
+Issue Material
+</button>
+
+<button class="receive" onclick="openPanel('receive')">
+Receive Material
+</button>
+
+<button class="scan" onclick="startScanner()">
+Scan QR
+</button>
+
+<button class="export" onclick="downloadPDF()">
+Export PDF
+</button>
+
+<button class="export" onclick="exportExcel()">
+Export Excel
+</button>
+
+</div>
+
+<div id="transactionPanel" class="panel">
+
+<h2 id="panelTitle"></h2>
+
+<select id="materialSelect" class="searchBox"></select>
+
+<input
+type="number"
+id="qtyInput"
+class="searchBox"
+placeholder="Enter Quantity"
+>
+
+<button
+class="scan"
+style="margin-top:20px;"
+onclick="submitTransaction()"
+>
+Submit Transaction
+</button>
+
+</div>
+
+<div id="reader"></div>
+
+<div style="margin-top:25px;">
+
+<button class="scan" onclick="generateQR()">
+Generate QR Label
+</button>
+
+<div id="qrcode"></div>
+
+</div>
+
+<canvas id="stockChart"></canvas>
+
+<div class="transactionBox">
+
+<h2>Stock History</h2>
+
+<div id="transactions"></div>
+
+</div>
+
+</div>
+
+<script>
 
 const defaultMaterials = [
 
@@ -55,7 +380,11 @@ const defaultMaterials = [
 
 ];
 
-let materials = defaultMaterials;
+let materials =
+JSON.parse(localStorage.getItem('materials')) ||
+defaultMaterials;
+
+let currentAction='';
 
 function saveData(){
 
@@ -71,16 +400,14 @@ function renderTable(){
 const table =
 document.getElementById('inventoryTable');
 
-table.innerHTML = '';
+table.innerHTML='';
 
-let low = 0;
+let low=0;
 
 materials.forEach(item=>{
 
-if(item.stock <= item.reorder){
-
+if(item.stock<=item.reorder){
 low++;
-
 }
 
 table.innerHTML += `
@@ -88,11 +415,8 @@ table.innerHTML += `
 <tr>
 
 <td>${item.code}</td>
-
 <td>${item.name}</td>
-
 <td>${item.stock}</td>
-
 <td>${item.reorder}</td>
 
 <td class="${item.stock<=item.reorder?'low':'normal'}">
@@ -107,10 +431,9 @@ ${item.stock<=item.reorder?'Low':'Normal'}
 
 });
 
-document.getElementById('lowStock').innerHTML =
-low;
+document.getElementById('lowStock').innerHTML=low;
 
-document.getElementById('totalMaterials').innerHTML =
+document.getElementById('totalMaterials').innerHTML=
 materials.length;
 
 fillDropdown();
@@ -142,16 +465,14 @@ ${item.code} - ${item.name}
 
 }
 
-let currentAction='';
-
 function openPanel(action){
 
-currentAction = action;
+currentAction=action;
 
 document.getElementById('transactionPanel').style.display='block';
 
 document.getElementById('panelTitle').innerHTML=
-action.toUpperCase() + ' Material';
+action.toUpperCase()+' Material';
 
 }
 
@@ -178,7 +499,7 @@ return;
 
 if(currentAction==='issue'){
 
-if(qty > material.stock){
+if(qty>material.stock){
 
 alert('Insufficient Stock');
 
@@ -209,6 +530,8 @@ material.stock
 );
 
 }
+
+saveData();
 
 renderTable();
 
@@ -250,7 +573,7 @@ document.getElementById('transactions')
 
 function searchMaterial(value){
 
-value = value.toLowerCase();
+value=value.toLowerCase();
 
 const rows =
 document.querySelectorAll('#inventoryTable tr');
@@ -397,7 +720,7 @@ y
 
 );
 
-y += 10;
+y+=10;
 
 });
 
@@ -426,12 +749,10 @@ workbook,
 
 }
 
-function toggleMode(){
-
-document.body.classList.toggle('lightMode');
-
-}
-
 renderTable();
 
 </script>
+
+</body>
+
+</html>
