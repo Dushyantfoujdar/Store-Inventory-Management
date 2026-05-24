@@ -3,171 +3,193 @@
 
 <head>
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Store Inventory Dashboard</title>
+<title>Store Inventory Dashboard</title>
 
-  <script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
 
-  <style>
+<style>
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #dff6ff, #ffffff);
-    }
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(135deg,#0f172a,#1e3a8a,#0f766e);
+  min-height:100vh;
+  color:white;
+}
 
-    .app {
-      padding: 20px;
-    }
+.app{
+  padding:20px;
+}
 
-    h1 {
-      color: #003566;
-      margin-bottom: 5px;
-    }
+h1{
+  margin-bottom:5px;
+  font-size:34px;
+}
 
-    .sub {
-      color: #555;
-      margin-bottom: 20px;
-    }
+.sub{
+  opacity:0.9;
+  margin-bottom:25px;
+}
 
-    .cards {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
+.cards{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
 
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      flex: 1;
-      min-width: 150px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+.card{
+  flex:1;
+  min-width:180px;
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(10px);
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.2);
+}
 
-    .card p {
-      font-size: 30px;
-      color: #3a0ca3;
-      font-weight: bold;
-      margin: 10px 0 0 0;
-    }
+.card h3{
+  margin:0;
+  font-size:16px;
+}
 
-    .searchBox {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #ccc;
-      margin-top: 20px;
-      box-sizing: border-box;
-      font-size: 16px;
-    }
+.card p{
+  font-size:34px;
+  font-weight:bold;
+  margin-top:10px;
+}
 
-    table {
-      width: 100%;
-      margin-top: 25px;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 15px;
-      overflow: hidden;
-    }
+.searchBox{
+  width:100%;
+  padding:15px;
+  margin-top:25px;
+  border:none;
+  border-radius:15px;
+  font-size:16px;
+  outline:none;
+}
 
-    th {
-      background: #caf0f8;
-      padding: 15px;
-      text-align: left;
-    }
+.tableContainer{
+  overflow-x:auto;
+  margin-top:25px;
+}
 
-    td {
-      padding: 15px;
-      border-top: 1px solid #eee;
-    }
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+  color:black;
+  border-radius:20px;
+  overflow:hidden;
+}
 
-    .normal {
-      color: green;
-      font-weight: bold;
-    }
+th{
+  background:linear-gradient(to right,#06b6d4,#3b82f6);
+  color:white;
+  padding:16px;
+  text-align:left;
+}
 
-    .low {
-      color: red;
-      font-weight: bold;
-    }
+td{
+  padding:16px;
+  border-bottom:1px solid #eee;
+}
 
-    .buttons {
-      display: flex;
-      gap: 15px;
-      margin-top: 25px;
-      flex-wrap: wrap;
-    }
+tr:hover{
+  background:#f0f9ff;
+}
 
-    button {
-      padding: 15px 20px;
-      border: none;
-      border-radius: 12px;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-      flex: 1;
-    }
+.normal{
+  color:green;
+  font-weight:bold;
+}
 
-    .issue {
-      background: #ef233c;
-    }
+.low{
+  color:red;
+  font-weight:bold;
+}
 
-    .receive {
-      background: #2b9348;
-    }
+.buttons{
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  margin-top:25px;
+}
 
-    .scanBtn {
-      background: #0077b6;
-    }
+button{
+  flex:1;
+  padding:16px;
+  border:none;
+  border-radius:15px;
+  color:white;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.3s;
+}
 
-    #reader {
-      width: 100%;
-      margin-top: 20px;
-    }
+button:hover{
+  transform:scale(1.03);
+}
 
-    .transactionBox {
-      margin-top: 30px;
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
+.issue{
+  background:linear-gradient(to right,#ef4444,#dc2626);
+}
 
-    .transaction {
-      border-bottom: 1px solid #eee;
-      padding: 10px 0;
-    }
+.receive{
+  background:linear-gradient(to right,#22c55e,#15803d);
+}
 
-    .greenText {
-      color: green;
-      font-weight: bold;
-    }
+.scanBtn{
+  background:linear-gradient(to right,#3b82f6,#1d4ed8);
+}
 
-    .redText {
-      color: red;
-      font-weight: bold;
-    }
+#reader{
+  margin-top:25px;
+  border-radius:20px;
+  overflow:hidden;
+}
 
-    @media (max-width: 600px) {
+.transactionBox{
+  margin-top:30px;
+  background:rgba(255,255,255,0.15);
+  backdrop-filter:blur(10px);
+  border-radius:20px;
+  padding:20px;
+}
 
-      .cards {
-        flex-direction: column;
-      }
+.transaction{
+  background:white;
+  color:black;
+  padding:15px;
+  border-radius:15px;
+  margin-top:12px;
+}
 
-      .buttons {
-        flex-direction: column;
-      }
+.greenText{
+  color:green;
+  font-weight:bold;
+}
 
-      table {
-        display: block;
-        overflow-x: auto;
-      }
+.redText{
+  color:red;
+  font-weight:bold;
+}
 
-    }
+@media(max-width:600px){
 
-  </style>
+  .cards{
+    flex-direction:column;
+  }
+
+  .buttons{
+    flex-direction:column;
+  }
+
+}
+
+</style>
 
 </head>
 
@@ -175,81 +197,81 @@
 
 <div class="app">
 
-  <h1>Store Inventory Dashboard</h1>
+<h1>Store Inventory Dashboard</h1>
 
-  <div class="sub">
-    QR Based Mobile Inventory Management System
-  </div>
+<div class="sub">
+QR Based Mobile Inventory Management System
+</div>
 
-  <div class="cards">
+<div class="cards">
 
-    <div class="card">
-      <h3>Total Materials</h3>
-      <p id="materialCount"></p>
-    </div>
+<div class="card">
+<h3>Total Materials</h3>
+<p id="materialCount"></p>
+</div>
 
-    <div class="card">
-      <h3>Total Stock</h3>
-      <p id="totalStock"></p>
-    </div>
+<div class="card">
+<h3>Low Stock Materials</h3>
+<p id="lowStockCount"></p>
+</div>
 
-    <div class="card">
-      <h3>Low Stock</h3>
-      <p id="lowStockCount"></p>
-    </div>
+</div>
 
-  </div>
+<input
+type="text"
+class="searchBox"
+placeholder="Search Material"
+onkeyup="searchMaterial(this.value)"
+>
 
-  <input
-    type="text"
-    class="searchBox"
-    placeholder="Search Material"
-    onkeyup="searchMaterial(this.value)"
-  >
+<div class="tableContainer">
 
-  <table>
+<table>
 
-    <thead>
-      <tr>
-        <th>Material Code</th>
-        <th>Material Name</th>
-        <th>Unit</th>
-        <th>Stock</th>
-        <th>Status</th>
-      </tr>
-    </thead>
+<thead>
+<tr>
+<th>Material Code</th>
+<th>Material Name</th>
+<th>Unit</th>
+<th>Current Stock</th>
+<th>Reorder Value</th>
+<th>Status</th>
+</tr>
+</thead>
 
-    <tbody id="inventoryTable"></tbody>
+<tbody id="inventoryTable"></tbody>
 
-  </table>
+</table>
 
-  <div class="buttons">
+</div>
 
-    <button class="issue" onclick="manualIssue()">
-      Issue Material
-    </button>
+<div class="buttons">
 
-    <button class="receive" onclick="manualReceive()">
-      Receive Material
-    </button>
+<button class="issue" onclick="manualIssue()">
+Issue Material
+</button>
 
-    <button class="scanBtn" onclick="startScanner()">
-      Scan QR Code
-    </button>
+<button class="receive" onclick="manualReceive()">
+Receive Material
+</button>
 
-  </div>
+<button class="scanBtn" onclick="startScanner()">
+Scan QR Code
+</button>
 
-  <div id="reader"></div>
+</div>
 
-  <h3 id="result"></h3>
+<div id="reader"></div>
 
-  <div class="transactionBox">
+<h3 id="result"></h3>
 
-    <h2>Recent Transactions</h2>
+<div class="transactionBox">
 
-    <div id="transactions"></div>
+<h2>Recent Transactions</h2>
 
-  </div>
+<div id="transactions"></div>
+
+</div>
 
 </div>
 
@@ -257,416 +279,435 @@
 
 const materials = [
 
-  {
-    code: '0838181493',
-    name: 'TES',
-    unit: 'Nos.',
-    stock: 95
-  },
+{
+code:'0838181493',
+name:'TES',
+unit:'Nos.',
+stock:95,
+reorder:20
+},
 
-  {
-    code: '0838880104',
-    name: 'SC Valve New',
-    unit: 'Nos.',
-    stock: 100
-  },
+{
+code:'0838880104',
+name:'SC Valve New',
+unit:'Nos.',
+stock:100,
+reorder:20
+},
 
-  {
-    code: '0838881066',
-    name: 'Combo Valve',
-    unit: 'Nos.',
-    stock: 75
-  },
+{
+code:'0838881066',
+name:'Combo Valve',
+unit:'Nos.',
+stock:75,
+reorder:20
+},
 
-  {
-    code: '0838882104',
-    name: 'LOT Valve',
-    unit: 'Nos.',
-    stock: 60
-  },
+{
+code:'0838882104',
+name:'LOT Valve',
+unit:'Nos.',
+stock:60,
+reorder:20
+},
 
-  {
-    code: '0838911014',
-    name: 'Pressure Regulator',
-    unit: 'Nos.',
-    stock: 40
-  },
+{
+code:'0838911014',
+name:'Pressure Regulator',
+unit:'Nos.',
+stock:40,
+reorder:15
+},
 
-  {
-    code: '0838920104',
-    name: 'Safety Caps',
-    unit: 'Nos.',
-    stock: 250
-  },
+{
+code:'0838920104',
+name:'Safety Caps',
+unit:'Nos.',
+stock:250,
+reorder:50
+},
 
-  {
-    code: '0838929014',
-    name: 'Nylon Thread',
-    unit: 'Nos.',
-    stock: 150
-  },
+{
+code:'0838929014',
+name:'Nylon Thread',
+unit:'Nos.',
+stock:150,
+reorder:30
+},
 
-  {
-    code: '0838929034',
-    name: 'SS Clip',
-    unit: 'Nos.',
-    stock: 80
-  },
+{
+code:'0838929034',
+name:'SS Clip',
+unit:'Nos.',
+stock:80,
+reorder:20
+},
 
-  {
-    code: '0838930764',
-    name: 'NBR O-Ring',
-    unit: 'Nos.',
-    stock: 120
-  },
+{
+code:'0838930764',
+name:'NBR O-Ring',
+unit:'Nos.',
+stock:120,
+reorder:25
+},
 
-  {
-    code: '0838930774',
-    name: 'FKM O-Ring',
-    unit: 'Nos.',
-    stock: 90
-  },
+{
+code:'0838930774',
+name:'FKM O-Ring',
+unit:'Nos.',
+stock:90,
+reorder:25
+},
 
-  {
-    code: '6183050164',
-    name: 'Teflon Tape',
-    unit: 'Nos.',
-    stock: 200
-  },
+{
+code:'6183050164',
+name:'Teflon Tape',
+unit:'Nos.',
+stock:200,
+reorder:40
+},
 
-  {
-    code: '8601061404',
-    name: 'Zinc Chrome Primer',
-    unit: 'Litres',
-    stock: 50
-  },
+{
+code:'8601061404',
+name:'Zinc Chrome Primer',
+unit:'Litres',
+stock:50,
+reorder:10
+},
 
-  {
-    code: '8614022944',
-    name: 'Paint Enamel Signal Red IS 2932-1',
-    unit: 'Litres',
-    stock: 70
-  },
+{
+code:'8614022944',
+name:'Paint Enamel Signal Red',
+unit:'Litres',
+stock:70,
+reorder:15
+},
 
-  {
-    code: '8614023204',
-    name: 'Paint Enamel White IS-2932',
-    unit: 'Litres',
-    stock: 65
-  },
+{
+code:'8614023204',
+name:'Paint Enamel White',
+unit:'Litres',
+stock:65,
+reorder:15
+},
 
-  {
-    code: '8614023664',
-    name: 'Paint Synthetic Enamel Oxford Blue',
-    unit: 'Litres',
-    stock: 55
-  },
+{
+code:'8614023664',
+name:'Paint Synthetic Enamel Oxford Blue',
+unit:'Litres',
+stock:55,
+reorder:15
+},
 
-  {
-    code: '8630200504',
-    name: 'Thinner F/Enamel Paint',
-    unit: 'Litres',
-    stock: 85
-  },
+{
+code:'8630200504',
+name:'Thinner F/Enamel Paint',
+unit:'Litres',
+stock:85,
+reorder:20
+},
 
-  {
-    code: '8740155404',
-    name: 'Brown Soap F/LPG Conveyor',
-    unit: 'Kg',
-    stock: 45
-  },
+{
+code:'8740155404',
+name:'Brown Soap F/LPG Conveyor',
+unit:'Kg',
+stock:45,
+reorder:10
+},
 
-  {
-    code: '9532500114',
-    name: 'Gloves Hand Cotton 10IN',
-    unit: 'Nos.',
-    stock: 300
-  },
+{
+code:'9532500114',
+name:'Gloves Hand Cotton 10IN',
+unit:'Nos.',
+stock:300,
+reorder:60
+},
 
-  {
-    code: '0838920203',
-    name: 'LOT CAP',
-    unit: 'Nos.',
-    stock: 110
-  }
+{
+code:'0838920203',
+name:'LOT CAP',
+unit:'Nos.',
+stock:110,
+reorder:25
+}
 
 ];
 
-const minStock = 20;
+function renderTable(){
 
-function renderTable() {
+const table=document.getElementById('inventoryTable');
 
-  const table = document.getElementById('inventoryTable');
+table.innerHTML='';
 
-  table.innerHTML = '';
+let lowStock=0;
 
-  let totalStock = 0;
-  let lowStock = 0;
+materials.forEach(item=>{
 
-  materials.forEach((item) => {
-
-    totalStock += item.stock;
-
-    if (item.stock < minStock) {
-      lowStock++;
-    }
-
-    table.innerHTML += `
-
-      <tr>
-        <td>${item.code}</td>
-        <td>${item.name}</td>
-        <td>${item.unit}</td>
-        <td>${item.stock}</td>
-
-        <td class="${item.stock < minStock ? 'low' : 'normal'}">
-          ${item.stock < minStock ? 'Low Stock' : 'Normal'}
-        </td>
-
-      </tr>
-
-    `;
-  });
-
-  document.getElementById('materialCount').innerHTML =
-    materials.length;
-
-  document.getElementById('totalStock').innerHTML =
-    totalStock;
-
-  document.getElementById('lowStockCount').innerHTML =
-    lowStock;
+if(item.stock<item.reorder){
+lowStock++;
 }
 
-function addTransaction(text, cls) {
+table.innerHTML+=`
 
-  const transactions =
-    document.getElementById('transactions');
+<tr>
 
-  const div = document.createElement('div');
+<td>${item.code}</td>
 
-  div.className = 'transaction';
+<td>${item.name}</td>
 
-  div.innerHTML = `
-    <span class="${cls}">${text}</span>
-    <br>
-    <small>${new Date().toLocaleString()}</small>
-  `;
+<td>${item.unit}</td>
 
-  transactions.prepend(div);
+<td>${item.stock}</td>
+
+<td>${item.reorder}</td>
+
+<td class="${item.stock<item.reorder?'low':'normal'}">
+
+${item.stock<item.reorder?'Low Stock':'Normal'}
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById('materialCount').innerHTML=
+materials.length;
+
+document.getElementById('lowStockCount').innerHTML=
+lowStock;
+
 }
 
-function manualIssue() {
+function addTransaction(text,cls){
 
-  const code =
-    prompt('Enter material code');
+const transactions=
+document.getElementById('transactions');
 
-  const material =
-    materials.find(m => m.code === code);
+const div=document.createElement('div');
 
-  if (!material) {
+div.className='transaction';
 
-    alert('Material not found');
+div.innerHTML=`
+<span class="${cls}">${text}</span>
+<br>
+<small>${new Date().toLocaleString()}</small>
+`;
 
-    return;
-  }
+transactions.prepend(div);
 
-  const qty =
-    parseInt(prompt('Enter issue quantity'));
-
-  if (!qty || qty <= 0) {
-
-    alert('Invalid quantity');
-
-    return;
-  }
-
-  if (qty > material.stock) {
-
-    alert('Insufficient stock');
-
-    return;
-  }
-
-  material.stock -= qty;
-
-  renderTable();
-
-  addTransaction(
-    `Issued ${qty} ${material.name}`,
-    'redText'
-  );
 }
 
-function manualReceive() {
+function manualIssue(){
 
-  const code =
-    prompt('Enter material code');
+const code=prompt('Enter material code');
 
-  const material =
-    materials.find(m => m.code === code);
+const material=
+materials.find(m=>m.code===code);
 
-  if (!material) {
-
-    alert('Material not found');
-
-    return;
-  }
-
-  const qty =
-    parseInt(prompt('Enter receive quantity'));
-
-  if (!qty || qty <= 0) {
-
-    alert('Invalid quantity');
-
-    return;
-  }
-
-  material.stock += qty;
-
-  renderTable();
-
-  addTransaction(
-    `Received ${qty} ${material.name}`,
-    'greenText'
-  );
+if(!material){
+alert('Material not found');
+return;
 }
 
-function searchMaterial(value) {
+const qty=
+parseInt(prompt('Enter issue quantity'));
 
-  value = value.toLowerCase();
-
-  const rows =
-    document.querySelectorAll('#inventoryTable tr');
-
-  rows.forEach(row => {
-
-    if (
-      row.innerText.toLowerCase().includes(value)
-    ) {
-
-      row.style.display = '';
-    }
-
-    else {
-
-      row.style.display = 'none';
-    }
-  });
+if(!qty||qty<=0){
+alert('Invalid quantity');
+return;
 }
 
-function startScanner() {
+if(qty>material.stock){
+alert('Insufficient stock');
+return;
+}
 
-  const html5QrCode =
-    new Html5Qrcode('reader');
+material.stock-=qty;
 
-  html5QrCode.start(
+renderTable();
 
-    { facingMode: 'environment' },
+addTransaction(
+`Issued ${qty} ${material.name}`,
+'redText'
+);
 
-    {
-      fps: 10,
-      qrbox: 250
-    },
+}
 
-    (decodedText) => {
+function manualReceive(){
 
-      document.getElementById('result').innerHTML =
-        'Scanned Material: ' + decodedText;
+const code=prompt('Enter material code');
 
-      const material = materials.find(m =>
-        decodedText.includes(m.code)
-      );
+const material=
+materials.find(m=>m.code===code);
 
-      if (!material) {
+if(!material){
+alert('Material not found');
+return;
+}
 
-        alert('Unknown Material');
+const qty=
+parseInt(prompt('Enter receive quantity'));
 
-        html5QrCode.stop();
+if(!qty||qty<=0){
+alert('Invalid quantity');
+return;
+}
 
-        return;
-      }
+material.stock+=qty;
 
-      const action = prompt(
-        'Type ISSUE or RECEIVE'
-      );
+renderTable();
 
-      if (!action) {
+addTransaction(
+`Received ${qty} ${material.name}`,
+'greenText'
+);
 
-        html5QrCode.stop();
+}
 
-        return;
-      }
+function searchMaterial(value){
 
-      const qty = parseInt(
-        prompt('Enter quantity')
-      );
+value=value.toLowerCase();
 
-      if (!qty || qty <= 0) {
+const rows=
+document.querySelectorAll('#inventoryTable tr');
 
-        alert('Invalid quantity');
+rows.forEach(row=>{
 
-        html5QrCode.stop();
+if(
+row.innerText.toLowerCase().includes(value)
+){
 
-        return;
-      }
+row.style.display='';
 
-      if (
-        action.toLowerCase() === 'issue'
-      ) {
+}
 
-        if (qty > material.stock) {
+else{
 
-          alert('Insufficient stock');
-        }
+row.style.display='none';
 
-        else {
+}
 
-          material.stock -= qty;
+});
 
-          renderTable();
+}
 
-          addTransaction(
-            `QR Issued ${qty} ${material.name}`,
-            'redText'
-          );
+function startScanner(){
 
-          alert('Material issued successfully');
-        }
-      }
+const html5QrCode=
+new Html5Qrcode('reader');
 
-      else if (
-        action.toLowerCase() === 'receive'
-      ) {
+html5QrCode.start(
 
-        material.stock += qty;
+{ facingMode:'environment' },
 
-        renderTable();
+{
+fps:10,
+qrbox:250
+},
 
-        addTransaction(
-          `QR Received ${qty} ${material.name}`,
-          'greenText'
-        );
+(decodedText)=>{
 
-        alert('Material received successfully');
-      }
+document.getElementById('result').innerHTML=
+'Scanned Material: '+decodedText;
 
-      else {
+const material=
+materials.find(m=>
+decodedText.includes(m.code)
+);
 
-        alert(
-          'Type ISSUE or RECEIVE only'
-        );
-      }
+if(!material){
 
-      html5QrCode.stop();
-    }
+alert('Unknown Material');
 
-  ).catch(err => {
+html5QrCode.stop();
 
-    alert('Camera Error: ' + err);
+return;
 
-  });
+}
+
+const action=
+prompt('Type ISSUE or RECEIVE');
+
+if(!action){
+
+html5QrCode.stop();
+
+return;
+
+}
+
+const qty=
+parseInt(prompt('Enter quantity'));
+
+if(!qty||qty<=0){
+
+alert('Invalid quantity');
+
+html5QrCode.stop();
+
+return;
+
+}
+
+if(action.toLowerCase()==='issue'){
+
+if(qty>material.stock){
+
+alert('Insufficient stock');
+
+}
+
+else{
+
+material.stock-=qty;
+
+renderTable();
+
+addTransaction(
+`QR Issued ${qty} ${material.name}`,
+'redText'
+);
+
+alert('Material issued successfully');
+
+}
+
+}
+
+else if(action.toLowerCase()==='receive'){
+
+material.stock+=qty;
+
+renderTable();
+
+addTransaction(
+`QR Received ${qty} ${material.name}`,
+'greenText'
+);
+
+alert('Material received successfully');
+
+}
+
+else{
+
+alert('Type ISSUE or RECEIVE only');
+
+}
+
+html5QrCode.stop();
+
+}
+
+).catch(err=>{
+
+alert('Camera Error: '+err);
+
+});
+
 }
 
 renderTable();
