@@ -11,8 +11,6 @@
 
 <!-- LIBRARIES -->
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
@@ -55,7 +53,7 @@ padding:20px;
 }
 
 h1{
-font-size:36px;
+font-size:34px;
 margin-bottom:10px;
 }
 
@@ -69,6 +67,23 @@ repeat(auto-fit,minmax(220px,1fr));
 gap:15px;
 
 margin-top:25px;
+
+position:sticky;
+
+top:0;
+
+z-index:100;
+
+padding-bottom:10px;
+
+background:
+linear-gradient(
+135deg,
+#0f172a,
+#1e293b,
+#1d4ed8,
+#0f766e
+);
 
 }
 
@@ -96,9 +111,7 @@ box-shadow:
 }
 
 .topButtons button:hover{
-
 transform:translateY(-4px);
-
 }
 
 .issue{
@@ -151,9 +164,7 @@ transition:0.3s;
 }
 
 .card:hover{
-
 transform:translateY(-5px);
-
 }
 
 .card p{
@@ -168,7 +179,9 @@ margin-top:15px;
 
 .section{
 
-margin-top:30px;
+display:none;
+
+margin-top:25px;
 
 padding:25px;
 
@@ -178,8 +191,6 @@ background:
 rgba(255,255,255,0.08);
 
 backdrop-filter:blur(12px);
-
-display:none;
 
 animation:fade 0.3s ease;
 
@@ -227,19 +238,13 @@ color:#ddd;
 }
 
 select{
-
 background:#0f172a !important;
-
 color:white !important;
-
 }
 
 option{
-
 background:#0f172a;
-
 color:white;
-
 }
 
 .tableContainer{
@@ -362,19 +367,6 @@ rgba(255,255,255,0.08);
 
 }
 
-.chartBox{
-
-margin-top:30px;
-
-padding:25px;
-
-border-radius:25px;
-
-background:
-rgba(255,255,255,0.08);
-
-}
-
 #reader{
 margin-top:20px;
 }
@@ -405,121 +397,31 @@ grid-template-columns:1fr;
 
 <button
 class="issue"
-onclick="showSection('transactionSection')"
+onclick="toggleSection('transactionSection')"
 >
 Issue / Receive
 </button>
 
 <button
 class="receive"
-onclick="showSection('qrSection')"
+onclick="toggleSection('qrSection')"
 >
 Generate QR
 </button>
 
 <button
 class="scan"
-onclick="showScanner()"
+onclick="toggleScanner()"
 >
 Scan QR
 </button>
 
 <button
 class="report"
-onclick="showSection('reportSection')"
+onclick="toggleSection('reportSection')"
 >
 Reports
 </button>
-
-</div>
-
-<!-- KPI CARDS -->
-
-<div class="cards">
-
-<div class="card">
-
-<h3>Total Materials</h3>
-
-<p id="totalMaterials"></p>
-
-</div>
-
-<div
-class="card"
-onclick="showLowStock()"
->
-
-<h3>Low Stock</h3>
-
-<p id="lowStock"></p>
-
-</div>
-
-<div class="card">
-
-<h3>Total Inventory</h3>
-
-<p id="totalStock"></p>
-
-</div>
-
-<div class="card">
-
-<h3>Total Transactions</h3>
-
-<p id="totalTransactions"></p>
-
-</div>
-
-</div>
-
-<!-- CHART -->
-
-<div class="chartBox">
-
-<h2>Inventory Analytics</h2>
-
-<canvas id="stockChart"></canvas>
-
-</div>
-
-<!-- INVENTORY TABLE -->
-
-<div class="chartBox">
-
-<h2>Inventory Table</h2>
-
-<input
-type="text"
-class="searchBox"
-placeholder="Search Material"
-onkeyup="searchMaterial(this.value)"
->
-
-<div class="tableContainer">
-
-<table>
-
-<thead>
-
-<tr>
-<th>Code</th>
-<th>Name</th>
-<th>Category</th>
-<th>Unit</th>
-<th>Stock</th>
-<th>Reorder</th>
-<th>Status</th>
-</tr>
-
-</thead>
-
-<tbody id="inventoryTable"></tbody>
-
-</table>
-
-</div>
 
 </div>
 
@@ -671,6 +573,86 @@ Download PDF
 
 </div>
 
+<!-- KPI CARDS -->
+
+<div class="cards">
+
+<div class="card">
+
+<h3>Total Materials</h3>
+
+<p id="totalMaterials"></p>
+
+</div>
+
+<div
+class="card"
+onclick="showLowStock()"
+>
+
+<h3>Low Stock</h3>
+
+<p id="lowStock"></p>
+
+</div>
+
+<div class="card">
+
+<h3>Total Inventory</h3>
+
+<p id="totalStock"></p>
+
+</div>
+
+<div class="card">
+
+<h3>Total Transactions</h3>
+
+<p id="totalTransactions"></p>
+
+</div>
+
+</div>
+
+<!-- INVENTORY TABLE -->
+
+<div class="section" style="display:block;">
+
+<h2>Inventory Table</h2>
+
+<input
+type="text"
+class="searchBox"
+placeholder="Search Material"
+onkeyup="searchMaterial(this.value)"
+>
+
+<div class="tableContainer">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Category</th>
+<th>Unit</th>
+<th>Stock</th>
+<th>Reorder</th>
+<th>Status</th>
+</tr>
+
+</thead>
+
+<tbody id="inventoryTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
 </div>
 
 <script>
@@ -774,35 +756,32 @@ JSON.parse(
 localStorage.getItem('transactions')
 )||[];
 
-const savedMaterials=
-JSON.parse(
-localStorage.getItem('materials')
-);
-
-if(savedMaterials){
-materials=savedMaterials;
-}
-
 function saveData(){
-
-localStorage.setItem(
-'materials',
-JSON.stringify(materials)
-);
 
 localStorage.setItem(
 'transactions',
 JSON.stringify(transactionHistory)
 );
 
+localStorage.setItem(
+'materials',
+JSON.stringify(materials)
+);
+
 }
 
-function showSection(id){
+function toggleSection(id){
+
+const section=
+document.getElementById(id);
+
+const visible=
+section.style.display==='block';
 
 hideSections();
 
-document.getElementById(id)
-.style.display='block';
+section.style.display=
+visible?'none':'block';
 
 }
 
@@ -812,15 +791,23 @@ document.querySelectorAll(
 '.section'
 ).forEach(sec=>{
 
+if(
+sec.id!==''
+){
 sec.style.display='none';
+}
 
 });
 
+document.querySelectorAll(
+'.section'
+)[4].style.display='block';
+
 }
 
-function showScanner(){
+function toggleScanner(){
 
-showSection('scannerSection');
+toggleSection('scannerSection');
 
 document.getElementById(
 'reader'
@@ -854,7 +841,7 @@ if(material){
 
 html5QrCode.stop();
 
-showSection(
+toggleSection(
 'transactionSection'
 );
 
@@ -965,8 +952,6 @@ document.getElementById(
 transactionHistory.length;
 
 fillDropdowns();
-
-renderChart();
 
 }
 
@@ -1091,17 +1076,6 @@ Swal.fire(
 'success'
 );
 
-if(material.stock<=material.reorder){
-
-Swal.fire(
-'Low Stock',
-material.name +
-' is low stock',
-'warning'
-);
-
-}
-
 }
 
 function generateQRLabel(){
@@ -1146,8 +1120,7 @@ canvas,
 qrData,
 
 {
-width:220,
-margin:2
+width:220
 },
 
 function(error){
@@ -1199,7 +1172,7 @@ document.getElementById(
 const link=
 document.createElement('a');
 
-link.download='QR_Label.png';
+link.download='QR.png';
 
 link.href=
 canvas.toDataURL();
@@ -1212,27 +1185,6 @@ link.click();
 
 function generateHistory(){
 
-const code=
-document.getElementById(
-'reportMaterial'
-).value;
-
-const from=
-new Date(
-document.getElementById(
-'fromDate'
-).value
-);
-
-const to=
-new Date(
-document.getElementById(
-'toDate'
-).value
-);
-
-to.setHours(23,59,59,999);
-
 const container=
 document.getElementById(
 'historyContainer'
@@ -1240,19 +1192,7 @@ document.getElementById(
 
 container.innerHTML='';
 
-const filtered=
-transactionHistory.filter(item=>{
-
-const d=
-new Date(item.date);
-
-return item.material &&
-d>=from &&
-d<=to;
-
-});
-
-filtered.forEach(item=>{
+transactionHistory.forEach(item=>{
 
 container.innerHTML += `
 
@@ -1414,53 +1354,6 @@ html:text ||
 'No Low Stock',
 
 icon:'warning'
-
-});
-
-}
-
-function renderChart(){
-
-const ctx=
-document.getElementById(
-'stockChart'
-);
-
-let normal=0;
-let low=0;
-
-materials.forEach(item=>{
-
-if(item.stock<=item.reorder){
-low++;
-}
-else{
-normal++;
-}
-
-});
-
-new Chart(ctx,{
-
-type:'doughnut',
-
-data:{
-
-labels:[
-'Normal',
-'Low Stock'
-],
-
-datasets:[{
-
-data:[
-normal,
-low
-]
-
-}]
-
-}
 
 });
 
