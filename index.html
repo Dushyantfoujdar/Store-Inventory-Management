@@ -7,17 +7,17 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Advanced Inventory Dashboard</title>
+<title>Smart Inventory Dashboard</title>
 
 <!-- LIBRARIES -->
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -37,7 +37,7 @@ background:
 linear-gradient(
 135deg,
 #0f172a,
-#111827,
+#1e293b,
 #1e3a8a,
 #0f766e
 );
@@ -100,9 +100,6 @@ background:
 rgba(255,255,255,0.08);
 
 backdrop-filter:blur(12px);
-
-border:
-1px solid rgba(255,255,255,0.12);
 
 box-shadow:
 0 10px 30px rgba(0,0,0,0.3);
@@ -304,10 +301,47 @@ color:black;
 }
 
 .qrLabel{
+margin-top:20px;
+text-align:center;
+}
+
+.transactionBox{
+
+margin-top:35px;
+
+padding:25px;
+
+border-radius:25px;
+
+background:
+rgba(255,255,255,0.08);
+
+backdrop-filter:blur(12px);
+
+}
+
+.transaction{
+
+padding:18px;
+
+border-radius:18px;
+
+margin-top:15px;
+
+background:
+rgba(255,255,255,0.08);
+
+}
+
+.filterBox{
+
+display:flex;
+
+gap:15px;
+
+flex-wrap:wrap;
 
 margin-top:20px;
-
-text-align:center;
 
 }
 
@@ -317,7 +351,8 @@ margin-top:25px;
 
 @media(max-width:768px){
 
-.buttons{
+.buttons,
+.filterBox{
 flex-direction:column;
 }
 
@@ -331,7 +366,7 @@ flex-direction:column;
 
 <div class="app" id="dashboard">
 
-<h1>Store Inventory Dashboard</h1>
+<h1>Smart Inventory Dashboard</h1>
 
 <p>QR Based Inventory Management System</p>
 
@@ -368,8 +403,8 @@ onkeyup="searchMaterial(this.value)"
 <thead>
 
 <tr>
-<th>Material Code</th>
-<th>Material Name</th>
+<th>Code</th>
+<th>Material</th>
 <th>Unit</th>
 <th>Stock</th>
 <th>Reorder</th>
@@ -402,15 +437,9 @@ Scan QR
 Generate QR
 </button>
 
-<button class="download" onclick="downloadDashboardPNG()">
-Download PNG
-</button>
-
-<button class="download" onclick="downloadDashboardPDF()">
-Download PDF
-</button>
-
 </div>
+
+<!-- TRANSACTION PANEL -->
 
 <div id="transactionPanel" class="panel">
 
@@ -442,6 +471,8 @@ Submit Transaction
 
 </div>
 
+<!-- QR PANEL -->
+
 <div id="qrPanel" class="panel">
 
 <h2>QR Label Generator</h2>
@@ -468,7 +499,58 @@ Download QR PNG
 
 </div>
 
+<!-- QR READER -->
+
 <div id="reader"></div>
+
+<!-- TRANSACTION REPORT -->
+
+<div class="transactionBox">
+
+<h2>Material Transaction History</h2>
+
+<div class="filterBox">
+
+<select id="reportMaterial" class="searchBox"></select>
+
+<input
+type="date"
+id="fromDate"
+class="searchBox"
+>
+
+<input
+type="date"
+id="toDate"
+class="searchBox"
+>
+
+<button
+class="scan"
+onclick="generateHistory()"
+>
+Generate History
+</button>
+
+<button
+class="download"
+onclick="downloadExcel()"
+>
+Excel
+</button>
+
+<button
+class="download"
+onclick="downloadPDF()"
+>
+PDF
+</button>
+
+</div>
+
+<div id="historyContainer"></div>
+
+</div>
 
 </div>
 
@@ -516,7 +598,11 @@ const materials=[
 
 ];
 
+let transactionHistory=[];
+
 let currentAction='';
+
+let filteredHistory=[];
 
 function renderTable(){
 
@@ -581,9 +667,12 @@ document.getElementById('materialSelect');
 const qrMaterial=
 document.getElementById('qrMaterial');
 
-materialSelect.innerHTML='';
+const reportMaterial=
+document.getElementById('reportMaterial');
 
+materialSelect.innerHTML='';
 qrMaterial.innerHTML='';
+reportMaterial.innerHTML='';
 
 materials.forEach(item=>{
 
@@ -596,6 +685,12 @@ ${item.code} - ${item.name}
 qrMaterial.innerHTML += `
 <option value="${item.code}">
 ${item.code} - ${item.name}
+</option>
+`;
+
+reportMaterial.innerHTML += `
+<option value="${item.name}">
+${item.name}
 </option>
 `;
 
@@ -662,38 +757,27 @@ material.stock += qty;
 
 }
 
+transactionHistory.unshift({
+
+material:material.name,
+
+code:material.code,
+
+action:currentAction,
+
+qty:qty,
+
+person:person,
+
+balance:material.stock,
+
+date:new Date().toLocaleString()
+
+});
+
 renderTable();
 
 alert('Transaction Successful');
-
-}
-
-function searchMaterial(value){
-
-value=value.toLowerCase();
-
-const rows=
-document.querySelectorAll(
-'#inventoryTable tr'
-);
-
-rows.forEach(row=>{
-
-if(
-row.innerText.toLowerCase().includes(value)
-){
-
-row.style.display='';
-
-}
-
-else{
-
-row.style.display='none';
-
-}
-
-});
 
 }
 
@@ -728,9 +812,71 @@ return;
 
 }
 
-alert('Scanned: '+material.name);
-
 html5QrCode.stop();
+
+const action=
+prompt(
+`Material: ${material.name}
+
+Type:
+issue
+or
+receive`
+);
+
+if(!action)return;
+
+const qty=
+parseInt(prompt('Enter Quantity'));
+
+if(!qty)return;
+
+const person=
+prompt('Enter Person Name');
+
+if(!person)return;
+
+if(action==='issue'){
+
+if(qty>material.stock){
+
+alert('Insufficient Stock');
+
+return;
+
+}
+
+material.stock -= qty;
+
+}
+
+if(action==='receive'){
+
+material.stock += qty;
+
+}
+
+transactionHistory.unshift({
+
+material:material.name,
+
+code:material.code,
+
+action:action,
+
+qty:qty,
+
+person:person,
+
+balance:material.stock,
+
+date:new Date().toLocaleString()
+
+});
+
+renderTable();
+
+alert('Transaction Completed');
 
 }
 
@@ -771,19 +917,12 @@ canvas,
 `${material.code}`,
 
 {
-width:220,
-margin:2,
-color:{
-dark:'#000000',
-light:'#FFFFFF'
-}
+width:220
 },
 
 function(error){
 
 if(error){
-
-console.error(error);
 
 alert('QR Generation Failed');
 
@@ -827,7 +966,7 @@ const link=
 document.createElement('a');
 
 link.download=
-'Material_QR_Label.png';
+'QR_Label.png';
 
 link.href=
 canvas.toDataURL('image/png');
@@ -838,57 +977,164 @@ link.click();
 
 }
 
-async function downloadDashboardPNG(){
+function generateHistory(){
 
-const canvas=
-await html2canvas(
-document.getElementById('dashboard')
+const material=
+document.getElementById('reportMaterial').value;
+
+const from=
+new Date(
+document.getElementById('fromDate').value
 );
 
-const link=
-document.createElement('a');
+const to=
+new Date(
+document.getElementById('toDate').value
+);
 
-link.download='InventoryDashboard.png';
+to.setHours(23,59,59,999);
 
-link.href=
-canvas.toDataURL('image/png');
+filteredHistory=
+transactionHistory.filter(item=>{
 
-link.click();
+const d=new Date(item.date);
+
+return item.material===material &&
+d>=from &&
+d<=to;
+
+});
+
+const container=
+document.getElementById('historyContainer');
+
+container.innerHTML='';
+
+filteredHistory.forEach(item=>{
+
+container.innerHTML += `
+
+<div class="transaction">
+
+<b>${item.material}</b>
+
+<br><br>
+
+Action:
+${item.action}
+
+<br>
+
+Qty:
+${item.qty}
+
+<br>
+
+Person:
+${item.person}
+
+<br>
+
+Balance:
+${item.balance}
+
+<br>
+
+Date:
+${item.date}
+
+</div>
+
+`;
+
+});
 
 }
 
-async function downloadDashboardPDF(){
+function downloadExcel(){
 
-const canvas=
-await html2canvas(
-document.getElementById('dashboard')
+const ws=
+XLSX.utils.json_to_sheet(filteredHistory);
+
+const wb=
+XLSX.utils.book_new();
+
+XLSX.utils.book_append_sheet(
+wb,
+ws,
+'Transactions'
 );
 
-const imgData=
-canvas.toDataURL('image/png');
+XLSX.writeFile(
+wb,
+'Material_Transactions.xlsx'
+);
+
+}
+
+function downloadPDF(){
 
 const { jsPDF }=
 window.jspdf;
 
 const pdf=
-new jsPDF('p','mm','a4');
+new jsPDF();
 
-const width=210;
+let y=20;
 
-const height=
-(canvas.height * width)
-/ canvas.width;
-
-pdf.addImage(
-imgData,
-'PNG',
-0,
-0,
-width,
-height
+pdf.text(
+'Material Transaction History',
+20,
+20
 );
 
-pdf.save('InventoryDashboard.pdf');
+filteredHistory.forEach(item=>{
+
+pdf.text(
+
+`${item.material}
+ | ${item.action}
+ | Qty:${item.qty}
+ | ${item.person}
+ | Bal:${item.balance}`,
+
+10,
+y+=10
+
+);
+
+});
+
+pdf.save('Material_Transactions.pdf');
+
+}
+
+function searchMaterial(value){
+
+value=value.toLowerCase();
+
+const rows=
+document.querySelectorAll(
+'#inventoryTable tr'
+);
+
+rows.forEach(row=>{
+
+if(
+row.innerText.toLowerCase().includes(value)
+){
+
+row.style.display='';
+
+}
+
+else{
+
+row.style.display='none';
+
+}
+
+});
 
 }
 
