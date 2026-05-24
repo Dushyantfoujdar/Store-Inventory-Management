@@ -9,6 +9,8 @@
 
 <title>Advanced Inventory Dashboard</title>
 
+<!-- LIBRARIES -->
+
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -329,34 +331,28 @@ padding:25px;
 
 border-radius:20px;
 
-background:
-rgba(255,255,255,0.08);
-
-display:inline-block;
-
-}
-
-.light-mode{
-background:#f1f5f9;
-color:black;
-}
-
-.light-mode .card,
-.light-mode .panel,
-.light-mode .transactionBox,
-.light-mode .tableContainer,
-.light-mode #qrcode{
 background:white;
+
+display:flex;
+
+flex-direction:column;
+
+align-items:center;
+
+justify-content:center;
+
+min-height:350px;
+
 color:black;
+
 }
 
-.light-mode table{
-color:black;
-}
+.qrLabel{
 
-.light-mode .searchBox{
-background:#f1f5f9;
-color:black;
+margin-top:20px;
+
+text-align:center;
+
 }
 
 @media(max-width:768px){
@@ -447,16 +443,8 @@ Scan QR
 Generate QR
 </button>
 
-<button class="theme" onclick="toggleTheme()">
-Dark / Light
-</button>
-
 <button class="download" onclick="downloadPNG()">
 Download PNG
-</button>
-
-<button class="download" onclick="downloadJPG()">
-Download JPG
 </button>
 
 <button class="download" onclick="downloadPDF()">
@@ -507,6 +495,14 @@ style="margin-top:20px;"
 onclick="generateQRLabel()"
 >
 Generate QR Label
+</button>
+
+<button
+class="download"
+style="margin-top:20px;"
+onclick="downloadQR()"
+>
+Download QR PNG
 </button>
 
 <div id="qrcode"></div>
@@ -598,27 +594,9 @@ let materials=
 JSON.parse(localStorage.getItem('materials'))
 || defaultMaterials;
 
-let transactionHistory=
-JSON.parse(localStorage.getItem('transactions'))
-|| [];
+let transactionHistory=[];
 
 let currentAction='';
-
-let currentReportData=[];
-
-function saveData(){
-
-localStorage.setItem(
-'materials',
-JSON.stringify(materials)
-);
-
-localStorage.setItem(
-'transactions',
-JSON.stringify(transactionHistory)
-);
-
-}
 
 function renderTable(){
 
@@ -640,9 +618,13 @@ table.innerHTML += `
 <tr>
 
 <td>${item.code}</td>
+
 <td>${item.name}</td>
+
 <td>${item.unit}</td>
+
 <td>${item.stock}</td>
+
 <td>${item.reorder}</td>
 
 <td class="${
@@ -763,136 +745,17 @@ return;
 
 material.stock -= qty;
 
-addHistory(
-'Issued',
-material.name,
-qty,
-material.stock,
-person
-);
-
 }
 
 if(currentAction==='receive'){
 
 material.stock += qty;
 
-addHistory(
-'Received',
-material.name,
-qty,
-material.stock,
-person
-);
-
 }
-
-saveData();
 
 renderTable();
 
 alert('Transaction Successful');
-
-}
-
-function addHistory(action,name,qty,balance,person){
-
-transactionHistory.unshift({
-
-action,
-name,
-qty,
-balance,
-person,
-time:new Date()
-
-});
-
-saveData();
-
-}
-
-function generateReport(){
-
-const material=
-document.getElementById('reportMaterial').value;
-
-const from=
-document.getElementById('fromDate').value;
-
-const to=
-document.getElementById('toDate').value;
-
-if(!from || !to){
-
-alert('Select Dates');
-
-return;
-
-}
-
-const fromDate=new Date(from);
-
-const toDate=new Date(to);
-
-toDate.setHours(23,59,59,999);
-
-currentReportData=
-transactionHistory.filter(item=>{
-
-const d=new Date(item.time);
-
-return item.name===material &&
-d>=fromDate &&
-d<=toDate;
-
-});
-
-const container=
-document.getElementById('reportResults');
-
-container.innerHTML='';
-
-if(currentReportData.length===0){
-
-container.innerHTML=
-'<div class="transaction">No Transactions Found</div>';
-
-return;
-
-}
-
-currentReportData.forEach(item=>{
-
-container.innerHTML += `
-
-<div class="transaction">
-
-<b>${item.action}</b> - ${item.name}
-
-<br><br>
-
-<b>Qty:</b> ${item.qty}
-
-<br>
-
-<b>Person:</b> ${item.person}
-
-<br>
-
-<b>Balance:</b> ${item.balance}
-
-<br>
-
-<b>Date:</b>
-
-${new Date(item.time).toLocaleString()}
-
-</div>
-
-`;
-
-});
 
 }
 
@@ -987,38 +850,68 @@ document.getElementById('qrcode');
 
 qrDiv.innerHTML='';
 
-new QRCode(qrDiv,{
+const qrContainer=
+document.createElement('div');
+
+qrDiv.appendChild(qrContainer);
+
+new QRCode(qrContainer,{
 
 text:
-`${material.code} - ${material.name}`,
+`${material.code}`,
 
-width:200,
+width:220,
 
-height:200
+height:220,
+
+colorDark:"#000000",
+
+colorLight:"#ffffff",
+
+correctLevel:QRCode.CorrectLevel.H
 
 });
 
-qrDiv.innerHTML += `
+const label=
+document.createElement('div');
 
-<p>
+label.className='qrLabel';
 
-<b>${material.code}</b>
+label.innerHTML=`
 
-<br>
+<h3>${material.name}</h3>
 
-${material.name}
+<p><b>Code:</b> ${material.code}</p>
 
-</p>
+<p><b>Unit:</b> ${material.unit}</p>
+
+<p><b>Stock:</b> ${material.stock}</p>
 
 `;
 
+qrDiv.appendChild(label);
+
 }
 
-function toggleTheme(){
+function downloadQR(){
 
-document.body.classList.toggle(
-'light-mode'
-);
+const qrElement=
+document.getElementById('qrcode');
+
+html2canvas(qrElement).then(canvas=>{
+
+const link=
+document.createElement('a');
+
+link.download=
+'Material_QR_Label.png';
+
+link.href=
+canvas.toDataURL('image/png');
+
+link.click();
+
+});
 
 }
 
@@ -1036,25 +929,6 @@ link.download='InventoryDashboard.png';
 
 link.href=
 canvas.toDataURL('image/png');
-
-link.click();
-
-}
-
-async function downloadJPG(){
-
-const canvas=
-await html2canvas(
-document.getElementById('dashboard')
-);
-
-const link=
-document.createElement('a');
-
-link.download='InventoryDashboard.jpg';
-
-link.href=
-canvas.toDataURL('image/jpeg',1);
 
 link.click();
 
