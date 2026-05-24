@@ -244,6 +244,8 @@ justify-content:center;
 z-index:9999;
 padding:20px;
 
+overflow:auto;
+
 }
 
 .popupBox{
@@ -262,6 +264,9 @@ linear-gradient(
 
 padding:25px;
 border-radius:25px;
+
+box-shadow:
+0 10px 40px rgba(0,0,0,0.5);
 
 }
 
@@ -365,6 +370,8 @@ justify-content:center;
 
 color:black;
 
+min-height:250px;
+
 }
 
 .transaction{
@@ -445,33 +452,21 @@ Add Material
 <div class="cards">
 
 <div class="card">
-
 <h3>Total Materials</h3>
-
 <p id="totalMaterials"></p>
-
 </div>
 
 <div
 class="card"
 onclick="showLowStock()"
 >
-
 <h3>Low Stock</h3>
-
 <p id="lowStock"></p>
-
 </div>
 
-<div
-class="card"
-onclick="showTodayTransactionsPopup()"
->
-
+<div class="card">
 <h3>Today's Transactions</h3>
-
 <p id="todayTransactions"></p>
-
 </div>
 
 </div>
@@ -505,54 +500,161 @@ onclick="showTodayTransactionsPopup()"
 
 </div>
 
+<!-- ISSUE RECEIVE POPUP -->
+
+<div
+id="transactionPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Issue / Receive Material</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('transactionPopup')"
+>
+X
+</button>
+
+</div>
+
+<select
+id="actionSelect"
+class="searchBox"
+>
+
+<option value="issue">
+Issue Material
+</option>
+
+<option value="receive">
+Receive Material
+</option>
+
+</select>
+
+<select
+id="materialSelect"
+class="searchBox"
+></select>
+
+<input
+type="number"
+id="qtyInput"
+class="searchBox"
+placeholder="Enter Quantity"
+>
+
+<input
+type="text"
+id="personInput"
+class="searchBox"
+placeholder="Issued To / Received From"
+>
+
+<button
+class="panelButton"
+onclick="submitTransaction()"
+>
+Submit Transaction
+</button>
+
+</div>
+
+</div>
+
+<!-- QR POPUP -->
+
+<div
+id="qrPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Generate QR</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('qrPopup')"
+>
+X
+</button>
+
+</div>
+
+<select
+id="qrMaterial"
+class="searchBox"
+></select>
+
+<button
+class="panelButton"
+onclick="generateQRLabel()"
+>
+Generate QR
+</button>
+
+<button
+class="panelButton"
+onclick="downloadQR()"
+>
+Download QR
+</button>
+
+<div id="qrcode"></div>
+
+</div>
+
+</div>
+
 <script>
 
 let materials=[
 
-{
-code:'0838181493',
-name:'TES',
-category:'Valves',
-unit:'Nos.',
-stock:95,
-reorder:20
-},
+{code:'0838181493',name:'TES',category:'Valves',unit:'Nos.',stock:95,reorder:20},
 
-{
-code:'0838880104',
-name:'SC Valve New',
-category:'Valves',
-unit:'Nos.',
-stock:100,
-reorder:20
-},
+{code:'0838880104',name:'SC Valve New',category:'Valves',unit:'Nos.',stock:100,reorder:20},
 
-{
-code:'0838881066',
-name:'Combo Valve',
-category:'Valves',
-unit:'Nos.',
-stock:75,
-reorder:20
-},
+{code:'0838881066',name:'Combo Valve',category:'Valves',unit:'Nos.',stock:75,reorder:20},
 
-{
-code:'0838882104',
-name:'LOT Valve',
-category:'Valves',
-unit:'Nos.',
-stock:60,
-reorder:20
-},
+{code:'0838882104',name:'LOT Valve',category:'Valves',unit:'Nos.',stock:60,reorder:20},
 
-{
-code:'0838911014',
-name:'Pressure Regulator',
-category:'Safety',
-unit:'Nos.',
-stock:40,
-reorder:15
-}
+{code:'0838911014',name:'Pressure Regulator',category:'Safety',unit:'Nos.',stock:40,reorder:15},
+
+{code:'0838920104',name:'Safety Caps',category:'Safety',unit:'Nos.',stock:250,reorder:50},
+
+{code:'0838929014',name:'Nylon Thread',category:'Consumables',unit:'Nos.',stock:150,reorder:30},
+
+{code:'0838929034',name:'SS Clip',category:'Consumables',unit:'Nos.',stock:80,reorder:20},
+
+{code:'0838930764',name:'NBR O-Ring',category:'Consumables',unit:'Nos.',stock:120,reorder:25},
+
+{code:'0838930774',name:'FKM O-Ring',category:'Consumables',unit:'Nos.',stock:90,reorder:25},
+
+{code:'6183050164',name:'Teflon Tape',category:'Consumables',unit:'Nos.',stock:200,reorder:40},
+
+{code:'8601061404',name:'Zinc Chrome Primer',category:'Paint',unit:'Litres',stock:50,reorder:10},
+
+{code:'8614022944',name:'Paint Enamel Signal Red',category:'Paint',unit:'Litres',stock:70,reorder:15},
+
+{code:'8614023204',name:'Paint Enamel White',category:'Paint',unit:'Litres',stock:65,reorder:15},
+
+{code:'8614023664',name:'Paint Synthetic Enamel Oxford Blue',category:'Paint',unit:'Litres',stock:55,reorder:15},
+
+{code:'8630200504',name:'Thinner F/Enamel Paint',category:'Paint',unit:'Litres',stock:85,reorder:20},
+
+{code:'8740155404',name:'Brown Soap F/LPG Conveyor',category:'Cleaning',unit:'Kg',stock:45,reorder:10},
+
+{code:'9532500114',name:'Gloves Hand Cotton 10IN',category:'Safety',unit:'Nos.',stock:300,reorder:60},
+
+{code:'0838920203',name:'LOT CAP',category:'Valves',unit:'Nos.',stock:110,reorder:25}
 
 ];
 
@@ -635,33 +737,61 @@ document.getElementById(
 ).innerHTML=
 transactionHistory.length;
 
+fillDropdowns();
+
+}
+
+function fillDropdowns(){
+
+const ids=[
+'materialSelect',
+'qrMaterial'
+];
+
+ids.forEach(id=>{
+
+const dropdown=
+document.getElementById(id);
+
+dropdown.innerHTML='';
+
+materials.forEach(item=>{
+
+dropdown.innerHTML += `
+
+<option value="${item.code}">
+${item.code} - ${item.name}
+</option>
+
+`;
+
+});
+
+});
+
 }
 
 function openTransactionPopup(){
 
-Swal.fire(
-'Issue / Receive',
-'Popup Opened',
-'success'
-);
+document.getElementById(
+'transactionPopup'
+).style.display='flex';
 
 }
 
 function openQRPopup(){
 
-Swal.fire(
-'Generate QR',
-'Popup Opened',
-'success'
-);
+document.getElementById(
+'qrPopup'
+).style.display='flex';
 
 }
 
 function openScannerPopup(){
 
 Swal.fire(
-'Scanner',
-'Popup Opened',
+'Scanner Ready',
+'QR Scanner Opened',
 'success'
 );
 
@@ -671,7 +801,7 @@ function openReportPopup(){
 
 Swal.fire(
 'Reports',
-'Popup Opened',
+'Reports Popup Opened',
 'success'
 );
 
@@ -681,104 +811,210 @@ function openMaterialPopup(){
 
 Swal.fire(
 'Add Material',
-'Popup Opened',
+'Material Popup Opened',
 'success'
 );
 
 }
 
-function editMaterial(index){
+function closePopup(id){
 
-const item=
-materials[index];
-
-Swal.fire({
-
-title:'Edit Material',
-
-html:`
-
-<input
-id="swalCode"
-class="swal2-input"
-value="${item.code}"
->
-
-<input
-id="swalName"
-class="swal2-input"
-value="${item.name}"
->
-
-<input
-id="swalCategory"
-class="swal2-input"
-value="${item.category}"
->
-
-<input
-id="swalUnit"
-class="swal2-input"
-value="${item.unit}"
->
-
-<input
-id="swalStock"
-class="swal2-input"
-value="${item.stock}"
->
-
-<input
-id="swalReorder"
-class="swal2-input"
-value="${item.reorder}"
->
-
-`,
-
-confirmButtonText:'Update',
-
-preConfirm:()=>{
-
-item.code=
-document.getElementById(
-'swalCode'
-).value;
-
-item.name=
-document.getElementById(
-'swalName'
-).value;
-
-item.category=
-document.getElementById(
-'swalCategory'
-).value;
-
-item.unit=
-document.getElementById(
-'swalUnit'
-).value;
-
-item.stock=
-parseInt(
-document.getElementById(
-'swalStock'
-).value
-);
-
-item.reorder=
-parseInt(
-document.getElementById(
-'swalReorder'
-).value
-);
-
-renderTable();
+document.getElementById(id)
+.style.display='none';
 
 }
 
+function submitTransaction(){
+
+const action=
+document.getElementById(
+'actionSelect'
+).value;
+
+const code=
+document.getElementById(
+'materialSelect'
+).value;
+
+const qty=
+parseInt(
+document.getElementById(
+'qtyInput'
+).value
+);
+
+const person=
+document.getElementById(
+'personInput'
+).value;
+
+const material=
+materials.find(
+m => m.code===code
+);
+
+if(!qty || !person){
+
+Swal.fire(
+'Error',
+'Fill all details',
+'error'
+);
+
+return;
+
+}
+
+if(action==='issue'){
+
+if(qty>material.stock){
+
+Swal.fire(
+'Error',
+'Insufficient Stock',
+'error'
+);
+
+return;
+
+}
+
+material.stock -= qty;
+
+}
+else{
+
+material.stock += qty;
+
+}
+
+transactionHistory.unshift({
+
+material:material.name,
+qty:qty,
+person:person,
+action:action,
+date:new Date()
+
 });
+
+renderTable();
+
+closePopup(
+'transactionPopup'
+);
+
+Swal.fire(
+'Success',
+'Transaction Successful',
+'success'
+);
+
+}
+
+function generateQRLabel(){
+
+const code=
+document.getElementById(
+'qrMaterial'
+).value;
+
+const material=
+materials.find(
+m => m.code===code
+);
+
+const qrDiv=
+document.getElementById(
+'qrcode'
+);
+
+qrDiv.innerHTML='';
+
+const canvas=
+document.createElement(
+'canvas'
+);
+
+qrDiv.appendChild(canvas);
+
+QRCode.toCanvas(
+
+canvas,
+
+JSON.stringify({
+
+code:material.code,
+name:material.name
+
+}),
+
+{
+width:220
+},
+
+function(error){
+
+if(error){
+
+Swal.fire(
+'Error',
+'QR Generation Failed',
+'error'
+);
+
+return;
+
+}
+
+const label=
+document.createElement('div');
+
+label.innerHTML=`
+
+<h3>${material.name}</h3>
+<p>${material.code}</p>
+
+`;
+
+qrDiv.appendChild(label);
+
+}
+
+);
+
+}
+
+function downloadQR(){
+
+html2canvas(
+document.getElementById(
+'qrcode'
+)
+
+).then(canvas=>{
+
+const link=
+document.createElement('a');
+
+link.download='QR.png';
+
+link.href=
+canvas.toDataURL();
+
+link.click();
+
+});
+
+}
+
+function editMaterial(index){
+
+Swal.fire(
+'Edit Material',
+materials[index].name,
+'info'
+);
 
 }
 
@@ -807,22 +1043,6 @@ title:'Low Stock Materials',
 html:text ||
 'No Low Stock',
 icon:'warning'
-
-});
-
-}
-
-function showTodayTransactionsPopup(){
-
-Swal.fire({
-
-title:"Today's Transactions",
-
-html:`
-<div style="text-align:center;">
-No Transactions Today
-</div>
-`
 
 });
 
