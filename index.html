@@ -160,6 +160,13 @@ margin-top:10px;
 margin-top:20px;
 }
 
+.filterBox{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
 @media(max-width:700px){
 
 .cards{
@@ -167,6 +174,10 @@ flex-direction:column;
 }
 
 .buttons{
+flex-direction:column;
+}
+
+.filterBox{
 flex-direction:column;
 }
 
@@ -278,7 +289,33 @@ Submit Transaction
 
 <div class="transactionBox">
 
-<h2>Stock History</h2>
+<h2>Last 30 Transactions</h2>
+
+<div class="filterBox">
+
+<input
+type="date"
+id="fromDate"
+class="searchBox"
+style="flex:1;"
+>
+
+<input
+type="date"
+id="toDate"
+class="searchBox"
+style="flex:1;"
+>
+
+<button
+class="scan"
+onclick="filterTransactions()"
+style="flex:1;"
+>
+Filter Transactions
+</button>
+
+</div>
 
 <div id="transactions"></div>
 
@@ -331,6 +368,8 @@ const materials = [
 ];
 
 let currentAction='';
+
+let transactionHistory=[];
 
 function renderTable(){
 
@@ -486,6 +525,40 @@ alert('Transaction Successful');
 
 function addHistory(action,name,qty,balance,person){
 
+const timestamp = new Date();
+
+const transaction = {
+
+action,
+name,
+qty,
+balance,
+person,
+time: timestamp
+
+};
+
+transactionHistory.unshift(transaction);
+
+if(transactionHistory.length>30){
+
+transactionHistory.pop();
+
+}
+
+renderTransactions(transactionHistory);
+
+}
+
+function renderTransactions(data){
+
+const container =
+document.getElementById('transactions');
+
+container.innerHTML='';
+
+data.forEach(item=>{
+
 const div =
 document.createElement('div');
 
@@ -493,28 +566,70 @@ div.className='transaction';
 
 div.innerHTML=`
 
-<b>${action}</b> - ${name}
+<b>${item.action}</b> - ${item.name}
 
 <br><br>
 
-<b>Quantity:</b> ${qty}
+<b>Quantity:</b> ${item.qty}
 
 <br>
 
-<b>${action==='Issued'?'Issued To':'Received From'}:</b> ${person}
+<b>${item.action==='Issued'?'Issued To':'Received From'}:</b> ${item.person}
 
 <br>
 
-<b>Balance Stock:</b> ${balance}
+<b>Balance Stock:</b> ${item.balance}
 
 <br>
 
-<b>Date:</b> ${new Date().toLocaleString()}
+<b>Date & Time:</b>
+
+${new Date(item.time).toLocaleString()}
 
 `;
 
-document.getElementById('transactions')
-.prepend(div);
+container.appendChild(div);
+
+});
+
+}
+
+function filterTransactions(){
+
+const from =
+document.getElementById('fromDate').value;
+
+const to =
+document.getElementById('toDate').value;
+
+if(!from || !to){
+
+renderTransactions(transactionHistory);
+
+return;
+
+}
+
+const fromDate =
+new Date(from);
+
+const toDate =
+new Date(to);
+
+toDate.setHours(23,59,59,999);
+
+const filtered =
+transactionHistory.filter(item=>{
+
+const itemDate =
+new Date(item.time);
+
+return itemDate >= fromDate &&
+itemDate <= toDate;
+
+});
+
+renderTransactions(filtered);
 
 }
 
