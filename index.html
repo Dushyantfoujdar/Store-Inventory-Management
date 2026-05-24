@@ -7,9 +7,13 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Smart Inventory Dashboard</title>
+<title>Professional Smart Inventory Dashboard</title>
 
 <!-- LIBRARIES -->
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
@@ -27,54 +31,133 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
+font-family:'Segoe UI',sans-serif;
 }
 
 body{
-
-font-family:'Segoe UI',sans-serif;
 
 background:
 linear-gradient(
 135deg,
 #0f172a,
-#1e293b,
 #1e3a8a,
 #0f766e
 );
 
-background-size:400% 400%;
+color:white;
+min-height:100vh;
+display:flex;
 
-animation:bgmove 15s ease infinite;
+}
+
+.sidebar{
+
+width:260px;
+
+background:
+rgba(0,0,0,0.3);
+
+backdrop-filter:blur(10px);
+
+padding:25px;
+
+position:fixed;
+
+height:100vh;
+
+overflow:auto;
+
+}
+
+.logo{
+
+font-size:28px;
+font-weight:bold;
+margin-bottom:40px;
+
+}
+
+.menu button{
+
+width:100%;
+
+padding:15px;
+
+margin-bottom:15px;
+
+border:none;
+
+border-radius:15px;
+
+background:
+rgba(255,255,255,0.08);
 
 color:white;
 
-min-height:100vh;
+font-size:15px;
+
+cursor:pointer;
+
+transition:0.3s;
 
 }
 
-@keyframes bgmove{
+.menu button:hover{
 
-0%{
-background-position:0% 50%;
-}
-
-50%{
-background-position:100% 50%;
-}
-
-100%{
-background-position:0% 50%;
-}
+background:
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
 
 }
 
-.app{
+.main{
+
+margin-left:280px;
+
 padding:25px;
+
+width:100%;
+
 }
 
-h1{
-font-size:38px;
-margin-bottom:10px;
+.topBar{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+flex-wrap:wrap;
+
+gap:15px;
+
+}
+
+.toggleBtn{
+
+padding:12px 20px;
+
+border:none;
+
+border-radius:15px;
+
+background:
+linear-gradient(
+to right,
+#7c3aed,
+#2563eb
+);
+
+color:white;
+
+cursor:pointer;
+
+font-weight:bold;
+
 }
 
 .cards{
@@ -82,11 +165,11 @@ margin-bottom:10px;
 display:grid;
 
 grid-template-columns:
-repeat(auto-fit,minmax(250px,1fr));
+repeat(auto-fit,minmax(220px,1fr));
 
 gap:20px;
 
-margin-top:25px;
+margin-top:30px;
 
 }
 
@@ -102,11 +185,11 @@ rgba(255,255,255,0.08);
 backdrop-filter:blur(12px);
 
 box-shadow:
-0 10px 30px rgba(0,0,0,0.3);
-
-cursor:pointer;
+0 10px 25px rgba(0,0,0,0.3);
 
 transition:0.3s;
+
+cursor:pointer;
 
 }
 
@@ -116,28 +199,47 @@ transform:translateY(-5px);
 
 }
 
+.card h3{
+font-size:18px;
+}
+
 .card p{
-font-size:40px;
+
+font-size:38px;
 font-weight:bold;
 margin-top:15px;
+
+}
+
+.section{
+
+margin-top:35px;
+
+padding:25px;
+
+border-radius:25px;
+
+background:
+rgba(255,255,255,0.08);
+
+backdrop-filter:blur(12px);
+
 }
 
 .searchBox{
 
 width:100%;
 
-padding:16px;
+padding:15px;
 
 margin-top:20px;
 
 border:none;
 
-border-radius:18px;
-
-font-size:16px;
+border-radius:15px;
 
 background:
-rgba(255,255,255,0.1);
+rgba(255,255,255,0.08);
 
 color:white;
 
@@ -151,63 +253,48 @@ color:#ddd;
 
 select{
 
+background:#0f172a !important;
 color:white !important;
-
-background:
-rgba(15,23,42,0.95) !important;
 
 }
 
 option{
 
 background:#0f172a;
-
 color:white;
 
 }
 
 .tableContainer{
 
-margin-top:30px;
-
 overflow-x:auto;
-
-padding:10px;
-
-border-radius:25px;
-
-background:
-rgba(255,255,255,0.08);
-
-backdrop-filter:blur(12px);
+margin-top:20px;
 
 }
 
 table{
+
 width:100%;
 border-collapse:collapse;
-color:white;
+
 }
 
 th{
 
-padding:18px;
-
-text-align:left;
+padding:15px;
 
 background:
 linear-gradient(
 to right,
-#06b6d4,
 #2563eb,
-#7c3aed
+#06b6d4
 );
 
 }
 
 td{
 
-padding:16px;
+padding:14px;
 
 border-bottom:
 1px solid rgba(255,255,255,0.1);
@@ -231,26 +318,19 @@ font-weight:bold;
 .buttons{
 
 display:flex;
-
 gap:15px;
-
 flex-wrap:wrap;
-
-margin-top:30px;
+margin-top:25px;
 
 }
 
 button{
 
-flex:1;
-
-padding:16px;
+padding:14px 18px;
 
 border:none;
 
-border-radius:18px;
-
-font-size:15px;
+border-radius:15px;
 
 font-weight:bold;
 
@@ -265,8 +345,6 @@ transition:0.3s;
 button:hover{
 
 transform:translateY(-3px);
-
-opacity:0.95;
 
 }
 
@@ -288,6 +366,8 @@ background:linear-gradient(to right,#f59e0b,#d97706);
 
 .panel{
 
+display:none;
+
 margin-top:25px;
 
 padding:25px;
@@ -297,37 +377,30 @@ border-radius:25px;
 background:
 rgba(255,255,255,0.08);
 
-backdrop-filter:blur(12px);
-
-display:none;
-
-animation:fadeIn 0.3s ease;
-
 }
 
-@keyframes fadeIn{
+.transaction{
 
-from{
-opacity:0;
-transform:translateY(10px);
-}
+padding:15px;
 
-to{
-opacity:1;
-transform:translateY(0px);
-}
+margin-top:15px;
+
+border-radius:15px;
+
+background:
+rgba(255,255,255,0.08);
 
 }
 
 #qrcode{
 
-margin-top:25px;
+background:white;
 
 padding:25px;
 
 border-radius:20px;
 
-background:white;
+margin-top:20px;
 
 display:flex;
 
@@ -337,67 +410,57 @@ align-items:center;
 
 justify-content:center;
 
-min-height:350px;
-
 color:black;
 
 }
 
-.qrLabel{
-margin-top:20px;
-text-align:center;
-}
+.chartContainer{
 
-.transactionBox{
-
-margin-top:35px;
-
-padding:25px;
-
-border-radius:25px;
-
-background:
-rgba(255,255,255,0.08);
-
-backdrop-filter:blur(12px);
-
-display:none;
-
-}
-
-.transaction{
-
-padding:18px;
-
-border-radius:18px;
-
-margin-top:15px;
-
-background:
-rgba(255,255,255,0.08);
-
-}
-
-.filterBox{
-
-display:flex;
-
-gap:15px;
-
-flex-wrap:wrap;
-
-margin-top:20px;
-
-}
-
-#reader{
 margin-top:25px;
+
+height:350px;
+
 }
 
-@media(max-width:768px){
+.lightMode{
 
-.buttons,
-.filterBox{
+background:#f1f5f9;
+color:black;
+
+}
+
+.lightMode .sidebar{
+background:white;
+}
+
+.lightMode .section,
+.lightMode .card{
+background:white;
+color:black;
+}
+
+.lightMode table{
+color:black;
+}
+
+.lightMode .searchBox{
+background:#e2e8f0;
+color:black;
+}
+
+@media(max-width:900px){
+
+.sidebar{
+position:relative;
+width:100%;
+height:auto;
+}
+
+.main{
+margin-left:0;
+}
+
+body{
 flex-direction:column;
 }
 
@@ -409,51 +472,106 @@ flex-direction:column;
 
 <body>
 
-<div class="app">
+<!-- SIDEBAR -->
 
-<h1>Smart Inventory Dashboard</h1>
+<div class="sidebar">
 
-<p>QR Based Inventory Management System</p>
+<div class="logo">
+📦 Inventory ERP
+</div>
 
-<!-- CARDS -->
+<div class="menu">
 
-<div class="cards">
+<button onclick="scrollToSection('dashboard')">
+Dashboard
+</button>
+
+<button onclick="scrollToSection('inventory')">
+Inventory
+</button>
+
+<button onclick="scrollToSection('transactionPanel')">
+Issue / Receive
+</button>
+
+<button onclick="scrollToSection('qrPanel')">
+QR Generator
+</button>
+
+<button onclick="scrollToSection('historyPanel')">
+Reports
+</button>
+
+</div>
+
+</div>
+
+<!-- MAIN -->
+
+<div class="main">
+
+<div class="topBar">
+
+<div>
+
+<h1>Professional Inventory Dashboard</h1>
+
+<p>Enterprise QR Based Inventory Management System</p>
+
+</div>
+
+<button
+class="toggleBtn"
+onclick="toggleMode()"
+>
+🌙 Dark / Light
+</button>
+
+</div>
+
+<!-- KPI CARDS -->
+
+<div class="cards" id="dashboard">
 
 <div class="card">
-
 <h3>Total Materials</h3>
-
 <p id="totalMaterials"></p>
-
 </div>
 
-<div
-class="card"
-onclick="showLowStock()"
->
-
-<h3>Low Stock Materials</h3>
-
+<div class="card" onclick="showLowStock()">
+<h3>Low Stock</h3>
 <p id="lowStock"></p>
+</div>
 
+<div class="card">
+<h3>Transactions Today</h3>
+<p id="todayTransactions">0</p>
+</div>
+
+<div class="card">
+<h3>Total Inventory</h3>
+<p id="totalStock">0</p>
 </div>
 
 </div>
 
-<!-- LOW STOCK PANEL -->
+<!-- CHART -->
 
-<div
-id="lowStockPanel"
-class="panel"
->
+<div class="section">
 
-<h2>Low Stock Materials</h2>
+<h2>Inventory Analytics</h2>
 
-<div id="lowStockList"></div>
+<div class="chartContainer">
+<canvas id="stockChart"></canvas>
+</div>
 
 </div>
 
-<!-- SEARCH -->
+<!-- INVENTORY -->
+
+<div class="section" id="inventory">
+
+<h2>Inventory Table</h2>
 
 <input
 type="text"
@@ -462,8 +580,6 @@ placeholder="Search Material"
 onkeyup="searchMaterial(this.value)"
 >
 
-<!-- TABLE -->
-
 <div class="tableContainer">
 
 <table>
@@ -471,8 +587,9 @@ onkeyup="searchMaterial(this.value)"
 <thead>
 
 <tr>
-<th>Material Code</th>
-<th>Material Name</th>
+<th>Code</th>
+<th>Name</th>
+<th>Category</th>
 <th>Unit</th>
 <th>Stock</th>
 <th>Reorder</th>
@@ -484,6 +601,8 @@ onkeyup="searchMaterial(this.value)"
 <tbody id="inventoryTable"></tbody>
 
 </table>
+
+</div>
 
 </div>
 
@@ -504,18 +623,16 @@ Generate QR
 </button>
 
 <button class="download" onclick="openHistoryPanel()">
-Material History
+Reports
 </button>
 
 </div>
 
-<!-- TRANSACTION PANEL -->
+<!-- ISSUE RECEIVE -->
 
-<div id="transactionPanel" class="panel">
+<div id="transactionPanel" class="panel section">
 
-<h2 id="panelTitle">
-Material Transaction
-</h2>
+<h2>Material Transaction</h2>
 
 <select id="actionSelect" class="searchBox">
 
@@ -535,7 +652,7 @@ Receive Material
 type="number"
 id="qtyInput"
 class="searchBox"
-placeholder="Enter Quantity"
+placeholder="Quantity"
 >
 
 <input
@@ -557,9 +674,9 @@ Submit Transaction
 
 <!-- QR PANEL -->
 
-<div id="qrPanel" class="panel">
+<div id="qrPanel" class="panel section">
 
-<h2>QR Label Generator</h2>
+<h2>QR Generator</h2>
 
 <select id="qrMaterial" class="searchBox"></select>
 
@@ -568,7 +685,7 @@ class="scan"
 style="margin-top:20px;"
 onclick="generateQRLabel()"
 >
-Generate QR Label
+Generate QR
 </button>
 
 <button
@@ -587,16 +704,11 @@ Download QR PNG
 
 <div id="reader"></div>
 
-<!-- HISTORY PANEL -->
+<!-- REPORTS -->
 
-<div
-class="transactionBox"
-id="historyPanel"
->
+<div id="historyPanel" class="panel section">
 
-<h2>Material Transaction History</h2>
-
-<div class="filterBox">
+<h2>Material Transaction Reports</h2>
 
 <select id="reportMaterial" class="searchBox"></select>
 
@@ -612,24 +724,17 @@ id="toDate"
 class="searchBox"
 >
 
-<button
-class="scan"
-onclick="generateHistory()"
->
-Generate History
+<div class="buttons">
+
+<button class="scan" onclick="generateHistory()">
+Generate Report
 </button>
 
-<button
-class="download"
-onclick="downloadExcel()"
->
+<button class="download" onclick="downloadExcel()">
 Download Excel
 </button>
 
-<button
-class="download"
-onclick="downloadPDF()"
->
+<button class="download" onclick="downloadPDF()">
 Download PDF
 </button>
 
@@ -643,81 +748,143 @@ Download PDF
 
 <script>
 
-const materials=[
+let materials=[
 
-{code:'0838181493',name:'TES',unit:'Nos.',stock:95,reorder:20},
+{
+code:'0838181493',
+name:'TES',
+category:'Valves',
+unit:'Nos.',
+stock:95,
+reorder:20
+},
 
-{code:'0838880104',name:'SC Valve New',unit:'Nos.',stock:100,reorder:20},
+{
+code:'0838880104',
+name:'SC Valve New',
+category:'Valves',
+unit:'Nos.',
+stock:100,
+reorder:20
+},
 
-{code:'0838881066',name:'Combo Valve',unit:'Nos.',stock:75,reorder:20},
+{
+code:'0838881066',
+name:'Combo Valve',
+category:'Valves',
+unit:'Nos.',
+stock:75,
+reorder:20
+},
 
-{code:'0838882104',name:'LOT Valve',unit:'Nos.',stock:60,reorder:20},
+{
+code:'0838882104',
+name:'LOT Valve',
+category:'Valves',
+unit:'Nos.',
+stock:60,
+reorder:20
+},
 
-{code:'0838911014',name:'Pressure Regulator',unit:'Nos.',stock:40,reorder:15},
+{
+code:'0838911014',
+name:'Pressure Regulator',
+category:'Safety',
+unit:'Nos.',
+stock:40,
+reorder:15
+},
 
-{code:'0838920104',name:'Safety Caps',unit:'Nos.',stock:250,reorder:50},
+{
+code:'0838920104',
+name:'Safety Caps',
+category:'Safety',
+unit:'Nos.',
+stock:250,
+reorder:50
+},
 
-{code:'0838929014',name:'Nylon Thread',unit:'Nos.',stock:150,reorder:30},
+{
+code:'0838929014',
+name:'Nylon Thread',
+category:'Consumables',
+unit:'Nos.',
+stock:150,
+reorder:30
+},
 
-{code:'0838929034',name:'SS Clip',unit:'Nos.',stock:80,reorder:20},
+{
+code:'0838929034',
+name:'SS Clip',
+category:'Consumables',
+unit:'Nos.',
+stock:80,
+reorder:20
+},
 
-{code:'0838930764',name:'NBR O-Ring',unit:'Nos.',stock:120,reorder:25},
+{
+code:'0838930764',
+name:'NBR O-Ring',
+category:'Consumables',
+unit:'Nos.',
+stock:120,
+reorder:25
+},
 
-{code:'0838930774',name:'FKM O-Ring',unit:'Nos.',stock:90,reorder:25},
-
-{code:'6183050164',name:'Teflon Tape',unit:'Nos.',stock:200,reorder:40},
-
-{code:'8601061404',name:'Zinc Chrome Primer',unit:'Litres',stock:50,reorder:10},
-
-{code:'8614022944',name:'Paint Enamel Signal Red',unit:'Litres',stock:70,reorder:15},
-
-{code:'8614023204',name:'Paint Enamel White',unit:'Litres',stock:65,reorder:15},
-
-{code:'8614023664',name:'Paint Synthetic Enamel Oxford Blue',unit:'Litres',stock:55,reorder:15},
-
-{code:'8630200504',name:'Thinner F/Enamel Paint',unit:'Litres',stock:85,reorder:20},
-
-{code:'8740155404',name:'Brown Soap F/LPG Conveyor',unit:'Kg',stock:45,reorder:10},
-
-{code:'9532500114',name:'Gloves Hand Cotton 10IN',unit:'Nos.',stock:300,reorder:60},
-
-{code:'0838920203',name:'LOT CAP',unit:'Nos.',stock:110,reorder:25}
+{
+code:'0838930774',
+name:'FKM O-Ring',
+category:'Consumables',
+unit:'Nos.',
+stock:90,
+reorder:25
+}
 
 ];
 
-let transactionHistory=[];
-let filteredHistory=[];
+let transactionHistory=
+JSON.parse(
+localStorage.getItem('transactions')
+)||[];
 
-function hidePanels(){
+function saveData(){
 
-document.getElementById(
-'transactionPanel'
-).style.display='none';
+localStorage.setItem(
+'transactions',
+JSON.stringify(transactionHistory)
+);
 
-document.getElementById(
-'qrPanel'
-).style.display='none';
+localStorage.setItem(
+'materials',
+JSON.stringify(materials)
+);
 
-document.getElementById(
-'lowStockPanel'
-).style.display='none';
+}
 
-document.getElementById(
-'historyPanel'
-).style.display='none';
+const savedMaterials=
+JSON.parse(
+localStorage.getItem('materials')
+);
 
+if(savedMaterials){
+materials=savedMaterials;
 }
 
 function renderTable(){
 
 const table=
-document.getElementById('inventoryTable');
+document.getElementById(
+'inventoryTable'
+);
 
 table.innerHTML='';
 
 let low=0;
+let total=0;
 
 materials.forEach(item=>{
+
+total += item.stock;
 
 if(item.stock<=item.reorder){
 low++;
@@ -730,6 +897,8 @@ table.innerHTML += `
 <td>${item.code}</td>
 
 <td>${item.name}</td>
+
+<td>${item.category}</td>
 
 <td>${item.unit}</td>
 
@@ -753,50 +922,103 @@ item.stock<=item.reorder?'Low':'Normal'
 
 });
 
-document.getElementById('totalMaterials').innerHTML=
+document.getElementById(
+'totalMaterials'
+).innerHTML=
 materials.length;
 
-document.getElementById('lowStock').innerHTML=
+document.getElementById(
+'lowStock'
+).innerHTML=
 low;
 
+document.getElementById(
+'totalStock'
+).innerHTML=
+total;
+
+document.getElementById(
+'todayTransactions'
+).innerHTML=
+transactionHistory.length;
+
 fillDropdowns();
+
+renderChart();
 
 }
 
 function fillDropdowns(){
 
-const materialSelect=
-document.getElementById('materialSelect');
+const dropdowns=[
+'materialSelect',
+'qrMaterial',
+'reportMaterial'
+];
 
-const qrMaterial=
-document.getElementById('qrMaterial');
+dropdowns.forEach(id=>{
 
-const reportMaterial=
-document.getElementById('reportMaterial');
+const d=
+document.getElementById(id);
 
-materialSelect.innerHTML='';
-qrMaterial.innerHTML='';
-reportMaterial.innerHTML='';
+d.innerHTML='';
 
 materials.forEach(item=>{
 
-materialSelect.innerHTML += `
+d.innerHTML += `
 <option value="${item.code}">
 ${item.code} - ${item.name}
 </option>
 `;
 
-qrMaterial.innerHTML += `
-<option value="${item.code}">
-${item.code} - ${item.name}
-</option>
-`;
+});
 
-reportMaterial.innerHTML += `
-<option value="${item.name}">
-${item.name}
-</option>
-`;
+});
+
+}
+
+function renderChart(){
+
+const ctx=
+document.getElementById(
+'stockChart'
+);
+
+let normal=0;
+let low=0;
+
+materials.forEach(item=>{
+
+if(item.stock<=item.reorder){
+low++;
+}
+else{
+normal++;
+}
+
+});
+
+new Chart(ctx,{
+
+type:'doughnut',
+
+data:{
+
+labels:[
+'Normal Stock',
+'Low Stock'
+],
+
+datasets:[{
+
+data:[
+normal,
+low
+]
+
+}]
+
+}
 
 });
 
@@ -804,56 +1026,32 @@ ${item.name}
 
 function showLowStock(){
 
-hidePanels();
-
-document.getElementById(
-'lowStockPanel'
-).style.display='block';
-
-const list =
-document.getElementById(
-'lowStockList'
-);
-
-list.innerHTML='';
-
-const lowMaterials =
+const lowMaterials=
 materials.filter(
-m => m.stock <= m.reorder
+m => m.stock<=m.reorder
 );
 
-if(lowMaterials.length===0){
-
-list.innerHTML=
-'<p>No Low Stock Materials</p>';
-
-return;
-
-}
+let text='';
 
 lowMaterials.forEach(item=>{
 
-list.innerHTML += `
-
-<div class="transaction">
-
-<b>${item.name}</b>
-
-<br><br>
-
-Code: ${item.code}
-
-<br>
-
-Current Stock: ${item.stock}
-
-<br>
-
-Reorder Level: ${item.reorder}
-
-</div>
-
+text += `
+${item.name}
+ - Stock:
+${item.stock}<br>
 `;
+
+});
+
+Swal.fire({
+
+title:'Low Stock Materials',
+
+html:text ||
+
+'No Low Stock',
+
+icon:'warning'
 
 });
 
@@ -889,36 +1087,58 @@ document.getElementById(
 
 }
 
+function hidePanels(){
+
+document.getElementById(
+'transactionPanel'
+).style.display='none';
+
+document.getElementById(
+'qrPanel'
+).style.display='none';
+
+document.getElementById(
+'historyPanel'
+).style.display='none';
+
+}
+
 function submitTransaction(){
 
-const action =
+const action=
 document.getElementById(
 'actionSelect'
 ).value;
 
-const code =
+const code=
 document.getElementById(
 'materialSelect'
 ).value;
 
-const qty =
+const qty=
 parseInt(
 document.getElementById(
 'qtyInput'
 ).value
 );
 
-const person =
+const person=
 document.getElementById(
 'personInput'
 ).value;
 
-const material =
-materials.find(m => m.code === code);
+const material=
+materials.find(
+m => m.code===code
+);
 
 if(!qty || !person){
 
-alert('Fill All Details');
+Swal.fire(
+'Error',
+'Fill All Details',
+'error'
+);
 
 return;
 
@@ -926,9 +1146,13 @@ return;
 
 if(action==='issue'){
 
-if(qty > material.stock){
+if(qty>material.stock){
 
-alert('Insufficient Stock');
+Swal.fire(
+'Error',
+'Insufficient Stock',
+'error'
+);
 
 return;
 
@@ -938,7 +1162,7 @@ material.stock -= qty;
 
 }
 
-if(action==='receive'){
+else{
 
 material.stock += qty;
 
@@ -947,8 +1171,6 @@ material.stock += qty;
 transactionHistory.unshift({
 
 material:material.name,
-
-code:material.code,
 
 action:action,
 
@@ -962,117 +1184,60 @@ date:new Date().toLocaleString()
 
 });
 
+saveData();
+
 renderTable();
 
-alert('Transaction Successful');
-
-document.getElementById(
-'qtyInput'
-).value='';
-
-document.getElementById(
-'personInput'
-).value='';
-
-}
-
-function startScanner(){
-
-hidePanels();
-
-const html5QrCode =
-new Html5Qrcode('reader');
-
-html5QrCode.start(
-
-{ facingMode:'environment' },
-
-{
-fps:10,
-qrbox:250
-},
-
-(decodedText)=>{
-
-try{
-
-const qrData =
-JSON.parse(decodedText);
-
-const material =
-materials.find(
-m => m.code === qrData.code
+Swal.fire(
+'Success',
+'Transaction Completed',
+'success'
 );
 
-if(!material){
+if(material.stock<=material.reorder){
 
-alert('Unknown Material');
-
-html5QrCode.stop();
-
-return;
-
-}
-
-html5QrCode.stop();
-
-hidePanels();
-
-document.getElementById(
-'transactionPanel'
-).style.display='block';
-
-document.getElementById(
-'materialSelect'
-).value = material.code;
-
-document.getElementById(
-'panelTitle'
-).innerHTML =
-'Scanned Material : ' + material.name;
-
-document.getElementById(
-'reader'
-).innerHTML='';
-
-}
-catch(err){
-
-alert('Invalid QR Code');
-
-html5QrCode.stop();
-
-}
-
-}
-
+Swal.fire(
+'Warning',
+`${material.name} Low Stock`,
+'warning'
 );
+
+}
 
 }
 
 function generateQRLabel(){
 
-const code =
-document.getElementById('qrMaterial').value;
+const code=
+document.getElementById(
+'qrMaterial'
+).value;
 
-const material =
-materials.find(m => m.code === code);
+const material=
+materials.find(
+m => m.code===code
+);
 
-const qrDiv =
-document.getElementById('qrcode');
+const qrDiv=
+document.getElementById(
+'qrcode'
+);
 
-qrDiv.innerHTML = '';
+qrDiv.innerHTML='';
 
-const canvas =
-document.createElement('canvas');
+const canvas=
+document.createElement(
+'canvas'
+);
 
 qrDiv.appendChild(canvas);
 
-const qrData = JSON.stringify({
+const qrData=
+JSON.stringify({
 
-code: material.code,
+code:material.code,
 
-name: material.name
+name:material.name
 
 });
 
@@ -1083,34 +1248,35 @@ canvas,
 qrData,
 
 {
-width:220,
-margin:2,
-color:{
-dark:'#000000',
-light:'#FFFFFF'
-}
+width:220
 },
 
 function(error){
 
 if(error){
 
-alert('QR Generation Failed');
+Swal.fire(
+'Error',
+'QR Failed',
+'error'
+);
 
 return;
 
 }
 
-const label =
+const label=
 document.createElement('div');
 
-label.className='qrLabel';
+label.innerHTML=`
 
-label.innerHTML = `
+<h3>
+${material.name}
+</h3>
 
-<h3>${material.name}</h3>
-
-<p><b>Code:</b> ${material.code}</p>
+<p>
+${material.code}
+</p>
 
 `;
 
@@ -1124,19 +1290,20 @@ qrDiv.appendChild(label);
 
 function downloadQR(){
 
-const qrElement=
-document.getElementById('qrcode');
+html2canvas(
+document.getElementById(
+'qrcode'
+)
 
-html2canvas(qrElement).then(canvas=>{
+).then(canvas=>{
 
 const link=
 document.createElement('a');
 
-link.download=
-'QR_Label.png';
+link.download='QR.png';
 
 link.href=
-canvas.toDataURL('image/png');
+canvas.toDataURL();
 
 link.click();
 
@@ -1144,40 +1311,77 @@ link.click();
 
 }
 
-function generateHistory(){
+function startScanner(){
+
+const html5QrCode=
+new Html5Qrcode(
+'reader'
+);
+
+html5QrCode.start(
+
+{ facingMode:'environment' },
+
+{
+fps:10,
+qrbox:250
+},
+
+(decodedText)=>{
+
+const qrData=
+JSON.parse(decodedText);
 
 const material=
-document.getElementById('reportMaterial').value;
-
-const from=
-new Date(
-document.getElementById('fromDate').value
+materials.find(
+m => m.code===qrData.code
 );
 
-const to=
-new Date(
-document.getElementById('toDate').value
+if(material){
+
+html5QrCode.stop();
+
+openPanel();
+
+document.getElementById(
+'materialSelect'
+).value=
+material.code;
+
+Swal.fire(
+'QR Scanned',
+material.name,
+'success'
 );
 
-to.setHours(23,59,59,999);
+}
 
-filteredHistory=
-transactionHistory.filter(item=>{
+}
 
-const d=new Date(item.date);
+);
 
-return item.material===material &&
-d>=from &&
-d<=to;
+}
 
-});
+function generateHistory(){
+
+const code=
+document.getElementById(
+'reportMaterial'
+).value;
 
 const container=
-document.getElementById('historyContainer');
+document.getElementById(
+'historyContainer'
+);
 
 container.innerHTML='';
 
-filteredHistory.forEach(item=>{
+const filtered=
+transactionHistory.filter(
+t => t.material.includes(code)
+);
+
+filtered.forEach(item=>{
 
 container.innerHTML += `
 
@@ -1187,26 +1391,28 @@ container.innerHTML += `
 
 <br><br>
 
-Action: ${item.action}
+Action:
+${item.action}
 
 <br>
 
-Quantity: ${item.qty}
+Quantity:
+${item.qty}
 
 <br>
 
-${item.action==='issue'
-?'Issued To'
-:'Received From'}:
+Person:
 ${item.person}
 
 <br>
 
-Balance: ${item.balance}
+Balance:
+${item.balance}
 
 <br>
 
-Date: ${item.date}
+Date:
+${item.date}
 
 </div>
 
@@ -1219,7 +1425,9 @@ Date: ${item.date}
 function downloadExcel(){
 
 const ws=
-XLSX.utils.json_to_sheet(filteredHistory);
+XLSX.utils.json_to_sheet(
+transactionHistory
+);
 
 const wb=
 XLSX.utils.book_new();
@@ -1232,7 +1440,7 @@ ws,
 
 XLSX.writeFile(
 wb,
-'Material_Transactions.xlsx'
+'Inventory_Report.xlsx'
 );
 
 }
@@ -1245,38 +1453,41 @@ window.jspdf;
 const pdf=
 new jsPDF();
 
-let y=20;
-
 pdf.text(
-'Material Transaction History',
+'Inventory Report',
 20,
 20
 );
 
-filteredHistory.forEach(item=>{
+let y=40;
+
+transactionHistory.forEach(item=>{
 
 pdf.text(
 
 `${item.material}
- | ${item.action}
- | Qty:${item.qty}
- | ${item.person}
- | Bal:${item.balance}`,
+ ${item.action}
+ Qty:${item.qty}`,
 
 10,
-y+=10
+y
 
 );
 
+y += 10;
+
 });
 
-pdf.save('Material_Transactions.pdf');
+pdf.save(
+'Inventory_Report.pdf'
+);
 
 }
 
 function searchMaterial(value){
 
-value=value.toLowerCase();
+value=
+value.toLowerCase();
 
 const rows=
 document.querySelectorAll(
@@ -1286,19 +1497,37 @@ document.querySelectorAll(
 rows.forEach(row=>{
 
 if(
-row.innerText.toLowerCase().includes(value)
+row.innerText
+.toLowerCase()
+.includes(value)
 ){
 
 row.style.display='';
 
 }
-
 else{
 
 row.style.display='none';
 
 }
 
+});
+
+}
+
+function toggleMode(){
+
+document.body.classList.toggle(
+'lightMode'
+);
+
+}
+
+function scrollToSection(id){
+
+document.getElementById(id)
+.scrollIntoView({
+behavior:'smooth'
 });
 
 }
