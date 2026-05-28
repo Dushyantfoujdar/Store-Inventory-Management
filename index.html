@@ -969,7 +969,33 @@ X
 
 </div>
 
-<script>
+<script type="module">
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs,
+doc,
+updateDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig = {
+ apiKey: "AIzaSyBX1AwGsnZ28V0RpYVUtCy7gU6tzTYFCXQ",
+ authDomain: "store-inventory-dashboar-f7aac.firebaseapp.com",
+ projectId: "store-inventory-dashboar-f7aac",
+ storageBucket: "store-inventory-dashboar-f7aac.firebasestorage.app",
+ messagingSenderId: "681790179457",
+ appId: "1:681790179457:web:7ecc55e9a29be8a0cde580"
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getFirestore(app);
 
 let materials=[
 
@@ -1065,35 +1091,13 @@ reorder:25
 
 ];
 
-let transactionHistory=
-JSON.parse(
-localStorage.getItem('transactions')
-)||[];
 
-const savedMaterials=
-JSON.parse(
-localStorage.getItem('materials')
-);
-
-if(savedMaterials){
-materials=savedMaterials;
-}
 
 let currentEditIndex=null;
 
 function saveData(){
 
-localStorage.setItem(
-'transactions',
-JSON.stringify(transactionHistory)
-);
 
-localStorage.setItem(
-'materials',
-JSON.stringify(materials)
-);
-
-}
 
 function renderTable(){
 
@@ -1180,7 +1184,7 @@ todayCount;
 
 fillDropdowns();
 
-saveData();
+
 
 }
 
@@ -1456,7 +1460,7 @@ document.getElementById(
 ).value
 );
 
-saveData();
+
 
 renderTable();
 
