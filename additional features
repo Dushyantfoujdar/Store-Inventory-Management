@@ -4,14 +4,11 @@
 <head>
 
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Professional Smart Inventory Dashboard</title>
+<title>Store Inventory Dashboard</title>
 
 <!-- LIBRARIES -->
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -40,124 +37,84 @@ background:
 linear-gradient(
 135deg,
 #0f172a,
-#1e3a8a,
+#1e293b,
+#1d4ed8,
 #0f766e
 );
 
 color:white;
+
 min-height:100vh;
-display:flex;
 
 }
 
-.sidebar{
-
-width:260px;
-
-background:
-rgba(0,0,0,0.3);
-
-backdrop-filter:blur(10px);
-
-padding:25px;
-
-position:fixed;
-
-height:100vh;
-
-overflow:auto;
-
+.app{
+padding:20px;
 }
 
-.logo{
-
-font-size:28px;
-font-weight:bold;
-margin-bottom:40px;
-
+h1{
+font-size:34px;
+margin-bottom:10px;
 }
 
-.menu button{
+.topButtons{
 
-width:100%;
+display:grid;
 
-padding:15px;
-
-margin-bottom:15px;
-
-border:none;
-
-border-radius:15px;
-
-background:
-rgba(255,255,255,0.08);
-
-color:white;
-
-font-size:15px;
-
-cursor:pointer;
-
-transition:0.3s;
-
-}
-
-.menu button:hover{
-
-background:
-linear-gradient(
-to right,
-#2563eb,
-#06b6d4
-);
-
-}
-
-.main{
-
-margin-left:280px;
-
-padding:25px;
-
-width:100%;
-
-}
-
-.topBar{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-flex-wrap:wrap;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
 
 gap:15px;
 
+margin-top:25px;
+
 }
 
-.toggleBtn{
+.topButtons button{
 
-padding:12px 20px;
+padding:18px;
 
 border:none;
 
-border-radius:15px;
+border-radius:20px;
 
-background:
-linear-gradient(
-to right,
-#7c3aed,
-#2563eb
-);
-
-color:white;
-
-cursor:pointer;
+font-size:16px;
 
 font-weight:bold;
 
+cursor:pointer;
+
+color:white;
+
+transition:0.3s;
+
+box-shadow:
+0 10px 25px rgba(0,0,0,0.3);
+
+}
+
+.topButtons button:hover{
+transform:translateY(-4px);
+}
+
+.issue{
+background:linear-gradient(to right,#ef4444,#dc2626);
+}
+
+.receive{
+background:linear-gradient(to right,#22c55e,#15803d);
+}
+
+.scan{
+background:linear-gradient(to right,#2563eb,#1d4ed8);
+}
+
+.report{
+background:linear-gradient(to right,#f59e0b,#d97706);
+}
+
+.materialBtn{
+background:linear-gradient(to right,#7c3aed,#5b21b6);
 }
 
 .cards{
@@ -184,23 +141,17 @@ rgba(255,255,255,0.08);
 
 backdrop-filter:blur(12px);
 
-box-shadow:
-0 10px 25px rgba(0,0,0,0.3);
+cursor:pointer;
 
 transition:0.3s;
 
-cursor:pointer;
+box-shadow:
+0 10px 30px rgba(0,0,0,0.3);
 
 }
 
 .card:hover{
-
 transform:translateY(-5px);
-
-}
-
-.card h3{
-font-size:18px;
 }
 
 .card p{
@@ -211,28 +162,13 @@ margin-top:15px;
 
 }
 
-.section{
-
-margin-top:35px;
-
-padding:25px;
-
-border-radius:25px;
-
-background:
-rgba(255,255,255,0.08);
-
-backdrop-filter:blur(12px);
-
-}
-
 .searchBox{
 
 width:100%;
 
 padding:15px;
 
-margin-top:20px;
+margin-top:18px;
 
 border:none;
 
@@ -245,6 +181,8 @@ color:white;
 
 outline:none;
 
+font-size:15px;
+
 }
 
 .searchBox::placeholder{
@@ -252,23 +190,22 @@ color:#ddd;
 }
 
 select{
-
 background:#0f172a !important;
 color:white !important;
-
 }
 
 option{
-
 background:#0f172a;
 color:white;
-
 }
 
 .tableContainer{
 
 overflow-x:auto;
-margin-top:20px;
+
+margin-top:25px;
+
+border-radius:20px;
 
 }
 
@@ -276,12 +213,13 @@ table{
 
 width:100%;
 border-collapse:collapse;
+text-align:center;
 
 }
 
 th{
 
-padding:15px;
+padding:16px;
 
 background:
 linear-gradient(
@@ -294,7 +232,7 @@ to right,
 
 td{
 
-padding:14px;
+padding:15px;
 
 border-bottom:
 1px solid rgba(255,255,255,0.1);
@@ -315,67 +253,32 @@ color:#4ade80;
 font-weight:bold;
 }
 
-.buttons{
+.panelButton{
 
-display:flex;
-gap:15px;
-flex-wrap:wrap;
-margin-top:25px;
+margin-top:20px;
 
-}
+padding:15px;
 
-button{
-
-padding:14px 18px;
+width:100%;
 
 border:none;
 
 border-radius:15px;
 
+font-size:16px;
+
 font-weight:bold;
 
 cursor:pointer;
 
-color:white;
-
-transition:0.3s;
-
-}
-
-button:hover{
-
-transform:translateY(-3px);
-
-}
-
-.issue{
-background:linear-gradient(to right,#ef4444,#dc2626);
-}
-
-.receive{
-background:linear-gradient(to right,#22c55e,#15803d);
-}
-
-.scan{
-background:linear-gradient(to right,#3b82f6,#1d4ed8);
-}
-
-.download{
-background:linear-gradient(to right,#f59e0b,#d97706);
-}
-
-.panel{
-
-display:none;
-
-margin-top:25px;
-
-padding:25px;
-
-border-radius:25px;
-
 background:
-rgba(255,255,255,0.08);
+linear-gradient(
+to right,
+#2563eb,
+#06b6d4
+);
+
+color:white;
 
 }
 
@@ -392,11 +295,126 @@ rgba(255,255,255,0.08);
 
 }
 
+.editBtn{
+
+padding:8px 14px;
+
+border:none;
+
+border-radius:10px;
+
+background:#2563eb;
+
+color:white;
+
+cursor:pointer;
+
+}
+
+.editBtn:hover{
+background:#1d4ed8;
+}
+
+.popupOverlay{
+
+position:fixed;
+
+top:0;
+left:0;
+
+width:100%;
+height:100%;
+
+background:
+rgba(0,0,0,0.7);
+
+display:none;
+
+align-items:center;
+justify-content:center;
+
+z-index:9999;
+
+padding:20px;
+
+overflow:auto;
+
+}
+
+.popupBox{
+
+width:100%;
+max-width:600px;
+
+background:
+linear-gradient(
+135deg,
+#0f172a,
+#1e293b,
+#1d4ed8,
+#0f766e
+);
+
+padding:25px;
+
+border-radius:25px;
+
+box-shadow:
+0 10px 40px rgba(0,0,0,0.5);
+
+animation:popup 0.3s ease;
+
+}
+
+@keyframes popup{
+
+from{
+transform:scale(0.8);
+opacity:0;
+}
+
+to{
+transform:scale(1);
+opacity:1;
+}
+
+}
+
+.popupTop{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:20px;
+
+}
+
+.closePopup{
+
+background:red;
+
+border:none;
+
+color:white;
+
+padding:10px 15px;
+
+border-radius:10px;
+
+cursor:pointer;
+
+font-weight:bold;
+
+}
+
 #qrcode{
 
 background:white;
 
-padding:25px;
+padding:20px;
 
 border-radius:20px;
 
@@ -410,58 +428,20 @@ align-items:center;
 
 justify-content:center;
 
+min-height:280px;
+
 color:black;
 
 }
 
-.chartContainer{
-
-margin-top:25px;
-
-height:350px;
-
+#reader{
+margin-top:20px;
 }
 
-.lightMode{
+@media(max-width:768px){
 
-background:#f1f5f9;
-color:black;
-
-}
-
-.lightMode .sidebar{
-background:white;
-}
-
-.lightMode .section,
-.lightMode .card{
-background:white;
-color:black;
-}
-
-.lightMode table{
-color:black;
-}
-
-.lightMode .searchBox{
-background:#e2e8f0;
-color:black;
-}
-
-@media(max-width:900px){
-
-.sidebar{
-position:relative;
-width:100%;
-height:auto;
-}
-
-.main{
-margin-left:0;
-}
-
-body{
-flex-direction:column;
+.topButtons{
+grid-template-columns:1fr;
 }
 
 }
@@ -472,113 +452,98 @@ flex-direction:column;
 
 <body>
 
-<!-- SIDEBAR -->
+<div class="app">
 
-<div class="sidebar">
+<h1>📦 Store Inventory Dashboard</h1>
 
-<div class="logo">
-📦 Inventory ERP
-</div>
+<p> QR Based Store Inventory Management System</p>
 
-<div class="menu">
+<!-- TOP BUTTONS -->
 
-<button onclick="scrollToSection('dashboard')">
-Dashboard
-</button>
+<div class="topButtons">
 
-<button onclick="scrollToSection('inventory')">
-Inventory
-</button>
-
-<button onclick="scrollToSection('transactionPanel')">
+<button
+class="issue"
+onclick="openTransactionPopup()"
+>
 Issue / Receive
 </button>
 
-<button onclick="scrollToSection('qrPanel')">
-QR Generator
+<button
+class="receive"
+onclick="openQRPopup()"
+>
+Generate QR
 </button>
 
-<button onclick="scrollToSection('historyPanel')">
+<button
+class="scan"
+onclick="openScannerPopup()"
+>
+Scan QR
+</button>
+
+<button
+class="report"
+onclick="openReportPopup()"
+>
 Reports
 </button>
 
-</div>
-
-</div>
-
-<!-- MAIN -->
-
-<div class="main">
-
-<div class="topBar">
-
-<div>
-
-<h1>Professional Inventory Dashboard</h1>
-
-<p>Enterprise QR Based Inventory Management System</p>
-
-</div>
-
 <button
-class="toggleBtn"
-onclick="toggleMode()"
+class="materialBtn"
+onclick="
+clearMaterialForm();
+openMaterialPopup();
+"
 >
-🌙 Dark / Light
+Add Material
 </button>
 
 </div>
 
-<!-- KPI CARDS -->
+<!-- CARDS -->
 
-<div class="cards" id="dashboard">
+<div class="cards">
 
-<div class="card">
+<div
+class="card"
+onclick="scrollToInventory()"
+>
+
 <h3>Total Materials</h3>
+
 <p id="totalMaterials"></p>
+
 </div>
 
-<div class="card" onclick="showLowStock()">
+<div
+class="card"
+onclick="showLowStock()"
+>
+
 <h3>Low Stock</h3>
+
 <p id="lowStock"></p>
-</div>
-
-<div class="card">
-<h3>Transactions Today</h3>
-<p id="todayTransactions">0</p>
-</div>
-
-<div class="card">
-<h3>Total Inventory</h3>
-<p id="totalStock">0</p>
-</div>
 
 </div>
 
-<!-- CHART -->
+<div
+class="card"
+onclick="showTodayTransactionsPopup()"
+>
 
-<div class="section">
+<h3>Today's Transactions</h3>
 
-<h2>Inventory Analytics</h2>
+<p id="todayTransactions"></p>
 
-<div class="chartContainer">
-<canvas id="stockChart"></canvas>
 </div>
 
 </div>
 
 <!-- INVENTORY -->
 
-<div class="section" id="inventory">
-
-<h2>Inventory Table</h2>
-
-<input
-type="text"
-class="searchBox"
-placeholder="Search Material"
-onkeyup="searchMaterial(this.value)"
->
+<div id="inventorySection">
 
 <div class="tableContainer">
 
@@ -587,6 +552,7 @@ onkeyup="searchMaterial(this.value)"
 <thead>
 
 <tr>
+
 <th>Code</th>
 <th>Name</th>
 <th>Category</th>
@@ -594,6 +560,8 @@ onkeyup="searchMaterial(this.value)"
 <th>Stock</th>
 <th>Reorder</th>
 <th>Status</th>
+<th>Edit</th>
+
 </tr>
 
 </thead>
@@ -606,35 +574,34 @@ onkeyup="searchMaterial(this.value)"
 
 </div>
 
-<!-- BUTTONS -->
+</div>
 
-<div class="buttons">
+<!-- ISSUE RECEIVE POPUP -->
 
-<button class="issue" onclick="openPanel()">
-Issue / Receive
-</button>
+<div
+id="transactionPopup"
+class="popupOverlay"
+>
 
-<button class="scan" onclick="startScanner()">
-Scan QR
-</button>
+<div class="popupBox">
 
-<button class="receive" onclick="openQRPanel()">
-Generate QR
-</button>
+<div class="popupTop">
 
-<button class="download" onclick="openHistoryPanel()">
-Reports
+<h2>Issue / Receive Material</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('transactionPopup')"
+>
+X
 </button>
 
 </div>
 
-<!-- ISSUE RECEIVE -->
-
-<div id="transactionPanel" class="panel section">
-
-<h2>Material Transaction</h2>
-
-<select id="actionSelect" class="searchBox">
+<select
+id="actionSelect"
+class="searchBox"
+>
 
 <option value="issue">
 Issue Material
@@ -646,13 +613,16 @@ Receive Material
 
 </select>
 
-<select id="materialSelect" class="searchBox"></select>
+<select
+id="materialSelect"
+class="searchBox"
+></select>
 
 <input
 type="number"
 id="qtyInput"
 class="searchBox"
-placeholder="Quantity"
+placeholder="Enter Quantity"
 >
 
 <input
@@ -663,8 +633,7 @@ placeholder="Issued To / Received From"
 >
 
 <button
-class="scan"
-style="margin-top:20px;"
+class="panelButton"
 onclick="submitTransaction()"
 >
 Submit Transaction
@@ -672,45 +641,109 @@ Submit Transaction
 
 </div>
 
-<!-- QR PANEL -->
+</div>
 
-<div id="qrPanel" class="panel section">
+<!-- QR POPUP -->
 
-<h2>QR Generator</h2>
+<div
+id="qrPopup"
+class="popupOverlay"
+>
 
-<select id="qrMaterial" class="searchBox"></select>
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Generate QR</h2>
 
 <button
-class="scan"
-style="margin-top:20px;"
+class="closePopup"
+onclick="closePopup('qrPopup')"
+>
+X
+</button>
+
+</div>
+
+<select
+id="qrMaterial"
+class="searchBox"
+></select>
+
+<button
+class="panelButton"
 onclick="generateQRLabel()"
 >
 Generate QR
 </button>
 
 <button
-class="download"
-style="margin-top:20px;"
+class="panelButton"
 onclick="downloadQR()"
 >
-Download QR PNG
+Download QR
 </button>
 
 <div id="qrcode"></div>
 
 </div>
 
-<!-- QR READER -->
+</div>
+
+<!-- SCANNER POPUP -->
+
+<div
+id="scannerPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>QR Scanner</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('scannerPopup')"
+>
+X
+</button>
+
+</div>
 
 <div id="reader"></div>
 
-<!-- REPORTS -->
+</div>
 
-<div id="historyPanel" class="panel section">
+</div>
 
-<h2>Material Transaction Reports</h2>
+<!-- REPORT POPUP -->
 
-<select id="reportMaterial" class="searchBox"></select>
+<div
+id="reportPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Material Transaction Report</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('reportPopup')"
+>
+X
+</button>
+
+</div>
+
+<select
+id="reportMaterial"
+class="searchBox"
+></select>
 
 <input
 type="date"
@@ -724,23 +757,213 @@ id="toDate"
 class="searchBox"
 >
 
-<div class="buttons">
-
-<button class="scan" onclick="generateHistory()">
+<button
+class="panelButton"
+onclick="generateReport()"
+>
 Generate Report
 </button>
 
-<button class="download" onclick="downloadExcel()">
+<div
+id="downloadButtons"
+style="display:none;"
+>
+
+<button
+class="panelButton"
+onclick="downloadExcel()"
+>
 Download Excel
 </button>
 
-<button class="download" onclick="downloadPDF()">
+<button
+class="panelButton"
+onclick="downloadPDF()"
+>
 Download PDF
 </button>
 
 </div>
 
 <div id="historyContainer"></div>
+
+</div>
+
+</div>
+
+<!-- ADD MATERIAL POPUP -->
+
+<div
+id="materialPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Add Material</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('materialPopup')"
+>
+X
+</button>
+
+</div>
+
+<input
+type="text"
+id="matCode"
+class="searchBox"
+placeholder="Material Code"
+>
+
+<input
+type="text"
+id="matName"
+class="searchBox"
+placeholder="Material Name"
+>
+
+<input
+type="text"
+id="matCategory"
+class="searchBox"
+placeholder="Category"
+>
+
+<input
+type="text"
+id="matUnit"
+class="searchBox"
+placeholder="Unit"
+>
+
+<input
+type="number"
+id="matStock"
+class="searchBox"
+placeholder="Current Stock"
+>
+
+<input
+type="number"
+id="matReorder"
+class="searchBox"
+placeholder="Reorder Value"
+>
+
+<button
+class="panelButton"
+onclick="saveMaterial()"
+>
+Save Material
+</button>
+
+</div>
+
+</div>
+
+<!-- EDIT POPUP -->
+
+<div
+id="editPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Edit Material</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('editPopup')"
+>
+X
+</button>
+
+</div>
+
+<input
+type="text"
+id="editCode"
+class="searchBox"
+placeholder="Material Code"
+>
+
+<input
+type="text"
+id="editName"
+class="searchBox"
+placeholder="Material Name"
+>
+
+<input
+type="text"
+id="editCategory"
+class="searchBox"
+placeholder="Category"
+>
+
+<input
+type="text"
+id="editUnit"
+class="searchBox"
+placeholder="Unit"
+>
+
+<input
+type="number"
+id="editStock"
+class="searchBox"
+placeholder="Current Stock"
+>
+
+<input
+type="number"
+id="editReorder"
+class="searchBox"
+placeholder="Reorder Value"
+>
+
+<button
+class="panelButton"
+onclick="updateMaterial()"
+>
+Update Material
+</button>
+
+</div>
+
+</div>
+
+<!-- TODAY POPUP -->
+
+<div
+id="todayPopup"
+class="popupOverlay"
+>
+
+<div class="popupBox">
+
+<div class="popupTop">
+
+<h2>Today's Transactions</h2>
+
+<button
+class="closePopup"
+onclick="closePopup('todayPopup')"
+>
+X
+</button>
+
+</div>
+
+<div id="todayTransactionList"></div>
 
 </div>
 
@@ -847,6 +1070,17 @@ JSON.parse(
 localStorage.getItem('transactions')
 )||[];
 
+const savedMaterials=
+JSON.parse(
+localStorage.getItem('materials')
+);
+
+if(savedMaterials){
+materials=savedMaterials;
+}
+
+let currentEditIndex=null;
+
 function saveData(){
 
 localStorage.setItem(
@@ -861,15 +1095,6 @@ JSON.stringify(materials)
 
 }
 
-const savedMaterials=
-JSON.parse(
-localStorage.getItem('materials')
-);
-
-if(savedMaterials){
-materials=savedMaterials;
-}
-
 function renderTable(){
 
 const table=
@@ -880,45 +1105,50 @@ document.getElementById(
 table.innerHTML='';
 
 let low=0;
-let total=0;
 
-materials.forEach(item=>{
-
-total += item.stock;
+materials.forEach((item,index)=>{
 
 if(item.stock<=item.reorder){
 low++;
 }
 
-table.innerHTML += `
+table.innerHTML += 
 
 <tr>
 
 <td>${item.code}</td>
-
 <td>${item.name}</td>
-
 <td>${item.category}</td>
-
 <td>${item.unit}</td>
-
 <td>${item.stock}</td>
-
 <td>${item.reorder}</td>
 
 <td class="${
-item.stock<=item.reorder?'low':'normal'
+item.stock<=item.reorder
+?'low'
+:'normal'
 }">
-
 ${
-item.stock<=item.reorder?'Low':'Normal'
+item.stock<=item.reorder
+?'Low'
+:'Normal'
 }
+</td>
+
+<td style="text-align:center;">
+
+<button
+class="editBtn"
+onclick="editMaterial(${index})"
+>
+Edit
+</button>
 
 </td>
 
 </tr>
 
-`;
+;
 
 });
 
@@ -932,44 +1162,52 @@ document.getElementById(
 ).innerHTML=
 low;
 
-document.getElementById(
-'totalStock'
-).innerHTML=
-total;
+const today=
+new Date().toDateString();
+
+const todayCount=
+transactionHistory.filter(t=>{
+
+return new Date(t.date)
+.toDateString()===today;
+
+}).length;
 
 document.getElementById(
 'todayTransactions'
 ).innerHTML=
-transactionHistory.length;
+todayCount;
 
 fillDropdowns();
 
-renderChart();
+saveData();
 
 }
 
 function fillDropdowns(){
 
-const dropdowns=[
+const ids=[
 'materialSelect',
 'qrMaterial',
 'reportMaterial'
 ];
 
-dropdowns.forEach(id=>{
+ids.forEach(id=>{
 
-const d=
+const dropdown=
 document.getElementById(id);
 
-d.innerHTML='';
+dropdown.innerHTML='';
 
 materials.forEach(item=>{
 
-d.innerHTML += `
+dropdown.innerHTML += 
+
 <option value="${item.code}">
 ${item.code} - ${item.name}
 </option>
-`;
+
+;
 
 });
 
@@ -977,129 +1215,260 @@ ${item.code} - ${item.name}
 
 }
 
-function renderChart(){
+function openTransactionPopup(){
 
-const ctx=
 document.getElementById(
-'stockChart'
+'transactionPopup'
+).style.display='flex';
+
+}
+
+function openQRPopup(){
+
+document.getElementById(
+'qrPopup'
+).style.display='flex';
+
+}
+
+function openScannerPopup(){
+
+document.getElementById(
+'scannerPopup'
+).style.display='flex';
+
+startScanner();
+
+}
+
+function openReportPopup(){
+
+document.getElementById(
+'reportPopup'
+).style.display='flex';
+
+}
+
+function openMaterialPopup(){
+
+document.getElementById(
+'materialPopup'
+).style.display='flex';
+
+}
+
+function closePopup(id){
+
+document.getElementById(id)
+.style.display='none';
+
+}
+
+function clearMaterialForm(){
+
+document.getElementById(
+'matCode'
+).value='';
+
+document.getElementById(
+'matName'
+).value='';
+
+document.getElementById(
+'matCategory'
+).value='';
+
+document.getElementById(
+'matUnit'
+).value='';
+
+document.getElementById(
+'matStock'
+).value='';
+
+document.getElementById(
+'matReorder'
+).value='';
+
+}
+
+function saveMaterial(){
+
+const code=
+document.getElementById(
+'matCode'
+).value;
+
+const name=
+document.getElementById(
+'matName'
+).value;
+
+const category=
+document.getElementById(
+'matCategory'
+).value;
+
+const unit=
+document.getElementById(
+'matUnit'
+).value;
+
+const stock=
+parseInt(
+document.getElementById(
+'matStock'
+).value
 );
 
-let normal=0;
-let low=0;
-
-materials.forEach(item=>{
-
-if(item.stock<=item.reorder){
-low++;
-}
-else{
-normal++;
-}
-
-});
-
-new Chart(ctx,{
-
-type:'doughnut',
-
-data:{
-
-labels:[
-'Normal Stock',
-'Low Stock'
-],
-
-datasets:[{
-
-data:[
-normal,
-low
-]
-
-}]
-
-}
-
-});
-
-}
-
-function showLowStock(){
-
-const lowMaterials=
-materials.filter(
-m => m.stock<=m.reorder
+const reorder=
+parseInt(
+document.getElementById(
+'matReorder'
+).value
 );
 
-let text='';
+if(
+!code ||
+!name ||
+!category ||
+!unit ||
+isNaN(stock) ||
+isNaN(reorder)
+){
 
-lowMaterials.forEach(item=>{
+Swal.fire(
+'Error',
+'Fill all fields',
+'error'
+);
 
-text += `
-${item.name}
- - Stock:
-${item.stock}<br>
-`;
+return;
+
+}
+
+materials.push({
+
+code,
+name,
+category,
+unit,
+stock,
+reorder
 
 });
 
-Swal.fire({
+renderTable();
 
-title:'Low Stock Materials',
+clearMaterialForm();
 
-html:text ||
+closePopup(
+'materialPopup'
+);
 
-'No Low Stock',
-
-icon:'warning'
-
-});
-
-}
-
-function openPanel(){
-
-hidePanels();
-
-document.getElementById(
-'transactionPanel'
-).style.display='block';
+Swal.fire(
+'Success',
+'Material Added',
+'success'
+);
 
 }
 
-function openQRPanel(){
+function editMaterial(index){
 
-hidePanels();
+currentEditIndex=index;
+
+const item=
+materials[index];
 
 document.getElementById(
-'qrPanel'
-).style.display='block';
+'editPopup'
+).style.display='flex';
+
+document.getElementById(
+'editCode'
+).value=
+item.code;
+
+document.getElementById(
+'editName'
+).value=
+item.name;
+
+document.getElementById(
+'editCategory'
+).value=
+item.category;
+
+document.getElementById(
+'editUnit'
+).value=
+item.unit;
+
+document.getElementById(
+'editStock'
+).value=
+item.stock;
+
+document.getElementById(
+'editReorder'
+).value=
+item.reorder;
 
 }
 
-function openHistoryPanel(){
+function updateMaterial(){
 
-hidePanels();
+const item=
+materials[currentEditIndex];
 
+item.code=
 document.getElementById(
-'historyPanel'
-).style.display='block';
+'editCode'
+).value;
 
-}
-
-function hidePanels(){
-
+item.name=
 document.getElementById(
-'transactionPanel'
-).style.display='none';
+'editName'
+).value;
 
+item.category=
 document.getElementById(
-'qrPanel'
-).style.display='none';
+'editCategory'
+).value;
 
+item.unit=
 document.getElementById(
-'historyPanel'
-).style.display='none';
+'editUnit'
+).value;
+
+item.stock=
+parseInt(
+document.getElementById(
+'editStock'
+).value
+);
+
+item.reorder=
+parseInt(
+document.getElementById(
+'editReorder'
+).value
+);
+
+saveData();
+
+renderTable();
+
+closePopup(
+'editPopup'
+);
+
+Swal.fire(
+'Updated',
+'Material Updated Successfully',
+'success'
+);
 
 }
 
@@ -1136,7 +1505,7 @@ if(!qty || !person){
 
 Swal.fire(
 'Error',
-'Fill All Details',
+'Fill all details',
 'error'
 );
 
@@ -1161,7 +1530,6 @@ return;
 material.stock -= qty;
 
 }
-
 else{
 
 material.stock += qty;
@@ -1171,38 +1539,26 @@ material.stock += qty;
 transactionHistory.unshift({
 
 material:material.name,
-
+materialCode:material.code,
 action:action,
-
 qty:qty,
-
 person:person,
-
 balance:material.stock,
-
-date:new Date().toLocaleString()
+date:new Date().toISOString()
 
 });
 
-saveData();
-
 renderTable();
+
+closePopup(
+'transactionPopup'
+);
 
 Swal.fire(
 'Success',
-'Transaction Completed',
+'Transaction Successful',
 'success'
 );
-
-if(material.stock<=material.reorder){
-
-Swal.fire(
-'Warning',
-`${material.name} Low Stock`,
-'warning'
-);
-
-}
 
 }
 
@@ -1232,20 +1588,16 @@ document.createElement(
 
 qrDiv.appendChild(canvas);
 
-const qrData=
-JSON.stringify({
-
-code:material.code,
-
-name:material.name
-
-});
-
 QRCode.toCanvas(
 
 canvas,
 
-qrData,
+JSON.stringify({
+
+code:material.code,
+name:material.name
+
+}),
 
 {
 width:220
@@ -1257,7 +1609,7 @@ if(error){
 
 Swal.fire(
 'Error',
-'QR Failed',
+'QR Generation Failed',
 'error'
 );
 
@@ -1268,17 +1620,12 @@ return;
 const label=
 document.createElement('div');
 
-label.innerHTML=`
+label.innerHTML=
 
-<h3>
-${material.name}
-</h3>
+<h3>${material.name}</h3>
+<p>${material.code}</p>
 
-<p>
-${material.code}
-</p>
-
-`;
+;
 
 qrDiv.appendChild(label);
 
@@ -1313,10 +1660,12 @@ link.click();
 
 function startScanner(){
 
-const html5QrCode=
-new Html5Qrcode(
+document.getElementById(
 'reader'
-);
+).innerHTML='';
+
+const html5QrCode=
+new Html5Qrcode('reader');
 
 html5QrCode.start(
 
@@ -1328,6 +1677,8 @@ qrbox:250
 },
 
 (decodedText)=>{
+
+try{
 
 const qrData=
 JSON.parse(decodedText);
@@ -1341,7 +1692,11 @@ if(material){
 
 html5QrCode.stop();
 
-openPanel();
+closePopup(
+'scannerPopup'
+);
+
+openTransactionPopup();
 
 document.getElementById(
 'materialSelect'
@@ -1357,16 +1712,37 @@ material.name,
 }
 
 }
+catch(err){
+
+Swal.fire(
+'Error',
+'Invalid QR',
+'error'
+);
+
+}
+
+}
 
 );
 
 }
 
-function generateHistory(){
+function generateReport(){
 
-const code=
+const materialCode=
 document.getElementById(
 'reportMaterial'
+).value;
+
+const from=
+document.getElementById(
+'fromDate'
+).value;
+
+const to=
+document.getElementById(
+'toDate'
 ).value;
 
 const container=
@@ -1377,13 +1753,57 @@ document.getElementById(
 container.innerHTML='';
 
 const filtered=
-transactionHistory.filter(
-t => t.material.includes(code)
+transactionHistory.filter(t=>{
+
+const tDate=
+new Date(t.date);
+
+const fromDate=
+new Date(from);
+
+const toDate=
+new Date(to);
+
+toDate.setHours(23,59,59,999);
+
+return (
+
+t.materialCode===materialCode &&
+
+tDate>=fromDate &&
+
+tDate<=toDate
+
 );
+
+});
+
+window.filteredTransactions=
+filtered;
+
+if(filtered.length===0){
+
+container.innerHTML=
+<div class="transaction">
+No Transactions Found
+</div>
+;
+
+document.getElementById(
+'downloadButtons'
+).style.display='none';
+
+return;
+
+}
+
+document.getElementById(
+'downloadButtons'
+).style.display='block';
 
 filtered.forEach(item=>{
 
-container.innerHTML += `
+container.innerHTML += 
 
 <div class="transaction">
 
@@ -1401,7 +1821,7 @@ ${item.qty}
 
 <br>
 
-Person:
+Issued To / Received From:
 ${item.person}
 
 <br>
@@ -1412,11 +1832,12 @@ ${item.balance}
 <br>
 
 Date:
-${item.date}
+${new Date(item.date)
+.toLocaleString()}
 
 </div>
 
-`;
+;
 
 });
 
@@ -1424,10 +1845,11 @@ ${item.date}
 
 function downloadExcel(){
 
+const data=
+window.filteredTransactions || [];
+
 const ws=
-XLSX.utils.json_to_sheet(
-transactionHistory
-);
+XLSX.utils.json_to_sheet(data);
 
 const wb=
 XLSX.utils.book_new();
@@ -1440,7 +1862,7 @@ ws,
 
 XLSX.writeFile(
 wb,
-'Inventory_Report.xlsx'
+'Material_Report.xlsx'
 );
 
 }
@@ -1454,20 +1876,22 @@ const pdf=
 new jsPDF();
 
 pdf.text(
-'Inventory Report',
+'Material Transaction Report',
 20,
 20
 );
 
 let y=40;
 
-transactionHistory.forEach(item=>{
+(
+window.filteredTransactions || []
+).forEach(item=>{
 
 pdf.text(
 
-`${item.material}
- ${item.action}
- Qty:${item.qty}`,
+${item.material}
+ | ${item.action}
+ | Qty:${item.qty},
 
 10,
 y
@@ -1479,55 +1903,129 @@ y += 10;
 });
 
 pdf.save(
-'Inventory_Report.pdf'
+'Material_Report.pdf'
 );
 
 }
 
-function searchMaterial(value){
+function showLowStock(){
 
-value=
-value.toLowerCase();
-
-const rows=
-document.querySelectorAll(
-'#inventoryTable tr'
+const low=
+materials.filter(
+m => m.stock<=m.reorder
 );
 
-rows.forEach(row=>{
+let text='';
 
-if(
-row.innerText
-.toLowerCase()
-.includes(value)
-){
+low.forEach(item=>{
 
-row.style.display='';
+text += 
+${item.name}
+ - Stock:
+${item.stock}<br>
+;
 
-}
-else{
+});
 
-row.style.display='none';
+Swal.fire({
 
-}
+title:'Low Stock Materials',
+html:text ||
+'No Low Stock',
+icon:'warning'
 
 });
 
 }
 
-function toggleMode(){
+function showTodayTransactionsPopup(){
 
-document.body.classList.toggle(
-'lightMode'
+document.getElementById(
+'todayPopup'
+).style.display='flex';
+
+const container=
+document.getElementById(
+'todayTransactionList'
 );
+
+container.innerHTML='';
+
+const today=
+new Date().toDateString();
+
+const filtered=
+transactionHistory.filter(t=>{
+
+return new Date(t.date)
+.toDateString()===today;
+
+});
+
+if(filtered.length===0){
+
+container.innerHTML=
+
+<div class="transaction">
+No Transactions Today
+</div>
+
+;
+
+return;
 
 }
 
-function scrollToSection(id){
+filtered.forEach(item=>{
 
-document.getElementById(id)
-.scrollIntoView({
+container.innerHTML += 
+
+<div class="transaction">
+
+<b>${item.material}</b>
+
+<br><br>
+
+Action:
+${item.action}
+
+<br>
+
+Quantity:
+${item.qty}
+
+<br>
+
+Issued To / Received From:
+${item.person}
+
+<br>
+
+Balance:
+${item.balance}
+
+<br>
+
+Date:
+${new Date(item.date)
+.toLocaleString()}
+
+</div>
+
+;
+
+});
+
+}
+
+function scrollToInventory(){
+
+document.getElementById(
+'inventorySection'
+).scrollIntoView({
+
 behavior:'smooth'
+
 });
 
 }
@@ -1542,4 +2040,234 @@ renderTable();
 
 </body>
 
-</html>
+</html> now how to make this code work like real website or app that is if someone chnages data then it should be visibile to everyone
+
+Right now your app is working as a:
+
+Local browser app
+
+Data stored only in your browser using:
+
+localStorage
+
+That means:
+
+If YOU change stock → only YOU can see it
+Other users/mobile users cannot see updates
+Data is not shared globally
+
+To make it work like a REAL website/app where:
+
+Everyone sees same stock
+Transactions sync instantly
+Multi-user support works
+Mobile + desktop use same data
+
+you need a BACKEND + DATABASE.
+
+The easiest method for you is:
+
+BEST OPTION FOR YOU
+
+Use:
+
+Firebase
+Free
+No server required
+Real-time sync
+Easy mobile support
+Works with your current HTML app
+WHAT WILL HAPPEN AFTER FIREBASE
+
+If one person issues material:
+
+TES -5
+
+then:
+
+All users immediately see updated stock
+Transaction history updates everywhere
+QR scanning updates central database
+Works like professional inventory software
+STEP BY STEP (VERY EASY)
+STEP 1 — CREATE FIREBASE ACCOUNT
+
+Go to:
+
+https://firebase.google.com
+
+Click:
+
+Get Started
+
+Login with Google account.
+
+STEP 2 — CREATE PROJECT
+
+Click:
+
+Create Project
+
+Project Name:
+
+Store Inventory Dashboard
+
+Click Continue.
+
+Disable Google Analytics.
+
+Click:
+
+Create Project
+STEP 3 — CREATE WEB APP
+
+Inside Firebase dashboard:
+
+Click:
+
+</> Web
+
+App nickname:
+
+Inventory App
+
+Click:
+
+Register App
+STEP 4 — COPY FIREBASE CONFIG
+
+Firebase will show something like:
+
+const firebaseConfig = {
+  apiKey: "xxxxx",
+  authDomain: "xxxxx",
+  projectId: "xxxxx",
+  storageBucket: "xxxxx",
+  messagingSenderId: "xxxxx",
+  appId: "xxxxx"
+};
+
+COPY it.
+
+STEP 5 — ENABLE FIRESTORE DATABASE
+
+Go to:
+
+Build → Firestore Database
+
+Click:
+
+Create Database
+
+Choose:
+
+Start in test mode
+
+Choose nearest location.
+
+Click Enable.
+
+STEP 6 — REPLACE localStorage WITH FIREBASE
+
+REMOVE this:
+
+localStorage.setItem()
+localStorage.getItem()
+
+Because Firebase will store data centrally.
+
+STEP 7 — ADD FIREBASE SDK IN YOUR HTML
+
+Add ABOVE your main <script>:
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+addDoc,
+getDocs,
+doc,
+updateDoc
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey: "YOUR_API_KEY",
+
+authDomain: "YOUR_AUTH_DOMAIN",
+
+projectId: "YOUR_PROJECT_ID",
+
+storageBucket: "YOUR_STORAGE_BUCKET",
+
+messagingSenderId: "YOUR_SENDER_ID",
+
+appId: "YOUR_APP_ID"
+
+};
+
+const app =
+initializeApp(firebaseConfig);
+
+const db =
+getFirestore(app);
+
+</script>
+STEP 8 — STORE MATERIALS IN FIREBASE
+
+Instead of:
+
+materials.push()
+
+Use:
+
+await addDoc(
+collection(db,"materials"),
+{
+code:code,
+name:name,
+stock:stock
+}
+);
+STEP 9 — LOAD MATERIALS FROM FIREBASE
+
+Replace local array loading with:
+
+async function loadMaterials(){
+
+const querySnapshot =
+await getDocs(
+collection(db,"materials")
+);
+
+materials=[];
+
+querySnapshot.forEach((doc)=>{
+
+materials.push({
+id:doc.id,
+...doc.data()
+});
+
+});
+
+renderTable();
+
+}
+
+loadMaterials();
+STEP 10 — UPDATE STOCK LIVE
+
+When issuing material:
+
+await updateDoc(
+doc(db,"materials",material.id),
+{
+stock:material.stock
+}
+);
