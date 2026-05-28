@@ -492,7 +492,10 @@ Reports
 
 <button
 class="materialBtn"
-id="addMaterialBtn"
+onclick="
+clearMaterialForm();
+openMaterialPopup();
+"
 >
 Add Material
 </button>
@@ -966,33 +969,7 @@ X
 
 </div>
 
-<script type="module">
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-getFirestore,
-collection,
-addDoc,
-getDocs,
-doc,
-updateDoc
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-const firebaseConfig = {
- apiKey: "AIzaSyBX1AwGsnZ28V0RpYVUtCy7gU6tzTYFCXQ",
- authDomain: "store-inventory-dashboar-f7aac.firebaseapp.com",
- projectId: "store-inventory-dashboar-f7aac",
- storageBucket: "store-inventory-dashboar-f7aac.firebasestorage.app",
- messagingSenderId: "681790179457",
- appId: "1:681790179457:web:7ecc55e9a29be8a0cde580"
-};
-
-const app =
-initializeApp(firebaseConfig);
-
-const db =
-getFirestore(app);
+<script>
 
 let materials=[
 
@@ -1088,65 +1065,36 @@ reorder:25
 
 ];
 
-async function loadMaterials(){
+let transactionHistory=
+JSON.parse(
+localStorage.getItem('transactions')
+)||[];
 
-const querySnapshot =
-await getDocs(
-collection(db,'materials')
+const savedMaterials=
+JSON.parse(
+localStorage.getItem('materials')
 );
 
-materials=[];
-
-querySnapshot.forEach((document)=>{
-
-materials.push({
-
-id:document.id,
-
-...document.data()
-
-});
-
-});
-
-renderTable();
-
+if(savedMaterials){
+materials=savedMaterials;
 }
-
-
 
 let currentEditIndex=null;
 
 function saveData(){
 
+localStorage.setItem(
+'transactions',
+JSON.stringify(transactionHistory)
+);
 
-window.clearMaterialForm=function(){
-
-document.getElementById(
-'matCode'
-).value='';
-
-document.getElementById(
-'matName'
-).value='';
-
-document.getElementById(
-'matCategory'
-).value='';
-
-document.getElementById(
-'matUnit'
-).value='';
-
-document.getElementById(
-'matStock'
-).value='';
-
-document.getElementById(
-'matReorder'
-).value='';
+localStorage.setItem(
+'materials',
+JSON.stringify(materials)
+);
 
 }
+
 function renderTable(){
 
 const table=
@@ -1164,7 +1112,7 @@ if(item.stock<=item.reorder){
 low++;
 }
 
-table.innerHTML += `
+table.innerHTML += 
 
 <tr>
 
@@ -1200,7 +1148,7 @@ Edit
 
 </tr>
 
-`;
+;
 
 });
 
@@ -1232,7 +1180,7 @@ todayCount;
 
 fillDropdowns();
 
-
+saveData();
 
 }
 
@@ -1253,13 +1201,13 @@ dropdown.innerHTML='';
 
 materials.forEach(item=>{
 
-dropdown.innerHTML += `
+dropdown.innerHTML += 
 
 <option value="${item.code}">
 ${item.code} - ${item.name}
 </option>
 
-`;
+;
 
 });
 
@@ -1344,7 +1292,7 @@ document.getElementById(
 
 }
 
-async function saveMaterial(){
+function saveMaterial(){
 
 const code=
 document.getElementById(
@@ -1399,27 +1347,16 @@ return;
 
 }
 
-await addDoc(
+materials.push({
 
-collection(db,'materials'),
+code,
+name,
+category,
+unit,
+stock,
+reorder
 
-{
-
-code:code,
-
-name:name,
-
-category:category,
-
-unit:unit,
-
-stock:stock,
-
-reorder:reorder
-
-}
-
-);
+});
 
 renderTable();
 
@@ -1519,7 +1456,7 @@ document.getElementById(
 ).value
 );
 
-
+saveData();
 
 renderTable();
 
@@ -1683,12 +1620,12 @@ return;
 const label=
 document.createElement('div');
 
-label.innerHTML=`
+label.innerHTML=
 
 <h3>${material.name}</h3>
 <p>${material.code}</p>
 
-`;
+;
 
 qrDiv.appendChild(label);
 
@@ -1846,11 +1783,11 @@ filtered;
 
 if(filtered.length===0){
 
-container.innerHTML=`
+container.innerHTML=
 <div class="transaction">
 No Transactions Found
 </div>
-`;
+;
 
 document.getElementById(
 'downloadButtons'
@@ -1866,7 +1803,7 @@ document.getElementById(
 
 filtered.forEach(item=>{
 
-container.innerHTML += `
+container.innerHTML += 
 
 <div class="transaction">
 
@@ -1900,7 +1837,7 @@ ${new Date(item.date)
 
 </div>
 
-`;
+;
 
 });
 
@@ -1952,9 +1889,9 @@ window.filteredTransactions || []
 
 pdf.text(
 
-`${item.material}
+${item.material}
  | ${item.action}
- | Qty:${item.qty}`,
+ | Qty:${item.qty},
 
 10,
 y
@@ -1982,11 +1919,11 @@ let text='';
 
 low.forEach(item=>{
 
-text += `
+text += 
 ${item.name}
  - Stock:
 ${item.stock}<br>
-`;
+;
 
 });
 
@@ -2027,13 +1964,13 @@ return new Date(t.date)
 
 if(filtered.length===0){
 
-container.innerHTML=`
+container.innerHTML=
 
 <div class="transaction">
 No Transactions Today
 </div>
 
-`;
+;
 
 return;
 
@@ -2041,7 +1978,7 @@ return;
 
 filtered.forEach(item=>{
 
-container.innerHTML += `
+container.innerHTML += 
 
 <div class="transaction">
 
@@ -2075,7 +2012,7 @@ ${new Date(item.date)
 
 </div>
 
-`;
+;
 
 });
 
@@ -2093,26 +2030,9 @@ behavior:'smooth'
 
 }
 
-window.onload =
-async function(){
+window.onload=function(){
 
-await loadMaterials();
-
-await loadTransactions();
-
-document.getElementById(
-'addMaterialBtn'
-).addEventListener('click',()=>{
-
-clearMaterialForm();
-
-document.getElementById(
-'materialPopup'
-).style.display='flex';
-
-});
-
-}
+renderTable();
 
 };
 
@@ -2120,4 +2040,4 @@ document.getElementById(
 
 </body>
 
-</html>
+</html> 
