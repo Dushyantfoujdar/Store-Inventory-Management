@@ -1091,6 +1091,31 @@ reorder:25
 
 ];
 
+async function loadMaterials(){
+
+const querySnapshot =
+await getDocs(
+collection(db,'materials')
+);
+
+materials=[];
+
+querySnapshot.forEach((document)=>{
+
+materials.push({
+
+id:document.id,
+
+...document.data()
+
+});
+
+});
+
+renderTable();
+
+}
+
 
 
 let currentEditIndex=null;
@@ -1296,7 +1321,7 @@ document.getElementById(
 
 }
 
-function saveMaterial(){
+async function saveMaterial(){
 
 const code=
 document.getElementById(
@@ -1351,16 +1376,27 @@ return;
 
 }
 
-materials.push({
+await addDoc(
 
-code,
-name,
-category,
-unit,
-stock,
-reorder
+collection(db,'materials'),
 
-});
+{
+
+code:code,
+
+name:name,
+
+category:category,
+
+unit:unit,
+
+stock:stock,
+
+reorder:reorder
+
+}
+
+);
 
 renderTable();
 
@@ -2034,9 +2070,10 @@ behavior:'smooth'
 
 }
 
-window.onload=function(){
+window.onload =
+async function(){
 
-renderTable();
+await loadMaterials();
 
 };
 
