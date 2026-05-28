@@ -492,10 +492,7 @@ Reports
 
 <button
 class="materialBtn"
-onclick="
-window.clearMaterialForm();
-window.openMaterialPopup();
-"
+id="addMaterialBtn"
 >
 Add Material
 </button>
@@ -1123,7 +1120,33 @@ let currentEditIndex=null;
 function saveData(){
 
 
+window.clearMaterialForm=function(){
 
+document.getElementById(
+'matCode'
+).value='';
+
+document.getElementById(
+'matName'
+).value='';
+
+document.getElementById(
+'matCategory'
+).value='';
+
+document.getElementById(
+'matUnit'
+).value='';
+
+document.getElementById(
+'matStock'
+).value='';
+
+document.getElementById(
+'matReorder'
+).value='';
+
+}
 function renderTable(){
 
 const table=
@@ -2074,6 +2097,22 @@ window.onload =
 async function(){
 
 await loadMaterials();
+
+await loadTransactions();
+
+document.getElementById(
+'addMaterialBtn'
+).addEventListener('click',()=>{
+
+clearMaterialForm();
+
+document.getElementById(
+'materialPopup'
+).style.display='flex';
+
+});
+
+}
 
 };
 
