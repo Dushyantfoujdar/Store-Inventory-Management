@@ -50,11 +50,16 @@ min-height:100vh;
 
 .app{
 padding:20px;
+width:100%;
+max-width:1400px;
+margin:auto;
+text-align:center;
 }
 
 h1{
 font-size:34px;
 margin-bottom:10px;
+text-align:center;
 }
 
 .topButtons{
@@ -62,7 +67,9 @@ margin-bottom:10px;
 display:grid;
 
 grid-template-columns:
-repeat(auto-fit,minmax(220px,1fr));
+repeat(auto-fit,minmax(220px,220px));
+
+justify-content:center;
 
 gap:15px;
 
@@ -122,7 +129,9 @@ background:linear-gradient(to right,#7c3aed,#5b21b6);
 display:grid;
 
 grid-template-columns:
-repeat(auto-fit,minmax(220px,1fr));
+repeat(auto-fit,minmax(220px,220px));
+
+justify-content:center;
 
 gap:20px;
 
@@ -147,6 +156,8 @@ transition:0.3s;
 
 box-shadow:
 0 10px 30px rgba(0,0,0,0.3);
+
+text-align:center;
 
 }
 
@@ -203,9 +214,11 @@ color:white;
 
 overflow-x:auto;
 
-margin-top:25px;
+margin:25px auto 0 auto;
 
 border-radius:20px;
+
+max-width:1400px;
 
 }
 
@@ -221,6 +234,8 @@ th{
 
 padding:16px;
 
+text-align:center;
+
 background:
 linear-gradient(
 to right,
@@ -233,6 +248,8 @@ to right,
 td{
 
 padding:15px;
+
+text-align:center;
 
 border-bottom:
 1px solid rgba(255,255,255,0.1);
@@ -255,11 +272,13 @@ font-weight:bold;
 
 .panelButton{
 
-margin-top:20px;
+display:block;
+
+margin:20px auto 0 auto;
 
 padding:15px;
 
-width:100%;
+width:90%;
 
 border:none;
 
@@ -456,7 +475,7 @@ grid-template-columns:1fr;
 
 <h1>📦 Store Inventory Dashboard</h1>
 
-<p> QR Based Store Inventory Management System</p>
+<p>QR Based Store Inventory Management System</p>
 
 <!-- TOP BUTTONS -->
 
@@ -1112,7 +1131,7 @@ if(item.stock<=item.reorder){
 low++;
 }
 
-table.innerHTML += 
+table.innerHTML += `
 
 <tr>
 
@@ -1135,7 +1154,7 @@ item.stock<=item.reorder
 }
 </td>
 
-<td style="text-align:center;">
+<td>
 
 <button
 class="editBtn"
@@ -1148,7 +1167,7 @@ Edit
 
 </tr>
 
-;
+`;
 
 });
 
@@ -1201,13 +1220,13 @@ dropdown.innerHTML='';
 
 materials.forEach(item=>{
 
-dropdown.innerHTML += 
+dropdown.innerHTML += `
 
 <option value="${item.code}">
 ${item.code} - ${item.name}
 </option>
 
-;
+`;
 
 });
 
@@ -1620,12 +1639,12 @@ return;
 const label=
 document.createElement('div');
 
-label.innerHTML=
+label.innerHTML=`
 
 <h3>${material.name}</h3>
 <p>${material.code}</p>
 
-;
+`;
 
 qrDiv.appendChild(label);
 
@@ -1783,11 +1802,11 @@ filtered;
 
 if(filtered.length===0){
 
-container.innerHTML=
+container.innerHTML=`
 <div class="transaction">
 No Transactions Found
 </div>
-;
+`;
 
 document.getElementById(
 'downloadButtons'
@@ -1803,7 +1822,7 @@ document.getElementById(
 
 filtered.forEach(item=>{
 
-container.innerHTML += 
+container.innerHTML += `
 
 <div class="transaction">
 
@@ -1837,7 +1856,7 @@ ${new Date(item.date)
 
 </div>
 
-;
+`;
 
 });
 
@@ -1889,9 +1908,9 @@ window.filteredTransactions || []
 
 pdf.text(
 
-${item.material}
+`${item.material}
  | ${item.action}
- | Qty:${item.qty},
+ | Qty:${item.qty}`,
 
 10,
 y
@@ -1919,11 +1938,11 @@ let text='';
 
 low.forEach(item=>{
 
-text += 
+text += `
 ${item.name}
  - Stock:
 ${item.stock}<br>
-;
+`;
 
 });
 
@@ -1964,13 +1983,13 @@ return new Date(t.date)
 
 if(filtered.length===0){
 
-container.innerHTML=
+container.innerHTML=`
 
 <div class="transaction">
 No Transactions Today
 </div>
 
-;
+`;
 
 return;
 
@@ -1978,7 +1997,7 @@ return;
 
 filtered.forEach(item=>{
 
-container.innerHTML += 
+container.innerHTML += `
 
 <div class="transaction">
 
@@ -2012,7 +2031,7 @@ ${new Date(item.date)
 
 </div>
 
-;
+`;
 
 });
 
@@ -2040,234 +2059,4 @@ renderTable();
 
 </body>
 
-</html> now how to make this code work like real website or app that is if someone chnages data then it should be visibile to everyone
-
-Right now your app is working as a:
-
-Local browser app
-
-Data stored only in your browser using:
-
-localStorage
-
-That means:
-
-If YOU change stock → only YOU can see it
-Other users/mobile users cannot see updates
-Data is not shared globally
-
-To make it work like a REAL website/app where:
-
-Everyone sees same stock
-Transactions sync instantly
-Multi-user support works
-Mobile + desktop use same data
-
-you need a BACKEND + DATABASE.
-
-The easiest method for you is:
-
-BEST OPTION FOR YOU
-
-Use:
-
-Firebase
-Free
-No server required
-Real-time sync
-Easy mobile support
-Works with your current HTML app
-WHAT WILL HAPPEN AFTER FIREBASE
-
-If one person issues material:
-
-TES -5
-
-then:
-
-All users immediately see updated stock
-Transaction history updates everywhere
-QR scanning updates central database
-Works like professional inventory software
-STEP BY STEP (VERY EASY)
-STEP 1 — CREATE FIREBASE ACCOUNT
-
-Go to:
-
-https://firebase.google.com
-
-Click:
-
-Get Started
-
-Login with Google account.
-
-STEP 2 — CREATE PROJECT
-
-Click:
-
-Create Project
-
-Project Name:
-
-Store Inventory Dashboard
-
-Click Continue.
-
-Disable Google Analytics.
-
-Click:
-
-Create Project
-STEP 3 — CREATE WEB APP
-
-Inside Firebase dashboard:
-
-Click:
-
-</> Web
-
-App nickname:
-
-Inventory App
-
-Click:
-
-Register App
-STEP 4 — COPY FIREBASE CONFIG
-
-Firebase will show something like:
-
-const firebaseConfig = {
-  apiKey: "xxxxx",
-  authDomain: "xxxxx",
-  projectId: "xxxxx",
-  storageBucket: "xxxxx",
-  messagingSenderId: "xxxxx",
-  appId: "xxxxx"
-};
-
-COPY it.
-
-STEP 5 — ENABLE FIRESTORE DATABASE
-
-Go to:
-
-Build → Firestore Database
-
-Click:
-
-Create Database
-
-Choose:
-
-Start in test mode
-
-Choose nearest location.
-
-Click Enable.
-
-STEP 6 — REPLACE localStorage WITH FIREBASE
-
-REMOVE this:
-
-localStorage.setItem()
-localStorage.getItem()
-
-Because Firebase will store data centrally.
-
-STEP 7 — ADD FIREBASE SDK IN YOUR HTML
-
-Add ABOVE your main <script>:
-
-<script type="module">
-
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-getFirestore,
-collection,
-addDoc,
-getDocs,
-doc,
-updateDoc
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-
-apiKey: "YOUR_API_KEY",
-
-authDomain: "YOUR_AUTH_DOMAIN",
-
-projectId: "YOUR_PROJECT_ID",
-
-storageBucket: "YOUR_STORAGE_BUCKET",
-
-messagingSenderId: "YOUR_SENDER_ID",
-
-appId: "YOUR_APP_ID"
-
-};
-
-const app =
-initializeApp(firebaseConfig);
-
-const db =
-getFirestore(app);
-
-</script>
-STEP 8 — STORE MATERIALS IN FIREBASE
-
-Instead of:
-
-materials.push()
-
-Use:
-
-await addDoc(
-collection(db,"materials"),
-{
-code:code,
-name:name,
-stock:stock
-}
-);
-STEP 9 — LOAD MATERIALS FROM FIREBASE
-
-Replace local array loading with:
-
-async function loadMaterials(){
-
-const querySnapshot =
-await getDocs(
-collection(db,"materials")
-);
-
-materials=[];
-
-querySnapshot.forEach((doc)=>{
-
-materials.push({
-id:doc.id,
-...doc.data()
-});
-
-});
-
-renderTable();
-
-}
-
-loadMaterials();
-STEP 10 — UPDATE STOCK LIVE
-
-When issuing material:
-
-await updateDoc(
-doc(db,"materials",material.id),
-{
-stock:material.stock
-}
-);
+</html>
