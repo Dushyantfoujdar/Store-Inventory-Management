@@ -675,9 +675,8 @@ placeholder="Enter Quantity"
 >
 
 <select
-id="matCategory"
+id="transactionCategory"
 class="searchBox"
-onchange="toggleNewCategoryInput()"
 >
 <option value="">Select Category</option>
 <option value="Electrical Spares">Electrical Spares</option>
@@ -889,8 +888,10 @@ placeholder="Material Name"
 >
 
 <select
+<select
 id="matCategory"
 class="searchBox"
+onchange="checkNewCategory(this.value)"
 >
 </select>
 
@@ -962,12 +963,11 @@ class="searchBox"
 placeholder="Material Name"
 >
 
-<input
-type="text"
+<select
 id="editCategory"
 class="searchBox"
-placeholder="Category"
 >
+</select>
 
 <input
 type="text"
@@ -1326,14 +1326,20 @@ document.getElementById(
 
 function fillCategoryDropdown(){
 
-const categorySelect=
+const categorySelect =
 document.getElementById(
 'matCategory'
 );
 
 if(!categorySelect) return;
 
-categorySelect.innerHTML='';
+categorySelect.innerHTML =
+
+`
+<option value="">
+Select Category
+</option>
+`;
 
 categories.forEach(category=>{
 
@@ -1347,8 +1353,15 @@ ${category}
 
 });
 
-}
+categorySelect.innerHTML +=
 
+`
+<option value="NEW_CATEGORY">
+➕ Add New Category
+</option>
+`;
+
+}
 
 
 function fillEditCategoryDropdown(){
@@ -1411,6 +1424,54 @@ Swal.fire(
 
 }
 
+function checkNewCategory(value){
+
+if(value === "NEW_CATEGORY"){
+
+const newCategory =
+prompt(
+"Enter New Category Name"
+);
+
+if(!newCategory) return;
+
+if(categories.includes(newCategory)){
+
+Swal.fire(
+'Error',
+'Category Already Exists',
+'error'
+);
+
+return;
+
+}
+
+categories.push(newCategory);
+
+saveData();
+
+fillCategoryDropdown();
+
+fillEditCategoryDropdown();
+
+fillCategoryFilter();
+
+document.getElementById(
+'matCategory'
+).value =
+newCategory;
+
+Swal.fire(
+'Success',
+'Category Added Successfully',
+'success'
+);
+
+}
+
+}
+ 
 function openQRPopup(){
 
 document.getElementById(
@@ -2220,6 +2281,32 @@ behavior:'smooth'
 
 }
 
+function fillCategoryFilter(){
+
+const filter =
+document.getElementById(
+'categoryFilter'
+);
+
+if(!filter) return;
+
+filter.innerHTML =
+'<option value="All">All Categories</option>';
+
+categories.forEach(category=>{
+
+filter.innerHTML += `
+
+<option value="${category}">
+${category}
+</option>
+
+`;
+
+});
+
+}
+ 
 window.onload=function(){
 
 fillCategoryDropdown();
