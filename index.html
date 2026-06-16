@@ -687,13 +687,11 @@ onchange="toggleNewCategoryInput()"
 <option value="NEW_CATEGORY">➕ Add New Category</option>
 </select>
 
-<input
-type="text"
-id="newCategory"
+<select
+id="editCategory"
 class="searchBox"
-placeholder="Enter New Category"
-style="display:none;"
 >
+</select>
 
 <button
 class="panelButton"
@@ -890,12 +888,11 @@ class="searchBox"
 placeholder="Material Name"
 >
 
-<input
-type="text"
+<select
 id="matCategory"
 class="searchBox"
-placeholder="Category"
 >
+</select>
 
 <input
 type="text"
@@ -1280,6 +1277,8 @@ fillDropdowns();
 
 fillCategoryDropdown();
 
+fillEditCategoryDropdown();
+
 fillCategoryFilter();
 
 saveData();
@@ -1339,6 +1338,33 @@ categorySelect.innerHTML='';
 categories.forEach(category=>{
 
 categorySelect.innerHTML += `
+
+<option value="${category}">
+${category}
+</option>
+
+`;
+
+});
+
+}
+
+
+
+function fillEditCategoryDropdown(){
+
+const dropdown =
+document.getElementById(
+'editCategory'
+);
+
+if(!dropdown) return;
+
+dropdown.innerHTML='';
+
+categories.forEach(category=>{
+
+dropdown.innerHTML += `
 
 <option value="${category}">
 ${category}
@@ -1556,6 +1582,8 @@ document.getElementById(
 'editName'
 ).value=
 item.name;
+
+fillEditCategoryDropdown();
 
 document.getElementById(
 'editCategory'
@@ -2195,6 +2223,8 @@ behavior:'smooth'
 window.onload=function(){
 
 fillCategoryDropdown();
+
+fillEditCategoryDropdown();
 
 fillCategoryFilter();
 
