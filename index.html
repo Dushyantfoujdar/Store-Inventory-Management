@@ -646,11 +646,25 @@ class="searchBox"
 placeholder="Enter Quantity"
 >
 
+<select
+id="matCategory"
+class="searchBox"
+onchange="toggleNewCategoryInput()"
+>
+<option value="">Select Category</option>
+<option value="Electrical Spares">Electrical Spares</option>
+<option value="Mechanical Spares">Mechanical Spares</option>
+<option value="Safety Spares">Safety Spares</option>
+<option value="Consumables">Consumables</option>
+<option value="NEW_CATEGORY">➕ Add New Category</option>
+</select>
+
 <input
 type="text"
-id="personInput"
+id="newCategory"
 class="searchBox"
-placeholder="Issued To / Received From"
+placeholder="Enter New Category"
+style="display:none;"
 >
 
 <button
@@ -991,7 +1005,16 @@ X
 </div>
 
 <script>
+ 
+let categories = [
 
+'Electrical Spares',
+'Mechanical Spares',
+'Safety Spares',
+'Consumables'
+
+];
+ 
 let materials=[
 
 {
@@ -1100,6 +1123,15 @@ if(savedMaterials){
 materials=savedMaterials;
 }
 
+const savedCategories =
+JSON.parse(
+localStorage.getItem('categories')
+);
+
+if(savedCategories){
+categories = savedCategories;
+}
+
 let currentEditIndex=null;
 
 function saveData(){
@@ -1112,6 +1144,11 @@ JSON.stringify(transactionHistory)
 localStorage.setItem(
 'materials',
 JSON.stringify(materials)
+);
+
+localStorage.setItem(
+'categories',
+JSON.stringify(categories)
 );
 
 }
@@ -1201,6 +1238,8 @@ todayCount;
 
 fillDropdowns();
 
+fillCategoryDropdown();
+
 saveData();
 
 }
@@ -1241,6 +1280,66 @@ function openTransactionPopup(){
 document.getElementById(
 'transactionPopup'
 ).style.display='flex';
+
+}
+
+function fillCategoryDropdown(){
+
+const categorySelect=
+document.getElementById(
+'matCategory'
+);
+
+if(!categorySelect) return;
+
+categorySelect.innerHTML='';
+
+categories.forEach(category=>{
+
+categorySelect.innerHTML += `
+
+<option value="${category}">
+${category}
+</option>
+
+`;
+
+});
+
+}
+
+function addNewCategory(){
+
+const newCategory=
+prompt(
+'Enter New Category Name'
+);
+
+if(!newCategory) return;
+
+if(categories.includes(newCategory)){
+
+Swal.fire(
+'Error',
+'Category Already Exists',
+'error'
+);
+
+return;
+
+}
+
+categories.push(newCategory);
+
+fillCategoryDropdown();
+
+saveData();
+
+Swal.fire(
+'Success',
+'Category Added',
+'success'
+);
 
 }
 
@@ -2054,6 +2153,8 @@ behavior:'smooth'
 window.onload=function(){
 
 renderTable();
+
+fillCategoryDropdown();
 
 };
 
