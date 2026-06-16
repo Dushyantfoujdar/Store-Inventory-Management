@@ -566,6 +566,34 @@ onclick="showTodayTransactionsPopup()"
 
 <div id="inventorySection">
 
+<select
+id="categoryFilter"
+class="searchBox"
+onchange="renderTable()"
+>
+
+<option value="All">
+All Categories
+</option>
+
+<option value="Mechanical Spares">
+Mechanical Spares
+</option>
+
+<option value="Electrical Spares">
+Electrical Spares
+</option>
+
+<option value="Safety Spares">
+Safety Spares
+</option>
+
+<option value="Consumables">
+Consumables
+</option>
+
+</select>
+
 <div class="tableContainer">
 
 <table>
@@ -1164,7 +1192,19 @@ table.innerHTML='';
 
 let low=0;
 
+const selectedCategory =
+document.getElementById(
+'categoryFilter'
+)?.value || 'All';
+
 materials.forEach((item,index)=>{
+
+if(
+selectedCategory !== 'All' &&
+item.category !== selectedCategory
+){
+return;
+}
 
 if(item.stock<=item.reorder){
 low++;
@@ -1239,6 +1279,8 @@ todayCount;
 fillDropdowns();
 
 fillCategoryDropdown();
+
+fillCategoryFilter();
 
 saveData();
 
@@ -2152,9 +2194,11 @@ behavior:'smooth'
 
 window.onload=function(){
 
-renderTable();
-
 fillCategoryDropdown();
+
+fillCategoryFilter();
+
+renderTable();
 
 };
 
